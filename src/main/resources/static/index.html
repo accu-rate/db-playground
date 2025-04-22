@@ -4,43 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plot Results</title>
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Ergebnisse plotten</h1>
-    <canvas id="resultChart" width="800" height="400"></canvas>
-    <script>
-        // Daten von der API abrufen
-        fetch('/api/results')
-            .then(response => response.json())
-            .then(data => {
-                const labels = data.map(item => item.pedID);
-                const durations = data.map(item => item.duration);
-
-                // Chart.js Diagramm erstellen
-                const ctx = document.getElementById('resultChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Dauer (Sekunden)',
-                            data: durations,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            })
-            .catch(error => console.error('Fehler beim Abrufen der Daten:', error));
-    </script>
+<form id="uploadForm" enctype="multipart/form-data">
+    <label for="csvFile">CSV-Datei hochladen:</label>
+    <input type="file" id="csvFile" name="csvFile" accept=".csv" />
+    <button onclick="uploadCsvFile('csvFile')">CSV hochladen</button>
+</form>
+<form id="queryForm">
+    <label for="query">SQL-Abfrage:</label>
+    <textarea id="query" name="query" rows="4" cols="50">
+SELECT pedID, MAX(time) - MIN(time) AS duration
+FROM floor_data
+WHERE posX BETWEEN 2 AND 6 AND posY BETWEEN 4 AND 8
+GROUP BY pedID
+HAVING COUNT(*) > 2
+    </textarea>
+    <button type="submit">Abfrage ausführen</button>
+</form>
+<div id="queryResults"></div>
+<h1>Ergebnisse plotten</h1>
+<canvas id="resultChart" width="800" height="400"></canvas>
+<script src="scripts.js"></script>
 </body>
 </html>

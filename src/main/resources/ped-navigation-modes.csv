@@ -1,0 +1,8 @@
+time,pedID,navMode,nextDest
+0.00,0,ORIGIN,origin-0
+0.50,0,MOVE,stair-0
+2.00,0,STAIR_ENTER,stair-0
+4.00,0,STAIR_ON_TREADS,stair-0
+19.50,0,STAIR_LEAVE,stair-0
+20.00,0,MOVE,destination-0
+22.00,0,DESTINATION,destination-0

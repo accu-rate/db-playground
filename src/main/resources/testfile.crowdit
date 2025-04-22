@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scenario isoDate="2025-04-22T14:43:20.132273400Z" name="testfile" xmlFormat="0.11.4">
+	<spatial>
+		<floor floorAt="geometry/flo0_20180910180850.floor" id="flo0" />
+		<floor floorAt="geometry/flo1_20180910180853.floor" id="flo1" />
+	</spatial>
+	<meta>
+		<paths>
+			<path id="path-0" ratio="1.0">origin-0,stair-0,destination-0</path>
+		</paths>
+		<backgroundImages />
+		<pedCharacters>
+			<type name="FPLMWalking" ratio="1.0" />
+		</pedCharacters>
+		<morphosis>
+			<origin id="origin-0" wunderZone="obj-59" rescueZone="false" neededRescuers="1">
+				<personas>
+					<persona ref="Standard">1.0</persona>
+				</personas>
+				<premovement ref="origin-0" />
+				<positioning generationPattern="none" comfortDistance="0.0" />
+				<intervals ref="origin-0" />
+				<allowedAreaSettings evasionBehaviour="everywhere" evasionActive="true" waitingBehaviour="center_inside" />
+			</origin>
+			<stair connectsTo="flo0" dirX="2.4492935982947064E-16" dirY="-1.0" dirZ="-1.0" id="stair-0" noOfTreads="36" wunderZone="obj-58" />
+			<destination disableDynamicFlooding="false" id="destination-0" wunderZone="obj-56">
+				<intervals ref="destination-0" />
+			</destination>
+		</morphosis>
+		<pathSnippets />
+		<floorProps>
+			<floorProp cellDist="0.1" elevation="0.0" floor="flo0" height="2.0" />
+			<floorProp cellDist="0.1" elevation="5.4" floor="flo1" height="2.0" />
+		</floorProps>
+		<groups>
+			<row>1,1.0</row>
+		</groups>
+		<elevatorMatrices />
+		<sets />
+	</meta>
+	<evaluations>
+		<measurements>
+			<rectangle floor="flo0" name="Rectangle">
+				<point x="2." y="6" />
+				<point x="4" y="8" />
+			</rectangle>
+		</measurements>
+	</evaluations>
+	<visualization>
+		<colorings>
+			<class rgba="255,107,43,170" visible="true" outlineColor="0,0,0,0">wunderZone</class>
+		</colorings>
+	</visualization>
+	<settings discretizationType="1" useDynamicFloorField="true" updateRateFloorField="1" useUndirectedFloorField="true" gridType="0" lastStep="300" distBetweenTwoPts="0.15" statisticRuns="false" newOutputWriteInterval="5.0" maxQueueDerivation="30.0" comfortDistanceInQueue="0.1" queueWidthFactor="1.0" compressOutput="false" includeSIR="false" useVisibilityGraph="false" agentQuota="1.0" useConnectorGraph="true" useEasyEscape="false" writeCsv="true" writeHdf5="false" macroDensityMax="4.5" macroDensityTrans="0.8" macroDensityCrit="2.2" notMovingTimestepThreshold="1" reschedulingOffset="0.2" enableCancelSimulation="false" radialPedScheduling="false" />
+	<reporting>
+		<reportElements />
+	</reporting>
+</scenario>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root xmlFormat="0.11.4" isoDate="2025-04-22T14:43:20.139323600Z">
+    <intervals id="destination-0"/>
+    <intervals id="origin-0">
+        <interval from="0" to="20" howMany="20" group="false"/>
+    </intervals>
+</root>

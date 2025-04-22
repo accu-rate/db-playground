@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<floor xmlFormat="0.11.4" isoDate="2025-04-22T14:43:20.163726300Z">
+    <layer id="1">
+        <wall closed="false" isCustom="false" deleted="false" id="w2">
+            <point x="0.0" y="0.0"/>
+            <point x="2.5" y="-0.5"/>
+            <point x="5.0" y="0.0"/>
+        </wall>
+        <wunderZone isCustom="false" deleted="false" id="obj-58">
+            <point x="0.5" y="5.5"/>
+            <point x="4.5" y="5.5"/>
+            <point x="4.5" y="14.5"/>
+            <point x="0.5" y="14.5"/>
+        </wunderZone>
+        <wunderZone isCustom="false" deleted="false" id="obj-59">
+            <point x="0.5" y="17.0"/>
+            <point x="0.5" y="20.0"/>
+            <point x="4.5" y="20.0"/>
+            <point x="4.5" y="17.0"/>
+        </wunderZone>
+    </layer>
+</floor>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root xmlFormat="0.11.4" isoDate="2025-04-22T14:43:20.143502400Z">
+    <premovement allAtOnce="false" id="NO_PREMOVEMENT">
+        <distribution min="0.0" max="0.0" mean="0.0" deviation="0.0" type="none"/>
+    </premovement>
+    <premovement allAtOnce="false" id="origin-0">
+        <distribution min="0.0" max="0.0" mean="0.0" deviation="0.0" type="uniform"/>
+    </premovement>
+</root>

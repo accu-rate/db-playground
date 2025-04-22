@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<agents xmlFormat="0.11.4" isoDate="2025-04-22T14:43:20.134272Z">
+    <persona id="Standard">
+        <velocity>
+            <distribution min="0.0" max="0.0" mean="1.0" deviation="0.0" type="none"/>
+        </velocity>
+        <torsoSize acceptedOverlap="0.15">
+            <distribution min="0.0" max="0.0" mean="0.44" deviation="0.0" type="none"/>
+        </torsoSize>
+        <behavior perceptionRadius="2.0" socialDist="0.0"/>
+        <ignoredSimulationObjects/>
+    </persona>
+</agents>

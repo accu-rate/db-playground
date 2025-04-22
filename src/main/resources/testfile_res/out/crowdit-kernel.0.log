@@ -1,0 +1,94 @@
+Apr. 22, 2025 4:40:55 PM accurate.cds.kernel.utils.Utilities initRand
+INFORMATION: Seed of random generator was set to: 0
+Apr. 22, 2025 4:40:56 PM accurate.cds.kernel.io.ScenarioXMLReader parseMeetingPoints
+FEIN: No `meetingPoints` element defined.
+Apr. 22, 2025 4:40:57 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 0.0 of 300.0
+Apr. 22, 2025 4:40:58 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 1.0 of 300.0
+Apr. 22, 2025 4:40:58 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 2.0 of 300.0
+Apr. 22, 2025 4:40:58 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 3.0 of 300.0
+Apr. 22, 2025 4:40:58 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 4.0 of 300.0
+Apr. 22, 2025 4:40:58 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 5.0 of 300.0
+Apr. 22, 2025 4:40:58 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 6.0 of 300.0
+Apr. 22, 2025 4:40:58 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 7.0 of 300.0
+Apr. 22, 2025 4:40:59 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 8.0 of 300.0
+Apr. 22, 2025 4:40:59 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 9.0 of 300.0
+Apr. 22, 2025 4:40:59 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 10.0 of 300.0
+Apr. 22, 2025 4:40:59 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 11.0 of 300.0
+Apr. 22, 2025 4:40:59 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 12.0 of 300.0
+Apr. 22, 2025 4:40:59 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 13.0 of 300.0
+Apr. 22, 2025 4:40:59 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 14.0 of 300.0
+Apr. 22, 2025 4:41:00 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 15.0 of 300.0
+Apr. 22, 2025 4:41:00 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 16.0 of 300.0
+Apr. 22, 2025 4:41:00 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 17.0 of 300.0
+Apr. 22, 2025 4:41:00 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 18.0 of 300.0
+Apr. 22, 2025 4:41:00 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 19.0 of 300.0
+Apr. 22, 2025 4:41:00 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 20.0 of 300.0
+Apr. 22, 2025 4:41:00 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 21.0 of 300.0
+Apr. 22, 2025 4:41:00 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 22.0 of 300.0
+Apr. 22, 2025 4:41:00 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 23.0 of 300.0
+Apr. 22, 2025 4:41:00 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 24.0 of 300.0
+Apr. 22, 2025 4:41:00 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 25.0 of 300.0
+Apr. 22, 2025 4:41:00 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 26.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 27.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 28.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 29.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 30.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 31.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 32.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 33.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 34.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 35.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 36.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 37.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 38.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 39.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 40.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 41.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 42.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 43.0 of 300.0
+Apr. 22, 2025 4:41:01 PM accurate.cds.kernel.observer.ProgressObserver notifyEndSimStep
+INFORMATION: Second 44.0 of 300.0

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphs xmlFormat="0.11.4">
+  <graph floorID="flo0">
+    <vertices>Destination0:destination-0=2.50, 2.00;
+Stair1:stair-0=2.50, 10.00;
+</vertices>
+    <edges/>
+  </graph>
+  <graph floorID="flo1">
+    <vertices>Origin0:origin-0=2.50, 18.50;
+Stair1:stair-0=2.50, 10.00;
+</vertices>
+    <edges/>
+  </graph>
+</graphs>

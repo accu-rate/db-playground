@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<output isoDate="2025-04-22T14:40:57.309165800Z" xmlFormat="0.11.4">
+  <author email="test.runner@accu-rate.de" name="Test Runner"/>
+  <kernelVersion branch="(no branch info)" buildhost="(no buildhost info)" gitDescribe="(no version number info)" isoDate="(no date info)"/>
+  <usedSettings agentQuota="1.0" comfortDistanceInQueue="0.1" compressOutput="false" discretizationType="1" distBetweenTwoPts="0.15" enableCancelSimulation="false" gridType="0" includeSIR="false" lastStep="300" macroDensityCrit="2.2" macroDensityMax="4.5" macroDensityTrans="0.8" maxQueueDerivation="30.0" newOutputWriteInterval="5.0" notMovingTimestepThreshold="1" queueWidthFactor="1.0" radialPedScheduling="false" reschedulingOffset="0.2" statisticRuns="false" updateRateFloorField="1" useConnectorGraph="true" useDynamicFloorField="true" useEasyEscape="false" useUndirectedFloorField="true" useVisibilityGraph="false" writeCsv="true" writeHdf5="false"/>
+  <statistics>
+    <noOfPeds>20</noOfPeds>
+    <simTime>44.0</simTime>
+  </statistics>
+  <floor csvAt="floor-flo0.csv" elevation="0.0" id="flo0" microTimeStepLength="0.5"/>
+  <floor csvAt="floor-flo1.csv" elevation="5.4" id="flo1" microTimeStepLength="0.5"/>
+</output>

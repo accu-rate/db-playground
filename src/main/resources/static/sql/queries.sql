@@ -1,14 +1,14 @@
 
--- Abfrage für die Dauer der Bewegung
-SELECT pedID, MAX(time) - MIN(time) AS duration
+-- Zeitverlauf
+SELECT pedID, MAX(time) - MIN(time) AS Duration
 FROM floor_data
-WHERE posX BETWEEN 2 AND 6 AND posY BETWEEN 4 AND 8
+WHERE posX BETWEEN ${posXMin} AND ${posXMax} AND posY BETWEEN ${posYMin} AND ${posYMax}
 GROUP BY pedID
 HAVING COUNT(*) > 2;
 
 
--- Abfrage für die Anzahl der Personen pro Zeit
-SELECT time, COUNT(DISTINCT pedID) AS pedID_count
+-- Räumungsverlauf
+SELECT time AS Time, COUNT(DISTINCT pedID) AS pedID_count
 FROM floor_data
 GROUP BY time
 ORDER BY time ASC;
@@ -31,7 +31,7 @@ Filtered AS (
     WHERE avg_speed < ?
 )
 SELECT
-    current_time AS time,
+    current_time AS Time,
     COUNT(pedID) AS PedCount
 FROM Filtered
 GROUP BY current_time

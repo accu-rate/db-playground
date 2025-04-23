@@ -22,47 +22,22 @@ public class CsvImporter implements CommandLineRunner {
         this.resultService = resultService;
     }
 
-    public void importCsv(String filePath) {
-
-        if (filePath.endsWith(".gz")) {
-            String gzipFilePath = filePath;
-            String outputCsvFilePath = filePath.replace(".gz", "");
-
-            unzipAndSaveAsCsv(gzipFilePath, outputCsvFilePath);
-            filePath = outputCsvFilePath;
-        }
-
-        try (Connection conn = DriverManager.getConnection("jdbc:duckdb:" + DATABASE_NAME);
-             Statement stmt = conn.createStatement()) {
-
-            String createTableQuery = "CREATE OR REPLACE TABLE floor_data AS SELECT * FROM read_csv_auto('" + filePath + "')";
-            stmt.execute(createTableQuery);
-        } catch (Exception e) {
-            throw new RuntimeException("Fehler beim Importieren der CSV-Datei in die Tabelle", e);
-        }
-    }
-
-    public void unzipAndSaveAsCsv(String gzipFilePath, String outputCsvFilePath) {
-        try (GZIPInputStream gzipInputStream = new GZIPInputStream(new FileInputStream(gzipFilePath), 1024 * 8);
-             InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
-             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-             FileWriter fileWriter = new FileWriter(outputCsvFilePath)) {
-
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                fileWriter.write(line + System.lineSeparator());
-            }
-
-            System.out.println("Datei erfolgreich entpackt und als CSV gespeichert: " + outputCsvFilePath);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Fehler beim Entpacken und Speichern der Datei", e);
-        }
-    }
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("Löschen der Datenbankdatei...");
+        deleteExistingDatabase();
+
+        URL resource = Main.class.getResource("/testfile_res/out/floor-flo1.csv");
+        if (resource == null) {
+            throw new RuntimeException("Datei floor-flo1.csv nicht gefunden!");
+        }
+        String filePath = Paths.get(resource.toURI()).toString();
+
+        initDatabase(filePath);
+    }
+
+    private void deleteExistingDatabase() {
+        System.out.println("Löschen der bisherigen Datenbankdatei...");
         File dbFile = new File(DATABASE_NAME);
         if (dbFile.exists() && dbFile.isFile()) {
             if (dbFile.delete()) {
@@ -71,14 +46,14 @@ public class CsvImporter implements CommandLineRunner {
                 throw new RuntimeException("Datenbankdatei konnte nicht gelöscht werden.");
             }
         }
+    }
 
+    public void importCsv(String filePath) {
+        initDatabase(filePath);
+    }
+
+    private void initDatabase(String filePath) {
         System.out.println("Importing CSV into a DuckDB table...");
-        URL resource = Main.class.getResource("/testfile_res/out/floor-Veranstaltungsfläche.csv");
-        if (resource == null) {
-            throw new RuntimeException("Datei floor-flo0.csv nicht gefunden!");
-        }
-        String filePath = Paths.get(resource.toURI()).toString();
-
         try (Connection conn = DriverManager.getConnection("jdbc:duckdb:" + DATABASE_NAME);
              Statement stmt = conn.createStatement()) {
             createPopulationFloorData(filePath, stmt);
@@ -112,19 +87,38 @@ public class CsvImporter implements CommandLineRunner {
         }
     }
 
+    private void recreateTable(Statement stmt, String filePath) throws SQLException {
+        String dropTableQuery = "DROP TABLE IF EXISTS floor_data";
+        stmt.execute(dropTableQuery);
+
+        String createTableQuery = "CREATE TABLE floor_data AS SELECT * FROM read_csv_auto('" + filePath + "')";
+        stmt.execute(createTableQuery);
+    }
+
+
     private void createVelocityTable(Statement stmt) throws SQLException {
         System.out.println("Creating table 'velocity' ...");
+
+        // Erstelle einen Index für die Spalten pedID und time
+        String createIndexQuery = "CREATE INDEX idx_floor_data_pedID_time ON floor_data (pedID, time);";
+        stmt.execute(createIndexQuery);
+
         String createVelocityTableQuery =
                 "CREATE OR REPLACE TABLE velocity AS " +
                         "SELECT " +
                         "    t1.time AS current_time, " +
                         "    t1.pedID, " +
                         "    SQRT(POWER(t1.posX - t2.posX, 2) + POWER(t1.posY - t2.posY, 2)) / (t1.time - t2.time) AS speed " +
-                        "FROM floor_data t1 " +
-                        "JOIN floor_data t2 " +
-                        "ON t1.pedID = t2.pedID AND t1.time > t2.time " +
-                        "WHERE t1.time - t2.time <= 5;";
+                        "FROM " +
+                        "    (SELECT * FROM floor_data WHERE time <= (SELECT MAX(time) FROM floor_data) - 5) t1 " +
+                        "JOIN " +
+                        "    floor_data t2 " +
+                        "ON " +
+                        "    t1.pedID = t2.pedID AND t1.time > t2.time " +
+                        "WHERE " +
+                        "    t1.time - t2.time <= 5;";
         stmt.execute(createVelocityTableQuery);
+
         System.out.println("Tabelle 'velocity' wurde erfolgreich erstellt.");
     }
 }

@@ -1,5 +1,6 @@
 package org.example;
 
+import org.duckdb.DuckDBConnection;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
@@ -35,20 +36,25 @@ public class ResultService {
 
         List<Map<String, Object>> results = new ArrayList<>();
 
-        try (Connection conn = DriverManager.getConnection("jdbc:duckdb:" + DATABASE_NAME);
+        try (DuckDBConnection conn = (DuckDBConnection) DriverManager.getConnection("jdbc:duckdb:" + DATABASE_NAME);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
+            if (!rs.next()) { // Prüft, ob das ResultSet leer ist
+                System.out.println("Die Abfrage: " + query + " hat keine Ergebnisse geliefert.");
+                return results;
+            }
 
-            while (rs.next()) {
+            do {
                 Map<String, Object> row = new HashMap<>();
                 for (int i = 1; i <= columnCount; i++) {
                     row.put(metaData.getColumnName(i), rs.getObject(i));
                 }
                 results.add(row);
-            }
+            } while (rs.next());
+
         } catch (SQLException e) {
             throw new RuntimeException("Fehler beim Ausführen der benutzerdefinierten Abfrage", e);
         }

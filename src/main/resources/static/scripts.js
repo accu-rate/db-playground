@@ -3,16 +3,21 @@ function setQuery() {
     const querySelect = document.getElementById('querySelect');
     const queryTextarea = document.getElementById('query');
     const additionalParamContainer = document.getElementById('additionalParamContainer');
+    const additionalAreaParamContainer = document.getElementById('additionalAreaParamContainer');
 
     const selectedQuery = querySelect.value;
     queryTextarea.value = selectedQuery;
 
-    // Überprüfen, ob die Query einen Platzhalter "?" enthält
     if (selectedQuery.includes('?')) {
-        additionalParamContainer.style.display = 'block'; // Eingabefeld anzeigen
-    } else {
-        additionalParamContainer.style.display = 'none'; // Eingabefeld ausblenden
-    }
+        additionalParamContainer.style.display = 'block';
+        additionalAreaParamContainer.classList.remove('hidden');
+        } else if (selectedQuery.includes('${')) {
+           additionalAreaParamContainer.classList.add('hidden');
+           additionalParamContainer.style.display = 'none';
+    } else{
+             additionalAreaParamContainer.classList.remove('hidden'); // Eingabefelder anzeigen
+             additionalParamContainer.style.display = 'none';
+             }
 }
 
 
@@ -41,59 +46,79 @@ function loadQueriesFromApi(apiUrl, selectElementId) {
         .catch(error => console.error('Fehler beim Laden der Queries:', error));
 }
 
+document.getElementById('uploadForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Verhindert das Standard-Formular-Submit-Verhalten
+    uploadCsvFile('csvFile');
+});
 
-// Funktion zum Hochladen der CSV-Datei
 function uploadCsvFile(fileInputId) {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    loadingIndicator.style.display = 'block'; // Ladeindikator anzeigen
+
     const fileInput = document.getElementById(fileInputId);
-if (!fileInput.files[0]) {
-    alert('Bitte wähle eine Datei aus.');
-    return;
-}
-const formData = new FormData();
+    if (!fileInput.files[0]) {
+        alert('Bitte wähle eine Datei aus.');
+        loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
+        return;
+    }
+
+    const formData = new FormData();
     formData.append('file', fileInput.files[0]);
 
     return fetch('/api/upload-csv', {
         method: 'POST',
         body: formData
+    })
+    .then(response => {
+        loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
+        if (!response.ok) {
+            alert('Fehler beim Hochladen der Datei.');
+        }
+    })
+    .catch(error => {
+        loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
+        console.error('Fehler beim Hochladen:', error);
+        alert('Ein Fehler ist aufgetreten.');
     });
 }
-
-// Event-Listener für das Formular
-document.getElementById('uploadForm').addEventListener('submit', function (event) {
-    event.preventDefault();
-
-    uploadCsvFile('csvFile')
-        .then(response => {
-            if (response.ok) {
-                alert('Datei erfolgreich hochgeladen und verarbeitet.');
-            } else {
-                alert('Fehler beim Hochladen der Datei.');
-            }
-        })
-        .catch(error => console.error('Fehler beim Hochladen:', error));
-});
 
 let selectedChartType = 'bar'; // Standard-Diagrammtyp
 
 function setChartTypeAndUpdate(type) {
-    selectedChartType = type;
-    const query = document.getElementById('query').value;
-    const additionalParam = document.getElementById('additionalParam').value;
+ selectedChartType = type;
+ const query = document.getElementById('query').value;
+ const additionalParam = document.getElementById('additionalParam').value;
+ const posXMin = document.getElementById('posXMin').value;
+ const posXMax = document.getElementById('posXMax').value;
+ const posYMin = document.getElementById('posYMin').value;
+ const posYMax = document.getElementById('posYMax').value;
 
-    if (!query) {
-        alert('Bitte wähle zuerst eine Abfrage aus.');
-        return;
-    }
+ if (!query) {
+     alert('Bitte wähle zuerst eine Abfrage aus.');
+     return;
+ }
 
+ // Ersetze den Platzhalter "?" nur, wenn er in der Query vorhanden ist
+ let queryWithParam = query.includes('?') ? query.replace('?', additionalParam) : query;
 
-    // Ersetze den Platzhalter "?" nur, wenn er in der Query vorhanden ist
-    const queryWithParam = query.includes('?') ? query.replace('?', additionalParam) : query;
+ // Ersetze die Platzhalter "${...}" nur, wenn sie in der Query vorhanden sind
+ if (query.includes('${')) {
+     queryWithParam = queryWithParam
+         .replace('${posXMin}', posXMin)
+         .replace('${posXMax}', posXMax)
+         .replace('${posYMin}', posYMin)
+         .replace('${posYMax}', posYMax);
+ }
 
-    fetchAndUpdateChart(queryWithParam);}
+ fetchAndUpdateChart(queryWithParam);
+ }
 
 let chartInstance;
 
 function fetchAndUpdateChart(query) {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    loadingIndicator.style.display = 'block'; // Ladeindikator anzeigen
+
     const url = '/api/custom-query';
     const options = {
         method: 'POST',
@@ -104,6 +129,8 @@ function fetchAndUpdateChart(query) {
     fetch(url, options)
         .then(response => response.json())
         .then(data => {
+            loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
+
             if (data.length === 0) {
                 alert('Keine Daten gefunden.');
                 return;
@@ -159,6 +186,8 @@ function fetchAndUpdateChart(query) {
                 }
             });
         })
-        .catch(error => console.error('Fehler beim Abrufen der Daten:', error));
+        .catch(error => {
+            loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
+            console.error('Fehler beim Abrufen der Daten:', error);
+        });
 }
-

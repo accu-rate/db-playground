@@ -23,6 +23,17 @@ public class CsvImporter implements CommandLineRunner {
         this.resultService = resultService;
     }
 
+    public void importCsv(String filePath) {
+        try (Connection conn = DriverManager.getConnection("jdbc:duckdb:" + DATABASE_NAME);
+             Statement stmt = conn.createStatement()) {
+
+            String createTableQuery = "CREATE OR REPLACE TABLE floor_data AS SELECT * FROM read_csv_auto('" + filePath + "')";
+            stmt.execute(createTableQuery);
+        } catch (Exception e) {
+            throw new RuntimeException("Fehler beim Importieren der CSV-Datei in die Tabelle", e);
+        }
+    }
+
     @Override
     public void run(String... args) throws Exception {
         System.out.println("Löschen der Datenbankdatei...");

@@ -1,3 +1,36 @@
+    // Funktion zum Setzen der ausgewählten Query
+    function setQuery() {
+        const querySelect = document.getElementById('querySelect');
+        const queryTextarea = document.getElementById('query');
+        queryTextarea.value = querySelect.value;
+    }
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    loadQueriesFromApi('/api/queries', 'querySelect');
+})
+
+function loadQueriesFromApi(apiUrl, selectElementId) {
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(queries => {
+            const querySelect = document.getElementById(selectElementId);
+            querySelect.innerHTML = ''; // Vorherige Optionen entfernen
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = '-- Wähle eine Abfrage --';
+            querySelect.appendChild(defaultOption);
+
+            for (const [name, query] of Object.entries(queries)) {
+                const option = document.createElement('option');
+                option.value = query;
+                option.textContent = name;
+                querySelect.appendChild(option);
+            }
+        })
+        .catch(error => console.error('Fehler beim Laden der Queries:', error));
+}
+
 // Funktion zum Hochladen der CSV-Datei
 function uploadCsvFile(fileInputId) {
     const fileInput = document.getElementById(fileInputId);
@@ -24,9 +57,7 @@ document.getElementById('uploadForm').addEventListener('submit', function (event
         })
         .catch(error => console.error('Fehler beim Hochladen:', error));
 });
-
-let chartInstance;
-
+let chartInstance; // Globale Variable für das Diagramm
 function fetchAndUpdateChart(query) {
     const url = '/api/custom-query';
     const options = {
@@ -34,7 +65,6 @@ function fetchAndUpdateChart(query) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query })
     };
-
     fetch(url, options)
         .then(response => response.json())
         .then(data => {
@@ -44,57 +74,54 @@ function fetchAndUpdateChart(query) {
             }
 
             const columnNames = Object.keys(data[0]);
-            const xAxisLabel = columnNames[1];
-            const yAxisLabel = columnNames[0];
+            const xAxisLabel = columnNames[0];
+            const yAxisLabel = columnNames[1];
 
             const labels = data.map(item => item[xAxisLabel]);
             const values = data.map(item => item[yAxisLabel]);
 
+        // Zerstöre das bestehende Diagramm, falls vorhanden
             if (chartInstance) {
-                chartInstance.data.labels = labels;
-                chartInstance.data.datasets[0].data = values;
-                chartInstance.data.datasets[0].label = yAxisLabel;
-                chartInstance.options.plugins.title.text = `Diagramm: ${xAxisLabel} vs ${yAxisLabel}`;
-                chartInstance.update();
-            } else {
-                const ctx = document.getElementById('resultChart').getContext('2d');
-                chartInstance = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: yAxisLabel,
-                            data: values,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
+                chartInstance.destroy();
+            }
+
+            const ctx = document.getElementById('resultChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: yAxisLabel,
+                        data: values,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `Diagramm: ${xAxisLabel} vs ${yAxisLabel}`
+                        }
                     },
-                    options: {
-                        plugins: {
+                    scales: {
+                        x: {
                             title: {
                                 display: true,
-                                text: `Diagramm: ${xAxisLabel} vs ${yAxisLabel}`
+                                text: xAxisLabel
                             }
                         },
-                        scales: {
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: xAxisLabel
-                                }
+                        y: {
+                            title: {
+                                display: true,
+                                text: yAxisLabel
                             },
-                            y: {
-                                title: {
-                                    display: true,
-                                    text: yAxisLabel
-                                },
-                                beginAtZero: true
-                            }
+                            beginAtZero: true
                         }
                     }
-                });
-            }
+                }
+            });
         })
         .catch(error => console.error('Fehler beim Abrufen der Daten:', error));
 }

@@ -10,20 +10,23 @@
 <body>
 <form id="uploadForm" enctype="multipart/form-data">
     <label for="csvFile">CSV-Datei hochladen:</label>
-    <input type="file" id="csvFile" name="csvFile" accept=".csv" />
+    <input type="file" id="csvFile" name="csvFile" accept=".csv"/>
     <button onclick="uploadCsvFile('csvFile')">CSV hochladen</button>
 </form>
+
 <form id="queryForm">
-    <label for="query">SQL-Abfrage:</label>
-    <textarea id="query" name="query" rows="4" cols="50">
-SELECT pedID, MAX(time) - MIN(time) AS duration
-FROM floor_data
-WHERE posX BETWEEN 2 AND 6 AND posY BETWEEN 4 AND 8
-GROUP BY pedID
-HAVING COUNT(*) > 2
-    </textarea>
+    <label for="querySelect">Wähle eine Abfrage:</label>
+    <select id="querySelect" name="queryName" onchange="setQuery()">
+        <option value="">-- Wähle eine Abfrage --</option>
+        <option value="Abfrage für die Dauer der Bewegung">Abfrage für die Dauer der Bewegung</option>
+        <option value="Abfrage für die Anzahl der Personen pro Zeit">Abfrage für die Anzahl der Personen pro Zeit
+        </option>
+    </select>
+    <input type="hidden" id="query" name="query">
+    <br><br>
     <button type="submit">Abfrage ausführen</button>
 </form>
+
 <div id="queryResults"></div>
 <h1>Ergebnisse plotten</h1>
 <canvas id="resultChart" width="800" height="400"></canvas>

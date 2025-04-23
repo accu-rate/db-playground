@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
@@ -18,14 +17,19 @@ public class ResultController {
         this.resultService = resultService;
     }
 
-    @GetMapping("/api/results")
-    public List<Map<String, Object>> getResults() {
-        return resultService.fetchResults();
+    @PostMapping("/api/results")
+    public List<Map<String, Object>> getResults(String queryName) {
+        return resultService.fetchResults(queryName);
     }
 
     @PostMapping("/api/custom-query")
     public List<Map<String, Object>> executeCustomQuery(@RequestBody Map<String, String> request) {
         String query = request.get("query");
-        return resultService.executeCustomQuery(query);
+        return resultService.executeQuery(query);
+    }
+
+    @GetMapping("/api/queries")
+    public Map<String, String> getAvailableQueries() {
+        return resultService.getAvailableQueries();
     }
 }

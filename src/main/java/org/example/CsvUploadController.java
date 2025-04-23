@@ -23,8 +23,7 @@ public class CsvUploadController {
 
         try {
             // Speichere die Datei temporär
-            File tempFile = File.createTempFile("uploaded-", ".csv");
-            file.transferTo(tempFile);
+            File tempFile = File.createTempFile("uploaded-", file.getOriginalFilename());
 
             // Importiere die Datei in die Datenbank
             csvImporter.importCsv(tempFile.getAbsolutePath());

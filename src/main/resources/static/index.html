@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plot Results</title>
+    <title>Simulationsdatenanalyse</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
 <form id="uploadForm" enctype="multipart/form-data">
@@ -17,18 +18,23 @@
 <form id="queryForm">
     <label for="querySelect">Wähle eine Abfrage:</label>
     <select id="querySelect" name="queryName" onchange="setQuery()">
-        <option value="">-- Wähle eine Abfrage --</option>
-        <option value="Abfrage für die Dauer der Bewegung">Abfrage für die Dauer der Bewegung</option>
-        <option value="Abfrage für die Anzahl der Personen pro Zeit">Abfrage für die Anzahl der Personen pro Zeit
-        </option>
     </select>
     <input type="hidden" id="query" name="query">
+    <div id="additionalParamContainer" style="display: none;">
+        <label for="additionalParam">Zusätzlicher Parameter (wie in der Beschreibung angegeben):</label>
+        <input type="text" id="additionalParam" placeholder="Parameter eingeben">
+    </div>
     <br><br>
-    <button type="submit">Abfrage ausführen</button>
+    <button type="button" onclick="setChartTypeAndUpdate('bar')">
+        <i class="fas fa-chart-bar"></i> Balkendiagramm
+    </button>
+    <button type="button" onclick="setChartTypeAndUpdate('scatter')">
+        <i class="fas fa-braille"></i> Punktwolkendiagramm
+    </button>
 </form>
 
 <div id="queryResults"></div>
-<h1>Ergebnisse plotten</h1>
+<h1>Ergebnisplot</h1>
 <canvas id="resultChart" width="800" height="400"></canvas>
 <script src="scripts.js"></script>
 </body>

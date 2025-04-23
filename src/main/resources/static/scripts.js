@@ -1,9 +1,19 @@
     // Funktion zum Setzen der ausgewählten Query
-    function setQuery() {
-        const querySelect = document.getElementById('querySelect');
-        const queryTextarea = document.getElementById('query');
-        queryTextarea.value = querySelect.value;
+function setQuery() {
+    const querySelect = document.getElementById('querySelect');
+    const queryTextarea = document.getElementById('query');
+    const additionalParamContainer = document.getElementById('additionalParamContainer');
+
+    const selectedQuery = querySelect.value;
+    queryTextarea.value = selectedQuery;
+
+    // Überprüfen, ob die Query einen Platzhalter "?" enthält
+    if (selectedQuery.includes('?')) {
+        additionalParamContainer.style.display = 'block'; // Eingabefeld anzeigen
+    } else {
+        additionalParamContainer.style.display = 'none'; // Eingabefeld ausblenden
     }
+}
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -31,10 +41,15 @@ function loadQueriesFromApi(apiUrl, selectElementId) {
         .catch(error => console.error('Fehler beim Laden der Queries:', error));
 }
 
+
 // Funktion zum Hochladen der CSV-Datei
 function uploadCsvFile(fileInputId) {
     const fileInput = document.getElementById(fileInputId);
-    const formData = new FormData();
+if (!fileInput.files[0]) {
+    alert('Bitte wähle eine Datei aus.');
+    return;
+}
+const formData = new FormData();
     formData.append('file', fileInput.files[0]);
 
     return fetch('/api/upload-csv', {
@@ -57,7 +72,27 @@ document.getElementById('uploadForm').addEventListener('submit', function (event
         })
         .catch(error => console.error('Fehler beim Hochladen:', error));
 });
-let chartInstance; // Globale Variable für das Diagramm
+
+let selectedChartType = 'bar'; // Standard-Diagrammtyp
+
+function setChartTypeAndUpdate(type) {
+    selectedChartType = type;
+    const query = document.getElementById('query').value;
+    const additionalParam = document.getElementById('additionalParam').value;
+
+    if (!query) {
+        alert('Bitte wähle zuerst eine Abfrage aus.');
+        return;
+    }
+
+
+    // Ersetze den Platzhalter "?" nur, wenn er in der Query vorhanden ist
+    const queryWithParam = query.includes('?') ? query.replace('?', additionalParam) : query;
+
+    fetchAndUpdateChart(queryWithParam);}
+
+let chartInstance;
+
 function fetchAndUpdateChart(query) {
     const url = '/api/custom-query';
     const options = {
@@ -65,6 +100,7 @@ function fetchAndUpdateChart(query) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query })
     };
+
     fetch(url, options)
         .then(response => response.json())
         .then(data => {
@@ -80,21 +116,21 @@ function fetchAndUpdateChart(query) {
             const labels = data.map(item => item[xAxisLabel]);
             const values = data.map(item => item[yAxisLabel]);
 
-        // Zerstöre das bestehende Diagramm, falls vorhanden
+            // Zerstöre das bestehende Diagramm, falls vorhanden
             if (chartInstance) {
                 chartInstance.destroy();
             }
 
             const ctx = document.getElementById('resultChart').getContext('2d');
             chartInstance = new Chart(ctx, {
-                type: 'bar',
+                type: selectedChartType, // Verwende den ausgewählten Diagrammtyp
                 data: {
                     labels: labels,
                     datasets: [{
                         label: yAxisLabel,
-                        data: values,
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
+                        data: selectedChartType === 'scatter' ? data.map(item => ({ x: item[xAxisLabel], y: item[yAxisLabel] })) : values,
+                        backgroundColor: 'rgba(27, 107, 189, 0.2)',
+                        borderColor: 'rgba(27, 107, 189, 1)',
                         borderWidth: 1
                     }]
                 },
@@ -126,8 +162,3 @@ function fetchAndUpdateChart(query) {
         .catch(error => console.error('Fehler beim Abrufen der Daten:', error));
 }
 
-document.getElementById('queryForm').addEventListener('submit', function (event) {
-    event.preventDefault();
-    const query = document.getElementById('query').value;
-    fetchAndUpdateChart(query);
-});

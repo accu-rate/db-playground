@@ -7,16 +7,16 @@ export function setQuery() {
 
     const selectedQuery = querySelect.value;
     queryTextarea.value = selectedQuery;
-
     if (selectedQuery.includes('?')) {
         additionalParamContainer.style.display = 'block';
-        additionalAreaParamContainer.classList.remove('hidden');
-    } else if (selectedQuery.includes('${x')) {
-        additionalAreaParamContainer.classList.add('hidden');
-        additionalParamContainer.style.display = 'none';
     } else {
-        additionalAreaParamContainer.classList.remove('hidden');
         additionalParamContainer.style.display = 'none';
+    }
+
+    if (selectedQuery.includes('${x')) {
+        additionalAreaParamContainer.classList.remove('hidden');
+    } else {
+        additionalAreaParamContainer.classList.add('hidden');
     }
 }
 

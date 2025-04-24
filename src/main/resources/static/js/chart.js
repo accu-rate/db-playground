@@ -28,7 +28,6 @@ export function setChartTypeAndUpdate(type) {
 
     // Ersetze die Platzhalter "${selectedTable}" nur, wenn sie in der Query vorhanden sind
      if (query.includes('${selectedTable}')) {
-                  alert('Tabelle wird ersetzt.');
       queryWithParam = queryWithParam
              .replace('${selectedTable}', selectedTable);
      }
@@ -36,7 +35,6 @@ export function setChartTypeAndUpdate(type) {
 
     // Ersetze die Platzhalter "${...}" nur, wenn sie in der Query vorhanden sind
     if (query.includes('${p')) {
-                      alert('posXMin.');
         queryWithParam = queryWithParam
             .replace('${posXMin}', posXMin)
             .replace('${posXMax}', posXMax)
@@ -45,7 +43,6 @@ export function setChartTypeAndUpdate(type) {
     }
 
     selectedChartType = type;
-     alert(queryWithParam);
     fetchAndUpdateChart(queryWithParam);
 }
 
@@ -79,7 +76,6 @@ export function fetchAndUpdateChart(query) {
 }
 
 function updateChart(data) {
-             alert('Daten werden angezeigt.');
     const columnNames = Object.keys(data[0]);
     const xAxisLabel = columnNames[0];
     const yAxisLabel = columnNames[1];

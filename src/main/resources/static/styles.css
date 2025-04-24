@@ -12,6 +12,11 @@ h1 {
     color: #1b6bbd;
 }
 
+h2 {
+    text-align: center;
+    margin-top: 12px;
+    color: #1b6bbd;
+}
 form {
     max-width: 600px;
     margin: 20px auto;
@@ -25,6 +30,25 @@ label {
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
+}
+
+
+section {
+    padding: 2rem;
+    margin: 1rem 0;
+}
+
+.chart-controls {
+    margin-bottom: 1rem;
+        display: flex;
+        align-items: bottom;
+        justify-content: center; /* Zentriert die Buttons horizontal */
+       gap: 5px; /* Abstand zwischen Label und Eingabefeld */
+}
+
+.chart-container {
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 textarea, input[type="file"] {

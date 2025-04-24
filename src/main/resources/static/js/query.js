@@ -1,5 +1,7 @@
 // js/query.js
 import { updateChart } from './chart.js';
+export let cachedQueries = []; // Array für mehrere Abfragen
+
 export function setQuery() {
     const querySelect = document.getElementById('querySelect');
     const queryTextarea = document.getElementById('query');
@@ -14,14 +16,13 @@ export function setQuery() {
         additionalParamContainer.style.display = 'none';
     }
 
-    if (selectedQuery.includes('${x')) {
+    if (selectedQuery.includes('${p')) {
         additionalAreaParamContainer.classList.remove('hidden');
     } else {
         additionalAreaParamContainer.classList.add('hidden');
     }
 }
 
-export let cachedData; // Variable zum Zwischenspeichern der Daten
 export function executeQuery() {
     const query = finalizeQuery();
 
@@ -50,8 +51,18 @@ export function executeQuery() {
                 return;
             }
 
-            cachedData = data; // Daten zwischenspeichern
-            updateChart(data); // Diagramm initial aktualisieren
+            const queryId = `Query ${cachedQueries.length + 1}`;
+            cachedQueries.push({ id: queryId, query, data }); // Speichere die Abfrage mit Identifier
+            executedQueriesDiv.classList.remove('hidden'); // Entfernt die `hidden`-Klasse
+            // Füge die Query zur Tabelle hinzu
+            const queryTableBody = document.querySelector('#queryTable tbody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="checkbox" value="${cachedQueries.length - 1}"></td>
+                <td>${queryId}</td>
+                <td>${query}</td>
+            `;
+            queryTableBody.appendChild(row);
         })
         .catch(error => {
             loadingIndicator.style.display = 'none';
@@ -99,6 +110,33 @@ function finalizeQuery() {
             .replace('${posYMax}', posYMax);
     }
     return queryWithParam;
+}
+
+export function clearAllQueries() {
+    // Leere das Array der gespeicherten Queries
+    cachedQueries.length = 0;
+
+    // Entferne alle Listenelemente aus query table
+    const queryTableBody = document.querySelector('#queryTable tbody');
+    queryTableBody.innerHTML = '';
+    executedQueriesDiv.classList.add('hidden'); // Entfernt die `hidden`-Klasse
+}
+
+export function deleteSelectedQueries() {
+    const queryTableBody = document.querySelector('#queryTable tbody');
+    const selectedCheckboxes = queryTableBody.querySelectorAll('input[type="checkbox"]:checked');
+
+    selectedCheckboxes.forEach(checkbox => {
+        const row = checkbox.closest('tr'); // Finde die zugehörige Tabellenzeile
+        const index = parseInt(checkbox.value); // Hole den Index der Abfrage
+        cachedQueries.splice(index, 1); // Entferne die Abfrage aus dem Array
+        row.remove(); // Entferne die Zeile aus der Tabelle
+    });
+
+    // Aktualisiere die Werte der Checkboxen, um die Indizes zu korrigieren
+    Array.from(queryTableBody.querySelectorAll('input[type="checkbox"]')).forEach((checkbox, newIndex) => {
+        checkbox.value = newIndex;
+    });
 }
 
 export function loadQueriesFromApi(apiUrl, selectElementId) {

@@ -41,7 +41,14 @@ import { loadQueriesFromApi } from './query.js';
 import { executeQuery } from './query.js';
 import { uploadMultipleCsvFilesAndFetchTables } from './upload.js';
 import { setChartTypeAndUpdate } from './chart.js';
+import { plotSelectedQueries } from './chart.js';
+import { clearAllQueries } from './query.js';
+import { deleteSelectedQueries } from './query.js';
 
+
+window.deleteSelectedQueries = deleteSelectedQueries;
+window.clearAllQueries = clearAllQueries;
 window.setQuery = setQuery;
 window.setChartTypeAndUpdate = setChartTypeAndUpdate;
 window.executeQuery = executeQuery;
+window.plotSelectedQueries = plotSelectedQueries;

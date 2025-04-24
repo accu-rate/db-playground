@@ -1,12 +1,32 @@
 <!-- components/chart-section.html -->
 <section class="chart-section">
     <h2>Diagramm</h2>
-    <div class="chart-controls" align="center">
-        <button onclick="setChartTypeAndUpdate('bar')"> <i class="fas fa-chart-bar"></i>Balkendiagramm</button>
-        <button onclick="setChartTypeAndUpdate('line')"><i class="fas fa-chart-line"></i>Liniendiagramm</button>
-        <button onclick="setChartTypeAndUpdate('scatter')"><i class="fas fa-braille"></i>Streudiagramm</button>
+    <div id="executedQueries" class="queryTable hidden">
+        <h3>Ausgeführte Abfragen</h3>
+        <table id="queryTable">
+            <thead>
+            <tr>
+                <th>Auswählen</th>
+                <th>ID</th>
+                <th>Query</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Dynamische Inhalte werden hier eingefügt -->
+            </tbody>
+        </table>
+        <div class="chart-controls">
+            <button type="button" onclick="plotSelectedQueries()">Ausgewählte Abfragen plotten</button>
+            <button type="button" onclick="deleteSelectedQueries()">Ausgewählte Abfragen löschen</button>
+            <button type="button" onclick="clearAllQueries()">Alle Abfragen löschen</button>
+        </div>
     </div>
     <div class="chart-container">
         <canvas id="resultChart" width="800" height="400"></canvas>
+    </div>
+    <div class="chart-controls">
+        <button onclick="setChartTypeAndUpdate('bar')"><i class="fas fa-chart-bar"></i>Balkendiagramm</button>
+        <button onclick="setChartTypeAndUpdate('line')"><i class="fas fa-chart-line"></i>Liniendiagramm</button>
+        <button onclick="setChartTypeAndUpdate('scatter')"><i class="fas fa-braille"></i>Streudiagramm</button>
     </div>
 </section>

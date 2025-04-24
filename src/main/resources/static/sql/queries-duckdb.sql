@@ -1,6 +1,12 @@
 -- Aufenthaltsdauer
 SELECT pedID, MAX(time) - MIN(time) AS Duration
 FROM ${selectedTable}
+GROUP BY pedID
+HAVING COUNT(*) > 2;
+
+-- Aufenthaltsdauer innerhalb eines bestimmten Bereichs
+SELECT pedID, MAX(time) - MIN(time) AS Duration
+FROM ${selectedTable}
 WHERE posX BETWEEN ${posXMin} AND ${posXMax} AND posY BETWEEN ${posYMin} AND ${posYMax}
 GROUP BY pedID
 HAVING COUNT(*) > 2;

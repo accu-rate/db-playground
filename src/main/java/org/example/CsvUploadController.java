@@ -24,11 +24,10 @@ public class CsvUploadController {
         }
 
         try {
-            // Speichere die Datei temporär
-            File tempFile = File.createTempFile("uploaded-", file.getOriginalFilename());
-            file.transferTo(tempFile); // Übertrage den Inhalt der Datei in die temporäre Datei
 
-            // Importiere die Datei in die Datenbank
+            File tempFile = File.createTempFile("uploaded-", file.getOriginalFilename());
+            file.transferTo(tempFile);
+
             csvImporter.importCsv(tempFile.getAbsolutePath());
         } catch (IOException e) {
             throw new RuntimeException("Fehler beim Verarbeiten der Datei", e);

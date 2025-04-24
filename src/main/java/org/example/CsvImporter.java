@@ -15,11 +15,8 @@ import static org.example.Main.DATABASE_NAME;
 @Component
 public class CsvImporter implements CommandLineRunner {
 
-    private final ResultService resultService;
-
     @Autowired
-    public CsvImporter(ResultService resultService) {
-        this.resultService = resultService;
+    public CsvImporter() {
     }
 
 
@@ -85,14 +82,6 @@ public class CsvImporter implements CommandLineRunner {
             int rowCount = rs.getInt("row_count");
             System.out.println("Anzahl der Zeilen in der Tabelle 'floor_data': " + rowCount);
         }
-    }
-
-    private void recreateTable(Statement stmt, String filePath) throws SQLException {
-        String dropTableQuery = "DROP TABLE IF EXISTS floor_data";
-        stmt.execute(dropTableQuery);
-
-        String createTableQuery = "CREATE TABLE floor_data AS SELECT * FROM read_csv_auto('" + filePath + "')";
-        stmt.execute(createTableQuery);
     }
 
 

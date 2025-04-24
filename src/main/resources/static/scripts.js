@@ -125,7 +125,7 @@ function fetchAndUpdateChart(query) {
     const loadingIndicator = document.getElementById('loadingIndicator');
     loadingIndicator.style.display = 'block'; // Ladeindikator anzeigen
 
-    const url = '/api/custom-query';
+    const url = '/api/execute-query';
     const options = {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},

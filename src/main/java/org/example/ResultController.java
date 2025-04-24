@@ -17,13 +17,8 @@ public class ResultController {
         this.resultService = resultService;
     }
 
-    @PostMapping("/api/results")
-    public List<Map<String, Object>> getResults(String queryName) {
-        return resultService.fetchResults(queryName);
-    }
-
-    @PostMapping("/api/custom-query")
-    public List<Map<String, Object>> executeCustomQuery(@RequestBody Map<String, String> request) {
+    @PostMapping("/api/execute-query")
+    public List<Map<String, Object>> executeQuery(@RequestBody Map<String, String> request) {
         String query = request.get("query");
         return resultService.executeQuery(query);
     }

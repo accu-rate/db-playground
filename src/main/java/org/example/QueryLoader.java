@@ -22,6 +22,18 @@ public class QueryLoader {
         }
     }
 
+    public QueryData getQuery(String queryName) {
+        Optional<QueryData> queryData = queryCache.stream().filter(q -> q.description().equals(queryName)).findFirst();
+        if (queryData.isEmpty()) {
+            throw new IllegalArgumentException("Abfrage mit dem Namen '" + queryName + "' wurde nicht gefunden.");
+        }
+        return queryData.get();
+    }
+
+    public List<QueryData> getQueryCache() {
+        return queryCache;
+    }
+
     private void loadQueries() throws IOException {
         String currentDescription = null;
         StringBuilder currentQuery = new StringBuilder();
@@ -41,21 +53,11 @@ public class QueryLoader {
             }
         }
 
-        // Letzte Abfrage hinzufügen, falls vorhanden
+
         if (currentDescription != null && !currentQuery.isEmpty()) {
             queryCache.add(new QueryData(currentDescription, currentQuery.toString().trim()));
         }
     }
 
-    public QueryData getQuery(String queryName) {
-        Optional<QueryData> queryData = queryCache.stream().filter(q -> q.description().equals(queryName)).findFirst();
-        if (queryData.isEmpty()) {
-            throw new IllegalArgumentException("Abfrage mit dem Namen '" + queryName + "' wurde nicht gefunden.");
-        }
-        return queryData.get();
-    }
 
-    public List<QueryData> getQueryCache() {
-        return queryCache;
-    }
 }

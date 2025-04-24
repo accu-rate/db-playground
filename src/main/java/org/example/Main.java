@@ -10,7 +10,7 @@ import java.sql.*;
 
 @SpringBootApplication
 public class Main {
-    public static final String DATABASE_NAME = "my_database.db";
+    public static final String DATABASE_NAME = "test-database.db";
 
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);

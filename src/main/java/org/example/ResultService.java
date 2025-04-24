@@ -26,11 +26,6 @@ public class ResultService {
     }
 
 
-    public List<Map<String, Object>> fetchResults(String queryName) {
-        QueryData query = queryLoader.getQuery(queryName);
-        return executeQuery(query.query());
-    }
-
     public List<Map<String, Object>> executeQuery(String query) {
         System.out.println("Custom Query API wurde aufgerufen"); // Debug-Ausgabe
 

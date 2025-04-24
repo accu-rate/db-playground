@@ -7,17 +7,17 @@ function setQuery() {
 
     const selectedQuery = querySelect.value;
     queryTextarea.value = selectedQuery;
-if (selectedQuery.includes('?')) {
-    additionalParamContainer.style.display = 'block';
-} else {
-    additionalParamContainer.style.display = 'none';
-}
+    if (selectedQuery.includes('?')) {
+        additionalParamContainer.style.display = 'block';
+    } else {
+        additionalParamContainer.style.display = 'none';
+    }
 
-if (selectedQuery.includes('${')) {
-    additionalAreaParamContainer.classList.remove('hidden');
-} else {
-    additionalAreaParamContainer.classList.add('hidden');
-}
+    if (selectedQuery.includes('${')) {
+        additionalAreaParamContainer.classList.remove('hidden');
+    } else {
+        additionalAreaParamContainer.classList.add('hidden');
+    }
 }
 
 
@@ -87,10 +87,10 @@ let selectedChartType = 'bar'; // Standard-Diagrammtyp
 function setChartTypeAndUpdate(type) {
     const query = document.getElementById('query').value;
     const additionalParam = document.getElementById('additionalParam').value;
-const posXMin = document.getElementById('posXMin').value || Number.MIN_VALUE;
-const posXMax = document.getElementById('posXMax').value || Number.MAX_VALUE;
-const posYMin = document.getElementById('posYMin').value || Number.MIN_VALUE;
-const posYMax = document.getElementById('posYMax').value || Number.MAX_VALUE;
+    const posXMin = document.getElementById('posXMin').value || Number.MIN_VALUE;
+    const posXMax = document.getElementById('posXMax').value || Number.MAX_VALUE;
+    const posYMin = document.getElementById('posYMin').value || Number.MIN_VALUE;
+    const posYMax = document.getElementById('posYMax').value || Number.MAX_VALUE;
 
     if (!query) {
         alert('Bitte wähle zuerst eine Abfrage aus.');

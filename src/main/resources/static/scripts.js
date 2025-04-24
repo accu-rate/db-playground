@@ -7,7 +7,6 @@ function setQuery() {
 
     const selectedQuery = querySelect.value;
     queryTextarea.value = selectedQuery;
-        alert('ausgewählte abfrage.' + selectedQuery);
 if (selectedQuery.includes('?')) {
     additionalParamContainer.style.display = 'block';
 } else {
@@ -88,11 +87,11 @@ let selectedChartType = 'bar'; // Standard-Diagrammtyp
 function setChartTypeAndUpdate(type) {
     const query = document.getElementById('query').value;
     const additionalParam = document.getElementById('additionalParam').value;
-const posXMin = document.getElementById('posXMin').value || 0;
+const posXMin = document.getElementById('posXMin').value || Number.MIN_VALUE;
 const posXMax = document.getElementById('posXMax').value || Number.MAX_VALUE;
-const posYMin = document.getElementById('posYMin').value || 0;
+const posYMin = document.getElementById('posYMin').value || Number.MIN_VALUE;
 const posYMax = document.getElementById('posYMax').value || Number.MAX_VALUE;
-    alert('posxMax.' + posXMax);
+
     if (!query) {
         alert('Bitte wähle zuerst eine Abfrage aus.');
         return;
@@ -101,6 +100,10 @@ const posYMax = document.getElementById('posYMax').value || Number.MAX_VALUE;
     // Ersetze den Platzhalter "?" nur, wenn er in der Query vorhanden ist
     let queryWithParam = query;
     if (query.includes('?')) {
+        if (!additionalParam) {
+            alert('Bitte setze die Staugrenzgeschwindigkeit.');
+            return;
+        }
         queryWithParam = query.replace('?', additionalParam);
     }
     // Ersetze die Platzhalter "${...}" nur, wenn sie in der Query vorhanden sind

@@ -1,0 +1,36 @@
+<!-- components/query-section.html -->
+<section class="query-section">
+    <h2>SQL-Abfrage</h2>
+    <div class="query-container">
+        <select id="querySelect" onchange="setQuery()">
+            <option value="">-- Wähle eine Abfrage --</option>
+        </select>
+        <input type="hidden" id="query" name="query">
+        <label for="tableSelect">Wähle die zu analysierenden Daten:</label>
+        <select id="tableSelect">
+            <option value="">-- Wähle eine Tabelle --</option>
+            <!-- Tabellenoptionen werden hier dynamisch eingefügt -->
+        </select>
+        <div id="additionalParamContainer" style="display: none;">
+            <label for="additionalParam">Parameter:</label>
+            <input type="text" id="additionalParam" placeholder="Parameter eingeben">
+        </div>
+
+        <div id="additionalAreaParamContainer" class="hidden">
+            <div class="param-group">
+                <label for="posXMin">X-Min:</label>
+                <input type="number" id="posXMin">
+
+                <label for="posXMax">X-Max:</label>
+                <input type="number" id="posXMax">
+            </div>
+            <div class="param-group">
+                <label for="posYMin">Y-Min:</label>
+                <input type="number" id="posYMin">
+
+                <label for="posYMax">Y-Max:</label>
+                <input type="number" id="posYMax">
+            </div>
+        </div>
+    </div>
+</section>

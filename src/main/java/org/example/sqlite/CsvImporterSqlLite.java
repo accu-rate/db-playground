@@ -21,14 +21,14 @@ public class CsvImporterSqlLite implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        deleteExistingDatabase();
-
-        String filePath = "src/main/resources/testfile_res/out/floor-flo1.csv";
-        if (!Files.exists(Paths.get(filePath))) {
-            throw new RuntimeException("Datei floor-flo1.csv nicht gefunden!");
-        }
-
-        initDatabase(filePath);
+//        deleteExistingDatabase();
+//
+//        String filePath = "src/main/resources/testfile_res/out/floor-flo1.csv";
+//        if (!Files.exists(Paths.get(filePath))) {
+//            throw new RuntimeException("Datei floor-flo1.csv nicht gefunden!");
+//        }
+//
+//        initDatabase(filePath);
     }
 
     private void deleteExistingDatabase() {

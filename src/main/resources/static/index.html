@@ -1,64 +1,20 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulationsdatenanalyse</title>
+    <title>Datenanalyse Tool</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-<h1>Analysetool für crowd:it</h1>
-<form id="uploadForm" enctype="multipart/form-data">
-    <label for="csvFile">csv oder .gz-Datei hochladen:</label>
-    <input type="file" id="csvFile" name="csvFile" accept=".csv,.gz"/>
-    <button type="submit">.csv oder .gz hochladen</button>
-    <div id="loadingIndicator" style="display: none;">Daten werden geladen...</div>
-</form>
+<div id="header"></div>
+<div id="upload-section"></div>
+<div id="query-section"></div>
+<div id="chart-section"></div>
 
-<form id="queryForm">
-    <label for="querySelect">Wähle eine Abfrage:</label>
-    <select id="querySelect" name="queryName" onchange="setQuery()">
-    </select>
-    <input type="hidden" id="query" name="query">
-    <br><br>
-    <div id="additionalParamContainer" style="display: none;">
-        <label for="additionalParam">Staugrenzgeschwindigkeit:</label>
-        <input type="text" id="additionalParam" placeholder="0.8">
-    </div>
-    <div id="additionalAreaParamContainer" class="hidden">
-        <br><br>
-        <label>Optional - räumliche Einschränkung:</label>
-        <div class="inline">
-            <label for="posXMin">Min x:</label>
-            <input type="text" id="posXMin" placeholder="x Wert eingeben">
-        </div>
-        <div class="inline">
-            <label for="posYMin">Min y:</label>
-            <input type="text" id="posYMin" placeholder="y Wert eingeben">
-        </div>
-        <div class="inline">
-            <label for="posXMax">Max x:</label>
-            <input type="text" id="posXMax" placeholder="x Wert eingeben">
-        </div>
-        <div class="inline">
-            <label for="posYMax">Max y:</label>
-            <input type="text" id="posYMax" placeholder="y Wert eingeben">
-        </div>
-    </div>
-    <br><br>
-    <button type="button" onclick="setChartTypeAndUpdate('bar')">
-        <i class="fas fa-chart-bar"></i> Balkendiagramm
-    </button>
-    <button type="button" onclick="setChartTypeAndUpdate('scatter')">
-        <i class="fas fa-braille"></i> Punktwolkendiagramm
-    </button>
-</form>
-
-<div id="queryResults"></div>
-<h1>Ergebnisplot</h1>
-<canvas id="resultChart" width="800" height="400"></canvas>
-<script src="scripts.js"></script>
+<script type="module" src="js/main.js"></script>
 </body>
 </html>

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,5 +27,10 @@ public class ResultController {
     @GetMapping("/api/queries")
     public Map<String, String> getAvailableQueries() {
         return resultService.getAvailableQueries();
+    }
+
+    @GetMapping("/api/get-tables")
+    public List<String> getTables() {
+        return resultService.getAvailableTables();
     }
 }

@@ -56,4 +56,22 @@ public class ResultService {
 
         return results;
     }
+
+    public List<String> getAvailableTables() {
+        List<String> tables = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection("jdbc:duckdb:" + DATABASE_NAME);
+             ResultSet rs = conn.getMetaData().getTables(null, "main", null, null)) {
+
+            if (!rs.next()) { // Prüft, ob das ResultSet leer ist
+                System.out.println("No tables are present.");
+                return tables;
+            }
+            do {
+                tables.add(rs.getString("TABLE_NAME"));
+            } while (rs.next());
+        } catch (SQLException e) {
+            throw new RuntimeException("Fehler beim Abrufen der Tabellen", e);
+        }
+        return tables;
+    }
 }

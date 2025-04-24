@@ -15,6 +15,8 @@ import static org.example.Main.DATABASE_NAME;
 @Component
 public class CsvImporterToDuckDB implements CommandLineRunner {
 
+    private static final String DEFAULT_TABLE_NAME = "sample_table";
+
     @Autowired
     public CsvImporterToDuckDB() {
     }
@@ -30,7 +32,7 @@ public class CsvImporterToDuckDB implements CommandLineRunner {
         }
         String filePath = Paths.get(resource.toURI()).toString();
 
-        initDatabase(filePath);
+        initDatabase(filePath, DEFAULT_TABLE_NAME);
     }
 
     private void deleteExistingDatabase() {
@@ -45,51 +47,43 @@ public class CsvImporterToDuckDB implements CommandLineRunner {
         }
     }
 
-    public void importCsv(String filePath) {
-        initDatabase(filePath);
+    public void importCsv(String filePath, String tableName) {
+        initDatabase(filePath, tableName);
     }
 
-    private void initDatabase(String filePath) {
+
+    private void initDatabase(String filePath, String tableName) {
         System.out.println("Importing CSV into a DuckDB table...");
         try (Connection conn = DriverManager.getConnection("jdbc:duckdb:" + DATABASE_NAME);
              Statement stmt = conn.createStatement()) {
-            createPopulationFloorData(filePath, stmt);
-            createVelocityTable(stmt);
+            createPopulationFloorData(filePath, stmt, tableName);
+            createVelocityTable(stmt, tableName);
+            conn.close();
 
         } catch (Exception e) {
             throw new RuntimeException("Fehler beim Importieren der CSV-Datei in die Tabelle", e);
         }
     }
 
-    private void createPopulationFloorData(String filePath, Statement stmt) throws SQLException {
-        String createTableQuery = "CREATE OR REPLACE TABLE floor_data AS SELECT * FROM read_csv_auto('" + filePath + "')";
+    private void createPopulationFloorData(String filePath, Statement stmt, String tableName) throws SQLException {
+        String createTableQuery = "CREATE OR REPLACE TABLE " + tableName + " AS SELECT * FROM read_csv_auto('" + filePath + "')";
 
         stmt.execute(createTableQuery);
-        String query = "PRAGMA table_info('floor_data');";
+        String query = "SELECT COUNT(*) AS row_count FROM " + tableName;
         ResultSet rs = stmt.executeQuery(query);
-
-        System.out.println("Spalteninformationen für Tabelle: " + "floor_data");
-        while (rs.next()) {
-            String columnName = rs.getString("name");
-            String columnType = rs.getString("type");
-            System.out.println("Spalte: " + columnName + ", Typ: " + columnType);
-        }
-
-        query = "SELECT COUNT(*) AS row_count FROM floor_data;";
-        rs = stmt.executeQuery(query);
 
         if (rs.next()) {
             int rowCount = rs.getInt("row_count");
-            System.out.println("Anzahl der Zeilen in der Tabelle 'floor_data': " + rowCount);
+            System.out.println("Anzahl der Zeilen in der Tabelle " + tableName + ":" + rowCount);
         }
     }
 
 
-    private void createVelocityTable(Statement stmt) throws SQLException {
+    private void createVelocityTable(Statement stmt, String tableName) throws SQLException {
         System.out.println("Creating table 'velocity' ...");
 
         // Erstelle einen Index für die Spalten pedID und time
-        String createIndexQuery = "CREATE INDEX idx_floor_data_pedID_time ON floor_data (pedID, time);";
+        String createIndexQuery = "CREATE INDEX idx_" + tableName + "_pedID_time ON " + tableName + " (pedID, time);";
         stmt.execute(createIndexQuery);
 
         // mean velocity over 5 time steps
@@ -109,7 +103,7 @@ public class CsvImporterToDuckDB implements CommandLineRunner {
 //                        "    t1.time - t2.time <= 5;";
 
         String createVelocityTableQuery =
-                "CREATE OR REPLACE TABLE velocity AS " +
+                "CREATE OR REPLACE TABLE velocity_" + tableName + " AS " +
                         "WITH LaggedData AS ( " +
                         "    SELECT " +
                         "        time AS current_time, " +
@@ -119,7 +113,7 @@ public class CsvImporterToDuckDB implements CommandLineRunner {
                         "        LAG(posX) OVER (PARTITION BY pedID ORDER BY time) AS prev_posX, " +
                         "        LAG(posY) OVER (PARTITION BY pedID ORDER BY time) AS prev_posY, " +
                         "        LAG(time) OVER (PARTITION BY pedID ORDER BY time) AS prev_time " +
-                        "    FROM floor_data " +
+                        "    FROM " + tableName +
                         ") " +
                         "SELECT " +
                         "    current_time, " +

@@ -1,0 +1,14 @@
+<!-- components/upload-section.html -->
+<section class="upload-section">
+    <h2>Dateiupload</h2>
+    <form id="uploadMultipleFilesForm" enctype="multipart/form-data">
+        <div class="file-upload">
+            <input type="file" id="csvFiles" name="files" multiple />
+            <button type="submit">Dateien hochladen</button>
+        </div>
+    </form>
+    <div id="loadingIndicator" style="display: none;">
+        <span class="loader"></span>
+        <p>Wird geladen...</p>
+    </div>
+</section>

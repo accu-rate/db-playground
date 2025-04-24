@@ -46,40 +46,77 @@ function loadQueriesFromApi(apiUrl, selectElementId) {
         .catch(error => console.error('Fehler beim Laden der Queries:', error));
 }
 
-document.getElementById('uploadForm').addEventListener('submit', function (event) {
+document.getElementById('uploadMultipleFilesForm').addEventListener('submit', function (event) {
     event.preventDefault(); // Verhindert das Standard-Formular-Submit-Verhalten
-    uploadCsvFile('csvFile');
+    uploadMultipleCsvFilesAndFetchTables('csvFiles');
 });
 
-function uploadCsvFile(fileInputId) {
+function uploadMultipleCsvFilesAndFetchTables(fileInputId) {
     const loadingIndicator = document.getElementById('loadingIndicator');
     loadingIndicator.style.display = 'block'; // Ladeindikator anzeigen
 
     const fileInput = document.getElementById(fileInputId);
-    if (!fileInput.files[0]) {
-        alert('Bitte wähle eine Datei aus.');
+    if (!fileInput.files.length) {
+        alert('Bitte wähle mindestens eine Datei aus.');
         loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
         return;
     }
 
     const formData = new FormData();
-    formData.append('file', fileInput.files[0]);
+    for (const file of fileInput.files) {
+        formData.append('files', file);
+    }
 
-    return fetch('/api/upload-csv-duckdb', {
+    fetch('/api/upload-multiple-csvs', {
         method: 'POST',
         body: formData
     })
         .then(response => {
-            loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
-            if (!response.ok) {
-                alert('Fehler beim Hochladen der Datei.');
+            if (response.ok) {
+                return fetch('/api/get-tables'); // Tabellen abrufen
+            } else {
+                throw new Error('Fehler beim Hochladen der Dateien.');
             }
         })
+        .then(response => response.json())
+        .then(tables => {
+            const select = document.getElementById('tableSelect');
+            select.innerHTML = ''; // Vorherige Optionen entfernen
+            tables.forEach(table => {
+                const option = document.createElement('option');
+                option.value = table;
+                option.textContent = table;
+                select.appendChild(option);
+            });
+        })
         .catch(error => {
-            loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
-            console.error('Fehler beim Hochladen:', error);
+            console.error('Fehler:', error);
             alert('Ein Fehler ist aufgetreten.');
+        })
+        .finally(() => {
+            loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
         });
+}
+
+
+// Abfrage ausführen
+function executeQuery() {
+    const selectedTable = document.getElementById('tableSelect').value;
+    const query = `
+        SELECT pedID, MAX(time) - MIN(time) AS Duration
+        FROM ${selectedTable}
+        WHERE posX BETWEEN :posXMin AND :posXMax AND posY BETWEEN :posYMin AND :posYMax
+        GROUP BY pedID
+        HAVING COUNT(*) > 2;
+    `;
+    // Senden Sie die Abfrage an das Backend
+    fetch('/api/execute-query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, params: { posXMin: 0, posXMax: 10, posYMin: 0, posYMax: 10 } })
+    })
+    .then(response => response.json())
+    .then(data => console.log(data));
 }
 
 let selectedChartType = 'bar'; // Standard-Diagrammtyp
@@ -91,6 +128,7 @@ function setChartTypeAndUpdate(type) {
     const posXMax = document.getElementById('posXMax').value || Number.MAX_VALUE;
     const posYMin = document.getElementById('posYMin').value || Number.MIN_VALUE;
     const posYMax = document.getElementById('posYMax').value || Number.MAX_VALUE;
+    const selectedTable = document.getElementById('tableSelect').value;
 
     if (!query) {
         alert('Bitte wähle zuerst eine Abfrage aus.');
@@ -106,8 +144,18 @@ function setChartTypeAndUpdate(type) {
         }
         queryWithParam = query.replace('?', additionalParam);
     }
+
+    // Ersetze die Platzhalter "${selectedTable}" nur, wenn sie in der Query vorhanden sind
+     if (query.includes('${selectedTable}')) {
+                  alert('Tabelle wird ersetzt.');
+      queryWithParam = queryWithParam
+             .replace('${selectedTable}', selectedTable);
+     }
+
+
     // Ersetze die Platzhalter "${...}" nur, wenn sie in der Query vorhanden sind
-    if (query.includes('${')) {
+    if (query.includes('${p')) {
+                      alert('posXMin.');
         queryWithParam = queryWithParam
             .replace('${posXMin}', posXMin)
             .replace('${posXMax}', posXMax)
@@ -116,6 +164,7 @@ function setChartTypeAndUpdate(type) {
     }
 
     selectedChartType = type;
+     alert(queryWithParam);
     fetchAndUpdateChart(queryWithParam);
 }
 

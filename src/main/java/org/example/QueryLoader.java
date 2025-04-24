@@ -10,7 +10,8 @@ import java.util.*;
 @Component
 public class QueryLoader {
 
-    private static final String QUERY_FILE_PATH = "src/main/resources/static/sql/queries.sql";
+//    private static final String QUERY_FILE_PATH = "src/main/resources/static/sql/queries-sqlite.sql";
+    private static final String QUERY_FILE_PATH = "src/main/resources/static/sql/queries-duckdb.sql";
 
     private final List<QueryData> queryCache = new ArrayList<>();
 
@@ -58,6 +59,4 @@ public class QueryLoader {
             queryCache.add(new QueryData(currentDescription, currentQuery.toString().trim()));
         }
     }
-
-
 }

@@ -1,4 +1,4 @@
-package org.example;
+package org.example.duckdb;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -7,15 +7,15 @@ import java.io.File;
 import java.io.IOException;
 
 @RestController
-public class CsvUploadController {
+public class CsvUploadControllerDuckDB {
 
-    private final CsvImporter csvImporter;
+    private final CsvImporterToDuckDB csvImporter;
 
-    public CsvUploadController(CsvImporter csvImporter) {
+    public CsvUploadControllerDuckDB(CsvImporterToDuckDB csvImporter) {
         this.csvImporter = csvImporter;
     }
 
-    @PostMapping("/api/upload-csv")
+    @PostMapping("/api/upload-csv-duckdb")
     public void uploadCsv(@RequestParam("file") MultipartFile file) {
 
         System.out.println("Hochladen der CSV-Datei: " + file.getOriginalFilename());

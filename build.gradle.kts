@@ -17,6 +17,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web") // Für Webanwendungen
     implementation("org.springframework.boot:spring-boot-starter-data-jpa") // Für JPA und Datenbankzugriff
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf") // Für Thymeleaf (optional)
+    implementation("org.xerial:sqlite-jdbc:3.42.0.0")
     runtimeOnly("org.springframework.boot:spring-boot-devtools") // Für Entwicklungszwecke
     runtimeOnly("com.h2database:h2") // Beispiel-Datenbank (H2)")
 

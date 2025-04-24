@@ -1,5 +1,6 @@
-package org.example;
+package org.example.duckdb;
 
+import org.example.Main;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -8,15 +9,14 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.util.zip.GZIPInputStream;
 
 import static org.example.Main.DATABASE_NAME;
 
 @Component
-public class CsvImporter implements CommandLineRunner {
+public class CsvImporterToDuckDB implements CommandLineRunner {
 
     @Autowired
-    public CsvImporter() {
+    public CsvImporterToDuckDB() {
     }
 
 
@@ -92,20 +92,41 @@ public class CsvImporter implements CommandLineRunner {
         String createIndexQuery = "CREATE INDEX idx_floor_data_pedID_time ON floor_data (pedID, time);";
         stmt.execute(createIndexQuery);
 
+        // mean velocity over 5 time steps
+//        String createVelocityTableQuery =
+//                "CREATE OR REPLACE TABLE velocity AS " +
+//                        "SELECT " +
+//                        "    t1.time AS current_time, " +
+//                        "    t1.pedID, " +
+//                        "    SQRT(POWER(t1.posX - t2.posX, 2) + POWER(t1.posY - t2.posY, 2)) / (t1.time - t2.time) AS speed " +
+//                        "FROM " +
+//                        "    (SELECT * FROM floor_data WHERE time <= (SELECT MAX(time) FROM floor_data) - 5) t1 " +
+//                        "JOIN " +
+//                        "    floor_data t2 " +
+//                        "ON " +
+//                        "    t1.pedID = t2.pedID AND t1.time > t2.time " +
+//                        "WHERE " +
+//                        "    t1.time - t2.time <= 5;";
+
         String createVelocityTableQuery =
                 "CREATE OR REPLACE TABLE velocity AS " +
+                        "WITH LaggedData AS ( " +
+                        "    SELECT " +
+                        "        time AS current_time, " +
+                        "        pedID, " +
+                        "        posX, " +
+                        "        posY, " +
+                        "        LAG(posX) OVER (PARTITION BY pedID ORDER BY time) AS prev_posX, " +
+                        "        LAG(posY) OVER (PARTITION BY pedID ORDER BY time) AS prev_posY, " +
+                        "        LAG(time) OVER (PARTITION BY pedID ORDER BY time) AS prev_time " +
+                        "    FROM floor_data " +
+                        ") " +
                         "SELECT " +
-                        "    t1.time AS current_time, " +
-                        "    t1.pedID, " +
-                        "    SQRT(POWER(t1.posX - t2.posX, 2) + POWER(t1.posY - t2.posY, 2)) / (t1.time - t2.time) AS speed " +
-                        "FROM " +
-                        "    (SELECT * FROM floor_data WHERE time <= (SELECT MAX(time) FROM floor_data) - 5) t1 " +
-                        "JOIN " +
-                        "    floor_data t2 " +
-                        "ON " +
-                        "    t1.pedID = t2.pedID AND t1.time > t2.time " +
-                        "WHERE " +
-                        "    t1.time - t2.time <= 5;";
+                        "    current_time, " +
+                        "    pedID, " +
+                        "    SQRT(POWER(posX - prev_posX, 2) + POWER(posY - prev_posY, 2)) / (current_time - prev_time) AS speed " +
+                        "FROM LaggedData " +
+                        "WHERE prev_time IS NOT NULL;";
         stmt.execute(createVelocityTableQuery);
 
         System.out.println("Tabelle 'velocity' wurde erfolgreich erstellt.");

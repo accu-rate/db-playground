@@ -65,7 +65,7 @@ function uploadCsvFile(fileInputId) {
     const formData = new FormData();
     formData.append('file', fileInput.files[0]);
 
-    return fetch('/api/upload-csv', {
+    return fetch('/api/upload-csv-duckdb', {
         method: 'POST',
         body: formData
     })

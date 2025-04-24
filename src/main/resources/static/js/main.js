@@ -38,8 +38,10 @@ document.addEventListener('DOMContentLoaded', initializeComponents);
 // Exportiere die Funktionen, die im HTML verwendet werden
 import { setQuery } from './query.js';
 import { loadQueriesFromApi } from './query.js';
+import { executeQuery } from './query.js';
 import { uploadMultipleCsvFilesAndFetchTables } from './upload.js';
 import { setChartTypeAndUpdate } from './chart.js';
 
 window.setQuery = setQuery;
 window.setChartTypeAndUpdate = setChartTypeAndUpdate;
+window.executeQuery = executeQuery;

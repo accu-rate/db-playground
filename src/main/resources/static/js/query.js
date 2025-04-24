@@ -53,7 +53,8 @@ export function executeQuery() {
 
             const queryId = `Query ${cachedQueries.length + 1}`;
             cachedQueries.push({ id: queryId, query, data }); // Speichere die Abfrage mit Identifier
-            executedQueriesDiv.classList.remove('hidden'); // Entfernt die `hidden`-Klasse
+            const executedQueriesTable = document.getElementById('executedQueries');
+            executedQueriesTable.classList.remove('hidden');
             // Füge die Query zur Tabelle hinzu
             const queryTableBody = document.querySelector('#queryTable tbody');
             const row = document.createElement('tr');
@@ -119,7 +120,8 @@ export function clearAllQueries() {
     // Entferne alle Listenelemente aus query table
     const queryTableBody = document.querySelector('#queryTable tbody');
     queryTableBody.innerHTML = '';
-    executedQueriesDiv.classList.add('hidden'); // Entfernt die `hidden`-Klasse
+    const executedQueriesTable = document.getElementById('executedQueries');
+    executedQueriesTable.classList.add('hidden');
 }
 
 export function deleteSelectedQueries() {

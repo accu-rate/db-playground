@@ -1,4 +1,4 @@
-    // Funktion zum Setzen der ausgewählten Query
+// Funktion zum Setzen der ausgewählten Query
 function setQuery() {
     const querySelect = document.getElementById('querySelect');
     const queryTextarea = document.getElementById('query');
@@ -7,17 +7,18 @@ function setQuery() {
 
     const selectedQuery = querySelect.value;
     queryTextarea.value = selectedQuery;
+        alert('ausgewählte abfrage.' + selectedQuery);
+if (selectedQuery.includes('?')) {
+    additionalParamContainer.style.display = 'block';
+} else {
+    additionalParamContainer.style.display = 'none';
+}
 
-    if (selectedQuery.includes('?')) {
-        additionalParamContainer.style.display = 'block';
-        additionalAreaParamContainer.classList.remove('hidden');
-        } else if (selectedQuery.includes('${')) {
-           additionalAreaParamContainer.classList.add('hidden');
-           additionalParamContainer.style.display = 'none';
-    } else{
-             additionalAreaParamContainer.classList.remove('hidden'); // Eingabefelder anzeigen
-             additionalParamContainer.style.display = 'none';
-             }
+if (selectedQuery.includes('${')) {
+    additionalAreaParamContainer.classList.remove('hidden');
+} else {
+    additionalAreaParamContainer.classList.add('hidden');
+}
 }
 
 
@@ -69,49 +70,51 @@ function uploadCsvFile(fileInputId) {
         method: 'POST',
         body: formData
     })
-    .then(response => {
-        loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
-        if (!response.ok) {
-            alert('Fehler beim Hochladen der Datei.');
-        }
-    })
-    .catch(error => {
-        loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
-        console.error('Fehler beim Hochladen:', error);
-        alert('Ein Fehler ist aufgetreten.');
-    });
+        .then(response => {
+            loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
+            if (!response.ok) {
+                alert('Fehler beim Hochladen der Datei.');
+            }
+        })
+        .catch(error => {
+            loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
+            console.error('Fehler beim Hochladen:', error);
+            alert('Ein Fehler ist aufgetreten.');
+        });
 }
 
 let selectedChartType = 'bar'; // Standard-Diagrammtyp
 
 function setChartTypeAndUpdate(type) {
- selectedChartType = type;
- const query = document.getElementById('query').value;
- const additionalParam = document.getElementById('additionalParam').value;
- const posXMin = document.getElementById('posXMin').value;
- const posXMax = document.getElementById('posXMax').value;
- const posYMin = document.getElementById('posYMin').value;
- const posYMax = document.getElementById('posYMax').value;
+    const query = document.getElementById('query').value;
+    const additionalParam = document.getElementById('additionalParam').value;
+const posXMin = document.getElementById('posXMin').value || 0;
+const posXMax = document.getElementById('posXMax').value || Number.MAX_VALUE;
+const posYMin = document.getElementById('posYMin').value || 0;
+const posYMax = document.getElementById('posYMax').value || Number.MAX_VALUE;
+    alert('posxMax.' + posXMax);
+    if (!query) {
+        alert('Bitte wähle zuerst eine Abfrage aus.');
+        return;
+    }
 
- if (!query) {
-     alert('Bitte wähle zuerst eine Abfrage aus.');
-     return;
- }
+    // Ersetze den Platzhalter "?" nur, wenn er in der Query vorhanden ist
+    let queryWithParam = query;
+    if (query.includes('?')) {
+        queryWithParam = query.replace('?', additionalParam);
+    }
+    // Ersetze die Platzhalter "${...}" nur, wenn sie in der Query vorhanden sind
+    if (query.includes('${')) {
+        queryWithParam = queryWithParam
+            .replace('${posXMin}', posXMin)
+            .replace('${posXMax}', posXMax)
+            .replace('${posYMin}', posYMin)
+            .replace('${posYMax}', posYMax);
+    }
 
- // Ersetze den Platzhalter "?" nur, wenn er in der Query vorhanden ist
- let queryWithParam = query.includes('?') ? query.replace('?', additionalParam) : query;
-
- // Ersetze die Platzhalter "${...}" nur, wenn sie in der Query vorhanden sind
- if (query.includes('${')) {
-     queryWithParam = queryWithParam
-         .replace('${posXMin}', posXMin)
-         .replace('${posXMax}', posXMax)
-         .replace('${posYMin}', posYMin)
-         .replace('${posYMax}', posYMax);
- }
-
- fetchAndUpdateChart(queryWithParam);
- }
+    selectedChartType = type;
+    fetchAndUpdateChart(queryWithParam);
+}
 
 let chartInstance;
 
@@ -122,8 +125,8 @@ function fetchAndUpdateChart(query) {
     const url = '/api/custom-query';
     const options = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query })
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({query})
     };
 
     fetch(url, options)
@@ -155,7 +158,10 @@ function fetchAndUpdateChart(query) {
                     labels: labels,
                     datasets: [{
                         label: yAxisLabel,
-                        data: selectedChartType === 'scatter' ? data.map(item => ({ x: item[xAxisLabel], y: item[yAxisLabel] })) : values,
+                        data: selectedChartType === 'scatter' ? data.map(item => ({
+                            x: item[xAxisLabel],
+                            y: item[yAxisLabel]
+                        })) : values,
                         backgroundColor: 'rgba(27, 107, 189, 0.2)',
                         borderColor: 'rgba(27, 107, 189, 1)',
                         borderWidth: 1

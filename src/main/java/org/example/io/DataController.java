@@ -25,7 +25,7 @@ public class DataController {
             file.transferTo(tempFile);
 
             assert originalFilename != null;
-            originalFilename = originalFilename.substring(0, originalFilename.lastIndexOf('.'));
+            originalFilename = originalFilename.substring(0, originalFilename.indexOf('.'));
             String cleanedFilename = originalFilename.replaceAll("[^a-zA-Z0-9]", "");
             dataHandler.importCsv(tempFile.getAbsolutePath(), cleanedFilename);
             tempFile.delete();

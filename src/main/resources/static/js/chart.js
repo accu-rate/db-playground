@@ -13,18 +13,23 @@ export function setChartTypeAndUpdate(type) {
     plotSelectedQueries();
 }
 
-
 export function updateChart(data) {
     const datasets = [];
     const colors = ['rgba(27, 107, 189, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(75, 192, 192, 0.2)'];
+let xAxisLabel;
+let yAxisLabel;
 
-    data.forEach((dataset, index) => {
+    data.forEach((entry, index) => {
+        const dataset = entry.data;
+        const label = `${entry.id} (${entry.table})`;
         const columnNames = Object.keys(dataset[0]);
-        const xAxisLabel = columnNames[0];
-        const yAxisLabel = columnNames[1];
+        if (index === 0) { // Nur beim ersten Durchlauf setzen
+          xAxisLabel = columnNames[0];
+          yAxisLabel = columnNames[1];
+        }
 
         datasets.push({
-            label: `Datensatz ${index + 1}: ${xAxisLabel} vs ${yAxisLabel}`,
+            label: label, // Verwende das dynamische Label
             data: selectedChartType === 'scatter'
                 ? dataset.map(item => ({ x: item[xAxisLabel], y: item[yAxisLabel] }))
                 : dataset.map(item => item[yAxisLabel]),
@@ -42,7 +47,7 @@ export function updateChart(data) {
     chartInstance = new Chart(ctx, {
         type: selectedChartType,
         data: {
-            labels: data[0].map(item => item[Object.keys(item)[0]]), // Labels basieren auf der ersten Abfrage
+            labels: data[0].data.map(item => item[Object.keys(item)[0]]), // Labels basieren auf der X-Achse
             datasets: datasets
         },
         options: {
@@ -56,13 +61,13 @@ export function updateChart(data) {
                 x: {
                     title: {
                         display: true,
-                        text: 'X-Achse'
+                        text: xAxisLabel
                     }
                 },
                 y: {
                     title: {
                         display: true,
-                        text: 'Y-Achse'
+                        text: yAxisLabel
                     },
                     beginAtZero: true
                 }
@@ -81,6 +86,6 @@ export function plotSelectedQueries() {
         return;
     }
 
-    const selectedData = selectedIndices.map(index => cachedQueries[index].data);
-    updateChart(selectedData); // Nutze die `updateChart`-Funktion, um die Daten zu plotten
+    const selectedData = selectedIndices.map(index => cachedQueries[index]);
+    updateChart(selectedData);
 }

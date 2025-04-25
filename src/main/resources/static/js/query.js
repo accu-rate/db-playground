@@ -51,16 +51,22 @@ export function executeQuery() {
                 return;
             }
 
-            const queryId = `Query ${cachedQueries.length + 1}`;
-            cachedQueries.push({ id: queryId, query, data }); // Speichere die Abfrage mit Identifier
+            const querySelect = document.getElementById('querySelect');
+            const queryName = querySelect.options[querySelect.selectedIndex].text; // Name der Query
+            const tableSelect = document.getElementById('tableSelect');
+            const tableName = tableSelect.options[tableSelect.selectedIndex].text; // Name der Tabelle
+
+            cachedQueries.push({ id: queryName, table: tableName, query, data }); // Speichere die Abfrage mit Tabellennamen
             const executedQueriesTable = document.getElementById('executedQueries');
             executedQueriesTable.classList.remove('hidden');
+
             // Füge die Query zur Tabelle hinzu
             const queryTableBody = document.querySelector('#queryTable tbody');
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td><input type="checkbox" value="${cachedQueries.length - 1}"></td>
-                <td>${queryId}</td>
+                <td>${queryName}</td>
+                <td>${tableName}</td>
                 <td>${query}</td>
             `;
             queryTableBody.appendChild(row);

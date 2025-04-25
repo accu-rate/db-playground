@@ -1,17 +1,18 @@
-package org.example.sqlite;
+package org.example.io;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.util.List;
 
-@Component
-public class CsvImporterSqlLite implements CommandLineRunner {
+//@Component -> uncomment here for using sqlite
+public class CsvImporterSqlLite implements CommandLineRunner, CsvImporter {
 
     private static final String DATABASE_NAME = "database.sqlite";
 
@@ -21,14 +22,14 @@ public class CsvImporterSqlLite implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-//        deleteExistingDatabase();
-//
-//        String filePath = "src/main/resources/testfile_res/out/floor-flo1.csv";
-//        if (!Files.exists(Paths.get(filePath))) {
-//            throw new RuntimeException("Datei floor-flo1.csv nicht gefunden!");
-//        }
-//
-//        initDatabase(filePath);
+        deleteExistingDatabase();
+
+        String filePath = "src/main/resources/testfile_res/out/floor-flo1.csv";
+        if (!Files.exists(Paths.get(filePath))) {
+            throw new RuntimeException("Datei floor-flo1.csv nicht gefunden!");
+        }
+
+        initDatabase(filePath);
     }
 
     private void deleteExistingDatabase() {
@@ -113,5 +114,10 @@ public class CsvImporterSqlLite implements CommandLineRunner {
 
         stmt.execute(createVelocityTableQuery);
         System.out.println("Tabelle 'velocity' wurde erfolgreich erstellt.");
+    }
+
+    @Override
+    public void importCsv(String filePath, String tableName) {
+
     }
 }

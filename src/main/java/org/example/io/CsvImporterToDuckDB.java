@@ -1,11 +1,11 @@
-package org.example.duckdb;
+package org.example.io;
 
 import org.example.Main;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.File;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.sql.*;
@@ -13,7 +13,7 @@ import java.sql.*;
 import static org.example.Main.DATABASE_NAME;
 
 @Component
-public class CsvImporterToDuckDB implements CommandLineRunner {
+public class CsvImporterToDuckDB implements CommandLineRunner, CsvImporter {
 
     private static final String DEFAULT_TABLE_NAME = "sample_table";
 
@@ -47,6 +47,7 @@ public class CsvImporterToDuckDB implements CommandLineRunner {
         }
     }
 
+    @Override
     public void importCsv(String filePath, String tableName) {
         initDatabase(filePath, tableName);
     }
@@ -57,7 +58,7 @@ public class CsvImporterToDuckDB implements CommandLineRunner {
         try (Connection conn = DriverManager.getConnection("jdbc:duckdb:" + DATABASE_NAME);
              Statement stmt = conn.createStatement()) {
             createPopulationFloorData(filePath, stmt, tableName);
-            createVelocityTable(stmt, tableName);
+            //       createVelocityTable(stmt, tableName);
             conn.close();
 
         } catch (Exception e) {

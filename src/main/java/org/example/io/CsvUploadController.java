@@ -1,32 +1,21 @@
-package org.example.duckdb;
+package org.example.io;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 
 @RestController
-public class CsvUploadControllerDuckDB {
+public class CsvUploadController {
 
-    private final CsvImporterToDuckDB csvImporter;
+    private final CsvImporter csvImporter;
 
-    public CsvUploadControllerDuckDB(CsvImporterToDuckDB csvImporter) {
+    public CsvUploadController(CsvImporter csvImporter) {
         this.csvImporter = csvImporter;
-    }
-
-    @PostMapping("/api/upload-csv-duckdb")
-    public void uploadCsv(@RequestParam("file") MultipartFile file) {
-
-        System.out.println("Hochladen der CSV-Datei: " + file.getOriginalFilename());
-        if (file.isEmpty()) {
-            throw new RuntimeException("Die hochgeladene Datei ist leer.");
-        }
-
-        uploadInDatabase(file);
     }
 
     private void uploadInDatabase(MultipartFile file) {

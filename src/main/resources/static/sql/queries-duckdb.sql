@@ -69,3 +69,27 @@ SELECT
 FROM Filtered
 GROUP BY current_time
 ORDER BY current_time;
+
+-- Anzahl Ausgänge vs. Räumungszeit
+WITH AvailableExits AS (
+    SELECT
+        variant,
+        COUNT(*) AS available_exits
+    FROM
+        variantmapping
+    WHERE
+        assignment = 'true'
+    GROUP BY
+        variant
+)
+SELECT
+    a.available_exits AS "Anzahl Ausgaenge",
+    b.value AS Raeumungszeit
+FROM
+    AvailableExits a
+JOIN
+    variantresultsummary b
+ON
+    a.variant = b.variant
+WHERE
+    b."constraint type" = 'evacuationTime';

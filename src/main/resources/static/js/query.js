@@ -1,8 +1,7 @@
 // js/query.js
-import { updateChart } from './chart.js';
+import {updateChart} from './chart.js';
+
 export let cachedQueries = []; // Array für mehrere Abfragen
-
-
 
 
 export function setQuery() {
@@ -14,12 +13,14 @@ export function setQuery() {
     const selectedQuery = querySelect.value;
     queryTextarea.value = selectedQuery;
     if (selectedQuery.includes('?')) {
+    console.log("query mit velocity")
         congestionVelocity.style.display = 'block';
     } else {
         congestionVelocity.style.display = 'none';
     }
 
     if (selectedQuery.includes('${p')) {
+        console.log("query mit velocity")
         additionalAreaParamContainer.classList.remove('hidden');
     } else {
         additionalAreaParamContainer.classList.add('hidden');
@@ -28,6 +29,7 @@ export function setQuery() {
 
 export function executeQuery() {
     const query = finalizeQuery();
+
 
     if (!query) {
         alert('Bitte wähle zuerst eine Abfrage aus.');
@@ -40,8 +42,8 @@ export function executeQuery() {
     const url = '/api/execute-query';
     const options = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query })
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({query})
     };
 
     fetch(url, options)
@@ -59,7 +61,7 @@ export function executeQuery() {
             const tableSelect = document.getElementById('tableSelect');
             const tableName = tableSelect.options[tableSelect.selectedIndex].text; // Name der Tabelle
 
-            cachedQueries.push({ id: queryName, table: tableName, query, data }); // Speichere die Abfrage mit Tabellennamen
+            cachedQueries.push({id: queryName, table: tableName, query, data}); // Speichere die Abfrage mit Tabellennamen
             const executedQueriesTable = document.getElementById('executedQueries');
             executedQueriesTable.classList.remove('hidden');
 
@@ -71,6 +73,7 @@ export function executeQuery() {
                 <td>${queryName}</td>
                 <td>${tableName}</td>
                 <td>${query}</td>
+                <td>${Object.keys(data).join(', ')}</td>
             `;
             queryTableBody.appendChild(row);
         })
@@ -105,10 +108,10 @@ function finalizeQuery() {
     }
 
     // Ersetze die Platzhalter "${selectedTable}" nur, wenn sie in der Query vorhanden sind
-     if (query.includes('${selectedTable}')) {
-      queryWithParam = queryWithParam
-             .replaceAll('${selectedTable}', selectedTable);
-     }
+    if (query.includes('${selectedTable}')) {
+        queryWithParam = queryWithParam
+            .replaceAll('${selectedTable}', selectedTable);
+    }
 
 
     // Ersetze die Platzhalter "${...}" nur, wenn sie in der Query vorhanden sind
@@ -150,7 +153,7 @@ export function deleteSelectedQueries() {
     });
 }
 
-export function loadQueriesFromApi(apiUrl, selectElementId) {
+export function loadQueriesFromApiAndFillOptions(apiUrl, selectElementId) {
     fetch(apiUrl)
         .then(response => response.json())
         .then(queries => {
@@ -169,5 +172,66 @@ export function loadQueriesFromApi(apiUrl, selectElementId) {
             }
         })
         .catch(error => console.error('Fehler beim Laden der Queries:', error));
+}
+
+export function loadQueriesFromApi(apiUrl) {
+    return fetch(apiUrl)
+        .then(response => response.json())
+        .catch(error => {
+            console.error('Fehler beim Laden der Queries:', error);
+            return [];
+        });
+}
+
+export async function filterQueriesFromQuerySelect(selectedTable, tableColumns) {
+    try {
+        const queries = await loadQueriesFromApi('/api/queries');
+
+        // Map in ein Array von Objekten umwandeln
+        const queryArray = Object.entries(queries).map(([key, value]) => ({ key, value }));
+
+        const filteredQueries = queryArray
+            .filter(option => option.value) // Entferne leere Werte
+            .filter(option => {
+                const query = option.value;
+                if (query.includes('${selectedTable}') || query.includes(selectedTable)) {
+                    const usedColumns = extractColumnsFromQuery(query);
+                    return usedColumns.every(column => tableColumns.includes(column));
+                }
+                return false;
+            });
+
+        // Gib die gefilterten Key-Value-Paare zurück
+        return filteredQueries;
+    } catch (error) {
+        console.error('Fehler beim Filtern der Queries:', error);
+        return [];
+    }
+}
+
+function extractColumnsFromQuery(query) {
+    // Einfache Extraktion von Spaltennamen aus der Query (z. B. nach SELECT oder WHERE)
+    const columnRegex = /\b(posX|posY|pedID|time)\b/g; // Passe das Regex an die erwarteten Spalten an
+    const matches = query.match(columnRegex);
+    return matches ? Array.from(new Set(matches)) : [];
+}
+
+export function updateQueryOptions(filteredQueries) {
+    const querySelect = document.getElementById('querySelect');
+    querySelect.innerHTML = '';
+
+    // Füge eine Standardoption hinzu
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '-- Wähle eine Abfrage --';
+    querySelect.appendChild(defaultOption);
+
+    // Füge die gefilterten Queries hinzu
+    filteredQueries.forEach(({ key, value }) => {
+        const option = document.createElement('option');
+        option.value = value; // Setze den Query-String als Value
+        option.textContent = key; // Setze die Beschreibung als Text
+        querySelect.appendChild(option);
+    });
 }
 

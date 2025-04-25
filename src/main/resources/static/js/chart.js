@@ -54,7 +54,7 @@ let yAxisLabel;
             plugins: {
                 title: {
                     display: true,
-                    text: 'Kombinierte Abfragen'
+                    text: 'Ergebnis'
                 }
             },
             scales: {

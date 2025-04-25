@@ -92,4 +92,5 @@ JOIN
 ON
     a.variant = b.variant
 WHERE
-    b."constraint type" = 'evacuationTime';
+    b."constraint type" = 'evacuationTime'
+ORDER BY b.value, a.available_exits;

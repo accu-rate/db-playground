@@ -30,7 +30,6 @@ export function setQuery() {
 export function executeQuery() {
     const query = finalizeQuery();
 
-
     if (!query) {
         alert('Bitte wähle zuerst eine Abfrage aus.');
         return;
@@ -69,12 +68,13 @@ export function executeQuery() {
             const queryTableBody = document.querySelector('#queryTable tbody');
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><input type="checkbox" value="${cachedQueries.length - 1}"></td>
+                <td><input type="checkbox" value="${cachedQueries.length - 1}" checked></td>
                 <td>${queryName}</td>
                 <td>${tableName}</td>
                 <td>${query}</td>
-                <td>${Object.keys(data).join(', ')}</td>
-            `;
+                <td>${Object.keys(data[0]).join(', ')}</td>
+                <td>${data.length}</td>   
+                `;
             queryTableBody.appendChild(row);
         })
         .catch(error => {
@@ -188,7 +188,7 @@ export async function filterQueriesFromQuerySelect(selectedTable, tableColumns) 
         const queries = await loadQueriesFromApi('/api/queries');
 
         // Map in ein Array von Objekten umwandeln
-        const queryArray = Object.entries(queries).map(([key, value]) => ({ key, value }));
+        const queryArray = Object.entries(queries).map(([key, value]) => ({key, value}));
 
         const filteredQueries = queryArray
             .filter(option => option.value) // Entferne leere Werte
@@ -227,7 +227,7 @@ export function updateQueryOptions(filteredQueries) {
     querySelect.appendChild(defaultOption);
 
     // Füge die gefilterten Queries hinzu
-    filteredQueries.forEach(({ key, value }) => {
+    filteredQueries.forEach(({key, value}) => {
         const option = document.createElement('option');
         option.value = value; // Setze den Query-String als Value
         option.textContent = key; // Setze die Beschreibung als Text

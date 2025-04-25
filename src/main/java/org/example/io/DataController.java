@@ -10,12 +10,12 @@ import java.io.File;
 import java.io.IOException;
 
 @RestController
-public class CsvUploadController {
+public class DataController {
 
-    private final CsvImporter csvImporter;
+    private final DataHandler dataHandler;
 
-    public CsvUploadController(CsvImporter csvImporter) {
-        this.csvImporter = csvImporter;
+    public DataController(DataHandler dataHandler) {
+        this.dataHandler = dataHandler;
     }
 
     private void uploadInDatabase(MultipartFile file) {
@@ -27,7 +27,7 @@ public class CsvUploadController {
             assert originalFilename != null;
             originalFilename = originalFilename.substring(0, originalFilename.lastIndexOf('.'));
             String cleanedFilename = originalFilename.replaceAll("[^a-zA-Z0-9]", "");
-            csvImporter.importCsv(tempFile.getAbsolutePath(), cleanedFilename);
+            dataHandler.importCsv(tempFile.getAbsolutePath(), cleanedFilename);
             tempFile.delete();
         } catch (IOException e) {
             throw new RuntimeException("Fehler beim Verarbeiten der Datei", e);
@@ -44,6 +44,19 @@ public class CsvUploadController {
             uploadInDatabase(files[i]);
         }
         return ResponseEntity.ok("Dateien erfolgreich importiert.");
+    }
+
+    @PostMapping("/api/reset-database")
+    public ResponseEntity<Void> resetDatabase() {
+        dataHandler.resetDatabase();
+        return ResponseEntity.ok().build();
+    }
+
+
+    @PostMapping("/api/export-database")
+    public ResponseEntity<Void> exportDatabase() {
+        dataHandler.resetDatabase();
+        return ResponseEntity.ok().build();
     }
 
 }

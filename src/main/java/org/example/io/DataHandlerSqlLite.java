@@ -12,17 +12,17 @@ import java.nio.file.Paths;
 import java.sql.*;
 
 //@Component -> uncomment here for using sqlite
-public class CsvImporterSqlLite implements CommandLineRunner, CsvImporter {
+public class DataHandlerSqlLite implements CommandLineRunner, DataHandler {
 
     private static final String DATABASE_NAME = "database.sqlite";
 
     @Autowired
-    public CsvImporterSqlLite() {
+    public DataHandlerSqlLite() {
     }
 
     @Override
     public void run(String... args) {
-        deleteExistingDatabase();
+        resetDatabase();
 
         String filePath = "src/main/resources/testfile_res/out/floor-flo1.csv";
         if (!Files.exists(Paths.get(filePath))) {
@@ -32,7 +32,7 @@ public class CsvImporterSqlLite implements CommandLineRunner, CsvImporter {
         initDatabase(filePath);
     }
 
-    private void deleteExistingDatabase() {
+    public void resetDatabase() {
         System.out.println("Löschen der bisherigen Datenbankdatei...");
         File dbFile = new File(DATABASE_NAME);
         if (dbFile.exists() && dbFile.isFile()) {
@@ -42,6 +42,11 @@ public class CsvImporterSqlLite implements CommandLineRunner, CsvImporter {
                 throw new RuntimeException("Datenbankdatei konnte nicht gelöscht werden.");
             }
         }
+    }
+
+    @Override
+    public void exportDatabase() {
+
     }
 
     public void initDatabase(String filePath) {

@@ -27,10 +27,16 @@ function initializeApp() {
     loadQueriesFromApi('/api/queries', 'querySelect');
 
     document.getElementById('uploadMultipleFilesForm').addEventListener('submit', function (event) {
-        event.preventDefault(); // Verhindert das Standard-Formular-Submit-Verhalten
+        event.preventDefault();
         uploadMultipleCsvFilesAndFetchTables('csvFiles');
     });
+
+    document.getElementById('resetDatabaseButton').addEventListener('click', () => {
+        resetDatabase();
+    });
 }
+
+
 
 // Starte die Anwendung
 document.addEventListener('DOMContentLoaded', initializeComponents);
@@ -40,12 +46,14 @@ document.addEventListener('DOMContentLoaded', initializeComponents);
 import { setQuery } from './query.js';
 import { loadQueriesFromApi } from './query.js';
 import { executeQuery } from './query.js';
-import { uploadMultipleCsvFilesAndFetchTables } from './upload.js';
+import { uploadMultipleCsvFilesAndFetchTables } from './data.js';
 import { setChartTypeAndUpdate } from './chart.js';
 import { plotSelectedQueries } from './chart.js';
 import { clearAllQueries } from './query.js';
 import { deleteSelectedQueries } from './query.js';
 import { initializeTableSelectListener } from './tables.js';
+import { resetDatabase } from './data.js';
+import { downloadDatabase } from './data.js';
 
 window.deleteSelectedQueries = deleteSelectedQueries;
 window.clearAllQueries = clearAllQueries;
@@ -53,3 +61,4 @@ window.setQuery = setQuery;
 window.setChartTypeAndUpdate = setChartTypeAndUpdate;
 window.executeQuery = executeQuery;
 window.plotSelectedQueries = plotSelectedQueries;
+window.downloadDatabase = downloadDatabase;

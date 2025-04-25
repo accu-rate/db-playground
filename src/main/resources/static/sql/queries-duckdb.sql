@@ -26,12 +26,34 @@ ORDER BY time ASC;
 
 
 -- Anzahl Personen im Stau über die Zeit
-With AverageSpeed AS (
+DROP INDEX IF EXISTS idx_${selectedTable}_pedID_time;
+CREATE INDEX idx_${selectedTable}_pedID_time ON ${selectedTable} (pedID, time);
+WITH LaggedData AS (
+    SELECT
+        time AS current_time,
+        pedID,
+        posX,
+        posY,
+        LAG(posX) OVER (PARTITION BY pedID ORDER BY time) AS prev_posX,
+        LAG(posY) OVER (PARTITION BY pedID ORDER BY time) AS prev_posY,
+        LAG(time) OVER (PARTITION BY pedID ORDER BY time) AS prev_time
+    FROM ${selectedTable}
+    WHERE time IS NOT NULL
+),
+Velocity AS (
+    SELECT
+        current_time,
+        pedID,
+        SQRT(POWER(posX - prev_posX, 2) + POWER(posY - prev_posY, 2)) / (current_time - prev_time) AS speed
+    FROM LaggedData
+    WHERE prev_time IS NOT NULL
+),
+AverageSpeed AS (
     SELECT
         current_time,
         pedID,
         AVG(speed) AS avg_speed
-    FROM velocity
+    FROM Velocity
     GROUP BY current_time, pedID
 ),
 Filtered AS (

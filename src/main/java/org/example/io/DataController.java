@@ -54,9 +54,18 @@ public class DataController {
 
 
     @PostMapping("/api/export-database")
-    public ResponseEntity<Void> exportDatabase() {
-        dataHandler.resetDatabase();
-        return ResponseEntity.ok().build();
+    public ResponseEntity<byte[]> exportDatabase() {
+        try {
+            // Exportiere die Datenbank in eine Datei
+            File exportedFile = dataHandler.exportDatabase(); // Implementiere diese Methode in DataHandler
+            byte[] fileContent = java.nio.file.Files.readAllBytes(exportedFile.toPath());
+
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=" + exportedFile.getName())
+                    .body(fileContent);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
 }

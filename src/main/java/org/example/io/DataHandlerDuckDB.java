@@ -16,7 +16,7 @@ import static org.example.Main.DATABASE_NAME;
 public class DataHandlerDuckDB implements CommandLineRunner, DataHandler {
 
     private static final String DEFAULT_TABLE_NAME = "sample_table";
-    private static final String EXPORT_PATH = "";
+
 
     @Autowired
     public DataHandlerDuckDB() {
@@ -50,14 +50,30 @@ public class DataHandlerDuckDB implements CommandLineRunner, DataHandler {
     }
 
     @Override
-    public void exportDatabase() {
+    public File exportDatabase() {
+        System.out.println("Datenbankdatei wird exportiert.");
+        String exportDirPath = System.getProperty("java.io.tmpdir") + "database_export";
+        File exportDir = new File(exportDirPath);
+
+        // Verzeichnis erstellen, falls es nicht existiert
+        if (!exportDir.exists()) {
+            exportDir.mkdirs();
+        }
+
         try (Connection conn = DriverManager.getConnection("jdbc:duckdb:" + DATABASE_NAME);
              Statement stmt = conn.createStatement()) {
 
-            String exportQuery = "EXPORT DATABASE '" + EXPORT_PATH + "' (FORMAT PARQUET);";
+            String exportQuery = "EXPORT DATABASE '" + exportDirPath + "';";
             stmt.execute(exportQuery);
 
-            System.out.println("Datenbank erfolgreich exportiert nach: " + EXPORT_PATH);
+            System.out.println("Datenbank erfolgreich exportiert nach: " + exportDirPath);
+            // Verzeichnis zippen
+            File zipFile = new File(exportDirPath + ".zip");
+            ZipUtils.zipDirectory(exportDir, zipFile);
+            System.out.println("Exportiertes Verzeichnis erfolgreich gezippt: " + zipFile.getAbsolutePath());
+
+            return zipFile;
+
         } catch (Exception e) {
             throw new RuntimeException("Fehler beim Exportieren der Datenbank", e);
         }

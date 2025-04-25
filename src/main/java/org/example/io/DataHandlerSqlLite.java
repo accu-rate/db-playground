@@ -45,8 +45,9 @@ public class DataHandlerSqlLite implements CommandLineRunner, DataHandler {
     }
 
     @Override
-    public void exportDatabase() {
+    public File exportDatabase() {
 
+        return null;
     }
 
     public void initDatabase(String filePath) {

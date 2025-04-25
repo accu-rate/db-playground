@@ -8,15 +8,15 @@ export let cachedQueries = []; // Array für mehrere Abfragen
 export function setQuery() {
     const querySelect = document.getElementById('querySelect');
     const queryTextarea = document.getElementById('query');
-    const additionalParamContainer = document.getElementById('additionalParamContainer');
+    const congestionVelocity = document.getElementById('congestionVelocityContainer');
     const additionalAreaParamContainer = document.getElementById('additionalAreaParamContainer');
 
     const selectedQuery = querySelect.value;
     queryTextarea.value = selectedQuery;
     if (selectedQuery.includes('?')) {
-        additionalParamContainer.style.display = 'block';
+        congestionVelocity.style.display = 'block';
     } else {
-        additionalParamContainer.style.display = 'none';
+        congestionVelocity.style.display = 'none';
     }
 
     if (selectedQuery.includes('${p')) {
@@ -82,7 +82,7 @@ export function executeQuery() {
 
 function finalizeQuery() {
     const query = document.getElementById('query').value;
-    const additionalParam = document.getElementById('additionalParam').value;
+    const congestionVelocity = document.getElementById('congestionVelocity').value;
     const posXMin = document.getElementById('posXMin').value || Number.MIN_VALUE;
     const posXMax = document.getElementById('posXMax').value || Number.MAX_VALUE;
     const posYMin = document.getElementById('posYMin').value || Number.MIN_VALUE;
@@ -97,17 +97,17 @@ function finalizeQuery() {
     // Ersetze den Platzhalter "?" nur, wenn er in der Query vorhanden ist
     let queryWithParam = query;
     if (query.includes('?')) {
-        if (!additionalParam) {
+        if (!congestionVelocity) {
             alert('Bitte setze die Staugrenzgeschwindigkeit.');
             return;
         }
-        queryWithParam = query.replace('?', additionalParam);
+        queryWithParam = query.replace('?', congestionVelocity);
     }
 
     // Ersetze die Platzhalter "${selectedTable}" nur, wenn sie in der Query vorhanden sind
      if (query.includes('${selectedTable}')) {
       queryWithParam = queryWithParam
-             .replace('${selectedTable}', selectedTable);
+             .replaceAll('${selectedTable}', selectedTable);
      }
 
 

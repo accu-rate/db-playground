@@ -1,4 +1,11 @@
 /* Allgemeine Stile */
+header {
+    display: flex;
+    flex-direction: column; /* Elemente vertikal anordnen */
+    align-items: center; /* Zentriert horizontal */
+    margin-bottom: 20px;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -111,6 +118,14 @@ button:hover {
     background-color: #e9eaf2; /* Graublau */
     cursor: pointer;
 }
+
+.button-container {
+    display: flex;
+    gap: 10px; /* Abstand zwischen den Buttons */
+    justify-content: center; /* Buttons zentrieren */
+    margin-top: 10px;
+}
+
 
 /* Diagramm- und Steuerungsstile */
 .chart-controls {

@@ -31,6 +31,7 @@ form {
 
 label {
     display: block;
+    margin-top: 8px;
     margin-bottom: 8px;
     font-weight: bold;
 }
@@ -182,4 +183,21 @@ canvas {
     to {
         transform: rotate(360deg);
     }
+}
+
+
+select {
+    font-size: 16px;
+    color: #333;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc; /* Rahmen */
+    border-radius: 4px; /* Abgerundete Ecken */
+    padding: 5px; /* Innenabstand */
+}
+
+/* Stil für die Optionen im Dropdown */
+select option {
+    font-size: 14px; /* Schriftgröße der Optionen */
+    color: #555; /* Textfarbe der Optionen */
+    background-color: #fff; /* Hintergrundfarbe der Optionen */
 }

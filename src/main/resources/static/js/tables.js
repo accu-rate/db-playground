@@ -1,10 +1,27 @@
 export function initializeTableSelectListener() {
     const tableSelect = document.getElementById('tableSelect');
+    const showColumnsCheckbox = document.getElementById('showColumnsCheckbox');
+
     tableSelect.addEventListener('change', () => {
         const selectedTable = tableSelect.value;
         if (selectedTable) {
             console.log(`Tabelle ausgewählt: ${selectedTable}`);
-            loadColumnsForSelectedTable();
+            if (showColumnsCheckbox.checked) {
+                loadColumnsForSelectedTable();
+            }
+        }
+    });
+
+    showColumnsCheckbox.addEventListener('change', () => {
+        if (showColumnsCheckbox.checked) {
+            const selectedTable = tableSelect.value;
+            if (selectedTable) {
+                loadColumnsForSelectedTable();
+            }
+        } else {
+            const columnsContainer = document.getElementById('columnsContainer');
+            columnsContainer.innerHTML = ''; // Spalten ausblenden
+            document.getElementById('columnsHeading').classList.add('hidden');
         }
     });
 }

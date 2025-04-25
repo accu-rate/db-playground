@@ -68,4 +68,22 @@ public class DataController {
         }
     }
 
+    @PostMapping("/api/import-database")
+    public ResponseEntity<String> importDatabase(@RequestParam("file") MultipartFile file) {
+        try {
+            // Temporäre Datei erstellen
+            File tempFile = File.createTempFile("imported-database-", ".zip");
+            file.transferTo(tempFile);
+
+            // Datenbank importieren
+            dataHandler.importDatabase(tempFile.getAbsolutePath());
+
+            // Temporäre Datei löschen
+            tempFile.delete();
+
+            return ResponseEntity.ok("Datenbank erfolgreich importiert.");
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Fehler beim Importieren der Datenbank: " + e.getMessage());
+        }
+    }
 }

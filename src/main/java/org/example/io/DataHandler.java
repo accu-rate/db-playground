@@ -9,4 +9,6 @@ public interface DataHandler {
     void resetDatabase();
 
     File exportDatabase();
+
+    void importDatabase(String filePath);
 }

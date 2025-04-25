@@ -34,6 +34,8 @@ function initializeApp() {
     document.getElementById('resetDatabaseButton').addEventListener('click', () => {
         resetDatabase();
     });
+
+    document.getElementById('importDatabaseButton').addEventListener('click', importDatabase);
 }
 
 
@@ -54,6 +56,7 @@ import { deleteSelectedQueries } from './query.js';
 import { initializeTableSelectListener } from './tables.js';
 import { resetDatabase } from './data.js';
 import { downloadDatabase } from './data.js';
+import { importDatabase } from './data.js';
 
 window.deleteSelectedQueries = deleteSelectedQueries;
 window.clearAllQueries = clearAllQueries;

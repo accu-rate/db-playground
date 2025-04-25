@@ -50,6 +50,11 @@ public class DataHandlerSqlLite implements CommandLineRunner, DataHandler {
         return null;
     }
 
+    @Override
+    public void importDatabase(String filePath) {
+
+    }
+
     public void initDatabase(String filePath) {
         System.out.println("Importiere CSV in eine SQLite-Datenbank...");
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_NAME);

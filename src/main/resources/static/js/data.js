@@ -21,14 +21,10 @@ export function uploadMultipleCsvFilesAndFetchTables(fileInputId) {
     })
         .then(response => {
             if (response.ok) {
-                return fetch('/api/get-tables'); // Tabellen abrufen
+                return fetchAndPopulateTables();
             } else {
                 throw new Error('Fehler beim Hochladen der Dateien.');
             }
-        })
-        .then(response => response.json())
-        .then(tables => {
-            populateTableSelect(tables);
         })
         .catch(error => {
             console.error('Fehler:', error);
@@ -36,6 +32,23 @@ export function uploadMultipleCsvFilesAndFetchTables(fileInputId) {
         })
         .finally(() => {
             loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
+        });
+}
+
+function fetchAndPopulateTables() {
+     return fetch('/api/get-tables') // Tabellen abrufen
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Fehler beim Abrufen der Tabellen.');
+            }
+            return response.json();
+        })
+        .then(tables => {
+            populateTableSelect(tables);
+        })
+        .catch(error => {
+            console.error('Fehler:', error);
+            alert('Ein Fehler ist aufgetreten.');
         });
 }
 
@@ -82,34 +95,37 @@ export function downloadDatabase() {
         });
 }
 
-export function exportDatabaseToDirectory(directoryInputId) {
-    const directoryInput = document.getElementById(directoryInputId);
-    const files = directoryInput.files;
+export function importDatabase() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.zip'; // Nur ZIP-Dateien erlauben
 
-    if (!files.length) {
-        alert('Bitte wähle ein Verzeichnis aus.');
-        return;
-    }
+    fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        if (!file) {
+            alert('Bitte wähle eine Datei aus.');
+            return;
+        }
 
-    // Hole den Pfad des ersten ausgewählten Ordners
-    const exportPath = files[0].webkitRelativePath.split('/')[0];
+        const formData = new FormData();
+        formData.append('file', file);
 
-    fetch('/api/export-database', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ filePath: exportPath })
-    })
-        .then(response => {
-            if (response.ok) {
-                alert('Die Datenbank wurde erfolgreich exportiert.');
-            } else {
-                throw new Error('Fehler beim Exportieren der Datenbank.');
-            }
+        fetch('/api/import-database', {
+            method: 'POST',
+            body: formData
         })
-        .catch(error => {
-            console.error('Fehler:', error);
-            alert('Ein Fehler ist aufgetreten.');
-        });
+            .then(response => {
+                if (response.ok) {
+                alert('Datenbank erfolgreich importiert.');
+                fetchAndPopulateTables();
+                } else {
+                    throw new Error('Fehler beim Importieren der Datenbank.');
+                }
+            })
+            .catch(error => {
+                console.error('Fehler:', error);
+                alert('Ein Fehler ist aufgetreten.');
+            });
+    });
+    fileInput.click(); // Öffnet den Datei-Dialog
 }

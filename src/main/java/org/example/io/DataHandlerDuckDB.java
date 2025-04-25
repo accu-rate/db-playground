@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.sql.*;
@@ -76,6 +77,46 @@ public class DataHandlerDuckDB implements CommandLineRunner, DataHandler {
 
         } catch (Exception e) {
             throw new RuntimeException("Fehler beim Exportieren der Datenbank", e);
+        }
+    }
+
+    @Override
+    public void importDatabase(String zipFile) {
+        resetDatabase();
+        // Temporäres Verzeichnis erstellen
+        String tempDirPath = System.getProperty("java.io.tmpdir") + "database_import";
+        File tempDir = new File(tempDirPath);
+        if (!tempDir.exists()) {
+            tempDir.mkdirs();
+        }
+
+        // ZIP-Datei entpacken
+        try {
+            ZipUtils.unzip(new File(zipFile), tempDir);
+            System.out.println("ZIP-Datei erfolgreich entpackt: " + tempDirPath);
+
+            // In den Unterordner wechseln
+            File[] subDirs = tempDir.listFiles(File::isDirectory);
+            if (subDirs == null || subDirs.length == 0) {
+                throw new RuntimeException("Kein Unterordner im entpackten Verzeichnis gefunden: " + tempDirPath);
+            }
+
+            File databaseFolder = subDirs[0]; // Erster Unterordner
+            System.out.println("Gefundener Unterordner: " + databaseFolder.getAbsolutePath());
+
+            // Datenbank importieren
+            try (Connection conn = DriverManager.getConnection("jdbc:duckdb:" + DATABASE_NAME);
+                 Statement stmt = conn.createStatement()) {
+
+                String importQuery = "IMPORT DATABASE '" + databaseFolder.getAbsolutePath() + "';";
+                stmt.execute(importQuery);
+                System.out.println("Datenbank erfolgreich importiert.");
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException("Fehler beim Entpacken der ZIP-Datei", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Fehler beim Importieren der Datenbank", e);
         }
     }
 

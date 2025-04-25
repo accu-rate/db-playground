@@ -1,4 +1,4 @@
-// js/upload.js
+import { populateTableSelect } from './tables.js';
 export function uploadMultipleCsvFilesAndFetchTables(fileInputId) {
     const loadingIndicator = document.getElementById('loadingIndicator');
     loadingIndicator.style.display = 'block'; // Ladeindikator anzeigen
@@ -28,14 +28,7 @@ export function uploadMultipleCsvFilesAndFetchTables(fileInputId) {
         })
         .then(response => response.json())
         .then(tables => {
-            const select = document.getElementById('tableSelect');
-            select.innerHTML = ''; // Vorherige Optionen entfernen
-            tables.forEach(table => {
-                const option = document.createElement('option');
-                option.value = table;
-                option.textContent = table;
-                select.appendChild(option);
-            });
+            populateTableSelect(tables);
         })
         .catch(error => {
             console.error('Fehler:', error);

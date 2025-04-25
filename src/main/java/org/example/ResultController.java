@@ -1,11 +1,7 @@
 package org.example;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,5 +28,10 @@ public class ResultController {
     @GetMapping("/api/get-tables")
     public List<String> getTables() {
         return resultService.getAvailableTables();
+    }
+
+    @GetMapping("/api/get-columns")
+    public List<String> getColumns(@RequestParam String table) {
+        return resultService.getColumnsOfTable(table);
     }
 }

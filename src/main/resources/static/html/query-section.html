@@ -8,11 +8,18 @@
                 <option value="">-- Wähle eine Abfrage --</option>
             </select>
             <input type="hidden" id="query" name="query">
-            <label for="tableSelect">Wähle die zu analysierenden Daten:</label>
-            <select id="tableSelect">
-                <option value="">-- Wähle eine Tabelle --</option>
-                <!-- Tabellenoptionen werden hier dynamisch eingefügt -->
-            </select>
+            <div class=".inline">
+                <label for="tableSelect">Wähle die zu analysierenden Daten:</label>
+                <select id="tableSelect">
+                    <option value="">-- Wähle eine Tabelle --</option>
+                    <!-- Tabellenoptionen werden hier dynamisch eingefügt -->
+                </select>
+
+                <label class="hidden" id="columnsHeading" for="columnsContainer">Verfügbare Spalten:</label>
+                <div id="columnsContainer">
+                    <!-- Spalten werden hier angezeigt -->
+                </div>
+            </div>
             <div id="additionalParamContainer" style="display: none;">
                 <label for="additionalParam">Parameter:</label>
                 <input type="text" id="additionalParam" placeholder="Parameter eingeben">

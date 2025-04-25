@@ -35,6 +35,7 @@ function initializeApp() {
 // Starte die Anwendung
 document.addEventListener('DOMContentLoaded', initializeComponents);
 
+
 // Exportiere die Funktionen, die im HTML verwendet werden
 import { setQuery } from './query.js';
 import { loadQueriesFromApi } from './query.js';
@@ -44,7 +45,7 @@ import { setChartTypeAndUpdate } from './chart.js';
 import { plotSelectedQueries } from './chart.js';
 import { clearAllQueries } from './query.js';
 import { deleteSelectedQueries } from './query.js';
-
+import { initializeTableSelectListener } from './tables.js';
 
 window.deleteSelectedQueries = deleteSelectedQueries;
 window.clearAllQueries = clearAllQueries;

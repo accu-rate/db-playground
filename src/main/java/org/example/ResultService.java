@@ -74,4 +74,23 @@ public class ResultService {
         }
         return tables;
     }
+
+    public List<String> getColumnsOfTable(String tableName) {
+        List<String> columns = new ArrayList<>();
+        String query = "PRAGMA table_info('" + tableName + "')";
+
+        try (Connection conn = DriverManager.getConnection("jdbc:duckdb:" + DATABASE_NAME);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                columns.add(rs.getString("name")); // Die Spalte "name" enthält die Spaltennamen
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Fehler beim Abrufen der Spaltennamen", e);
+        }
+
+        return columns;
+    }
 }

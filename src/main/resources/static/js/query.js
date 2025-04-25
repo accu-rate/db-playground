@@ -2,6 +2,9 @@
 import { updateChart } from './chart.js';
 export let cachedQueries = []; // Array für mehrere Abfragen
 
+
+
+
 export function setQuery() {
     const querySelect = document.getElementById('querySelect');
     const queryTextarea = document.getElementById('query');

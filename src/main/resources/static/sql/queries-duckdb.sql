@@ -94,3 +94,28 @@ ON
 WHERE
     b."constraint type" = 'evacuationTime'
 ORDER BY b.value, a.available_exits;
+
+-- Anzahl Personen vs. Räumungszeit
+WITH NoOfPeds AS (
+    SELECT
+        variant,
+        COUNT(*) AS no_of_peds
+    FROM
+        variantmapping
+    WHERE
+        CAST(assignment AS INTEGER) < ${noOfPeds}
+    GROUP BY
+        variant
+)
+SELECT
+    a.no_of_peds AS "Anzahl Personen",
+    b.value AS Raeumungszeit
+FROM
+    NoOfPeds a
+JOIN
+    variantresultsummary b
+ON
+    a.variant = b.variant
+WHERE
+    b."constraint type" = 'evacuationTime'
+ORDER BY b.value, a.no_of_peds;

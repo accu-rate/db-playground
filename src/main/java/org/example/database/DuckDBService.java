@@ -53,7 +53,7 @@ public class DuckDBService implements DatabaseService {
     public List<String> getDistinctValues(String columnName) {
         System.out.println("getting distinct values for column: " + columnName);
         logPoolStats();
-        String query = "SELECT DISTINCT " + columnName + " FROM variantmapping";
+        String query = "SELECT DISTINCT " + columnName + " FROM variantmapping ORDER BY " + columnName;
         List<String> results = new ArrayList<>();
 
         try (Connection conn = dataSource.getConnection();

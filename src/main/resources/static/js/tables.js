@@ -2,16 +2,6 @@ export function initializeTableSelectListener() {
     const tableSelect = document.getElementById('tableSelect');
     const showColumnsCheckbox = document.getElementById('showColumnsCheckbox');
 
-    tableSelect.addEventListener('change', () => {
-        const selectedTable = tableSelect.value;
-        if (selectedTable) {
-            console.log(`Tabelle ausgewählt: ${selectedTable}`);
-            if (showColumnsCheckbox.checked) {
-                loadColumnsForSelectedTable();
-            }
-        }
-    });
-
     showColumnsCheckbox.addEventListener('change', () => {
         if (showColumnsCheckbox.checked) {
             const selectedTable = tableSelect.value;
@@ -33,7 +23,7 @@ export function populateTableSelect(tables) {
     if (tables.length === 0) {
         const noDataOption = document.createElement('option');
         noDataOption.value = '';
-        noDataOption.textContent = 'Keine Daten gefunden, die den eingestellten Filtern entsprechen';
+        noDataOption.textContent = 'Keine Daten gefunden';
         select.appendChild(noDataOption);
         return;
     }

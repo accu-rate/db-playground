@@ -1,4 +1,5 @@
 import {populateTableSelect} from './tables.js';
+import {updateFilters} from './filter.js';
 
 export function uploadMultipleCsvFilesAndFetchTables(fileInputId) {
     const loadingIndicator = document.getElementById('loadingIndicator');
@@ -35,66 +36,9 @@ export function uploadMultipleCsvFilesAndFetchTables(fileInputId) {
         });
 }
 
-async function updateTablesAndFilters(loadingIndicator) {
-    try {
-        await fetchAndPopulateTables();
-
-        const response = await fetch('/api/filter-options');
-        if (!response.ok) {
-            throw new Error('Fehler beim Abrufen der Filteroptionen.');
-        }
-
-        const filterOptions = await response.json();
-        populateFilter('variantFilter', filterOptions.variant);
-        populateFilter('refFilter', filterOptions.ref);
-        populateFilter('typeFilter', filterOptions.type);
-    } catch (error) {
-        console.error('Fehler:', error);
-        alert('Ein Fehler ist aufgetreten.');
-    } finally {
-        if (loadingIndicator) {
-            loadingIndicator.style.display = 'none';
-        }
-    }
-}
-
-export function populateFilter(filterId, options) {
-    const filter = document.getElementById(filterId);
-    filter.innerHTML = ''; // Vorherige Optionen entfernen
-
-    // Standardoption hinzufügen
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = '-- Kein Filter --';
-    filter.appendChild(defaultOption);
-
-    // Filteroptionen hinzufügen
-    options.forEach(option => {
-        const opt = document.createElement('option');
-        opt.value = option;
-        opt.textContent = option;
-        filter.appendChild(opt);
-    });
-}
-
-function fetchAndPopulateTables() {
-    return fetch('/api/get-tables') // Tabellen abrufen
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Fehler beim Abrufen der Tabellen.');
-            }
-            return response.json();
-        })
-        .then(tables => {
-            populateTableSelect(tables);
-        })
-        .catch(error => {
-            console.error('Fehler:', error);
-            alert('Ein Fehler ist aufgetreten.');
-        });
-}
-
 export async function processVariantFolder() {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    loadingIndicator.style.display = 'block'; // Ladeindikator anzeigen
     const fileInput = document.getElementById('zipFile');
     const formData = new FormData();
     formData.append('file', fileInput.files[0]);
@@ -113,8 +57,39 @@ export async function processVariantFolder() {
         await updateTablesAndFilters();
     } catch (error) {
         console.error('Fehler:', error);
+    } finally {
+        loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
     }
 }
+
+
+async function updateTablesAndFilters() {
+    try {
+        await fetchAndPopulateTables();
+        await updateFilters();
+    } catch (error) {
+        console.error('Fehler:', error);
+        alert('Ein Fehler ist aufgetreten.');
+    }
+}
+
+export function fetchAndPopulateTables() {
+    return fetch('/api/get-tables') // Tabellen abrufen
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Fehler beim Abrufen der Tabellen.');
+            }
+            return response.json();
+        })
+        .then(tables => {
+            populateTableSelect(tables);
+        })
+        .catch(error => {
+            console.error('Fehler:', error);
+            alert('Ein Fehler ist aufgetreten.');
+        });
+}
+
 
 export function resetDatabase() {
     if (confirm('Möchtest du wirklich die gesamte Datenbank löschen?')) {

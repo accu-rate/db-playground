@@ -6,6 +6,7 @@ export function setQuery() {
     const querySelect = document.getElementById('querySelect');
     const queryTextarea = document.getElementById('query');
     const congestionVelocity = document.getElementById('congestionVelocityContainer');
+    const noOfPedsField = document.getElementById('noOfPedsContainer');
     const additionalAreaParamContainer = document.getElementById('additionalAreaParamContainer');
 
     const selectedQuery = querySelect.value;
@@ -15,6 +16,12 @@ export function setQuery() {
         congestionVelocity.style.display = 'block';
     } else {
         congestionVelocity.style.display = 'none';
+    }
+    if (selectedQuery.includes('${noOfPeds}')) {
+        console.log("query mit no of Peds")
+        noOfPedsField.style.display = 'block';
+    } else {
+        noOfPedsField.style.display = 'none';
     }
 
     if (selectedQuery.includes('${p')) {
@@ -89,6 +96,7 @@ function finalizeQuery() {
     const posYMin = document.getElementById('posYMin').value || Number.MIN_VALUE;
     const posYMax = document.getElementById('posYMax').value || Number.MAX_VALUE;
     const selectedTable = document.getElementById('tableSelect').value;
+    const noOfPeds = document.getElementById('noOfPeds').value;
 
     if (!query) {
         alert('Bitte wähle zuerst eine Abfrage aus.');
@@ -110,7 +118,10 @@ function finalizeQuery() {
         queryWithParam = queryWithParam
             .replaceAll('${selectedTable}', selectedTable);
     }
-
+    if (query.includes('${noOfPeds}')) {
+        queryWithParam = queryWithParam
+            .replaceAll('${noOfPeds}', noOfPeds);
+    }
 
     // Ersetze die Platzhalter "${...}" nur, wenn sie in der Query vorhanden sind
     if (query.includes('${p')) {

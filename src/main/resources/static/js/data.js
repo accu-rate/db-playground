@@ -1,6 +1,8 @@
 import {populateTableSelect} from './tables.js';
 import {updateFilters} from './filter.js';
 
+import {sendRequestToBackend} from './utils.js';
+
 export function uploadMultipleCsvFilesAndFetchTables(fileInputId) {
     const loadingIndicator = document.getElementById('loadingIndicator');
     loadingIndicator.style.display = 'block'; // Ladeindikator anzeigen
@@ -73,23 +75,17 @@ async function updateTablesAndFilters() {
     }
 }
 
-export function fetchAndPopulateTables() {
-    return fetch('/api/get-tables') // Tabellen abrufen
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Fehler beim Abrufen der Tabellen.');
-            }
-            return response.json();
-        })
-        .then(tables => {
-            populateTableSelect(tables);
-        })
-        .catch(error => {
-            console.error('Fehler:', error);
-            alert('Ein Fehler ist aufgetreten.');
-        });
-}
+export async function fetchAndPopulateTables() {
+    const url = '/api/get-tables';
+    const tables = await sendRequestToBackend(null, url); // sendRequestToBackend verwenden
 
+    if (!tables) {
+        console.error('Fehler beim Abrufen der Tabellen.');
+        return;
+    }
+
+    populateTableSelect(tables);
+}
 
 export function resetDatabase() {
     if (confirm('Möchtest du wirklich die gesamte Datenbank löschen?')) {

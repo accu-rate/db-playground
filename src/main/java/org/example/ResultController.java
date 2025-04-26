@@ -1,7 +1,8 @@
 package org.example;
 
 import org.example.database.DatabaseService;
-import org.springframework.http.ResponseEntity;
+import org.example.database.QueryResponse;
+import org.example.database.utils.DatabaseException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -18,39 +19,64 @@ public class ResultController {
     }
 
     @PostMapping("/api/execute-query")
-    public List<Map<String, Object>> executeQuery(@RequestBody Map<String, String> request) {
-        String query = request.get("query");
-        return resultService.executeQuery(query);
+    public QueryResponse executeQuery(@RequestBody String query) {
+        try {
+            // Entferne umschließende Anführungszeichen, falls vorhanden
+            query = query.replaceAll("^\"|\"$", "");
+            return new QueryResponse(resultService.executeQuery(query));
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+            return new QueryResponse("Fehler bei der Abfrage: " + e.getMessage());
+        }
     }
 
     @GetMapping("/api/queries")
-    public Map<String, String> getAvailableQueries() {
-        return resultService.getAvailableQueries();
+    public QueryResponse getAvailableQueries() {
+        try {
+            return new QueryResponse(resultService.getAvailableQueries());
+        } catch (DatabaseException e) {
+            return new QueryResponse("Fehler beim Laden der Abfragen: " + e.getMessage());
+        }
     }
 
     @GetMapping("/api/get-tables")
-    public List<String> getTables() {
-        return resultService.getTables();
+    public QueryResponse getTables() {
+        try {
+            return new QueryResponse(resultService.getTables());
+        } catch (DatabaseException e) {
+            return new QueryResponse("Fehler beim Laden der Tabellen: " + e.getMessage());
+        }
     }
 
     @GetMapping("/api/get-columns")
-    public List<String> getColumns(@RequestParam String table) {
-        return resultService.getColumns(table);
+    public QueryResponse getColumns(@RequestParam String table) {
+        try {
+            return new QueryResponse(resultService.getColumns(table));
+        } catch (DatabaseException e) {
+            return new QueryResponse("Fehler beim Laden der Spalten: " + e.getMessage());
+        }
     }
 
     @GetMapping("/api/filter-options")
-    public ResponseEntity<Map<String, List<String>>> getFilterOptions() {
-        Map<String, List<String>> filterOptions = new HashMap<>();
-        filterOptions.put("variant", resultService.getDistinctValues("variant"));
-        filterOptions.put("ref", resultService.getDistinctValues("ref"));
-        filterOptions.put("type", resultService.getDistinctValues("type"));
-        filterOptions.put("assignment", resultService.getDistinctValues("assignment"));
-        return ResponseEntity.ok(filterOptions);
+    public QueryResponse getFilterOptions() {
+        try {
+            Map<String, List<String>> filterOptions = new HashMap<>();
+            filterOptions.put("variant", resultService.getDistinctValues("variant"));
+            filterOptions.put("ref", resultService.getDistinctValues("ref"));
+            filterOptions.put("type", resultService.getDistinctValues("type"));
+            filterOptions.put("assignment", resultService.getDistinctValues("assignment"));
+            return new QueryResponse(filterOptions);
+        } catch (DatabaseException e) {
+            return new QueryResponse("Fehler beim Laden der Filter-Optionen: " + e.getMessage());
+        }
     }
 
     @PostMapping("/api/filter-data")
-    public ResponseEntity<List<String>> filterData(@RequestBody Map<String, String> filters) {
-        List<String> results = resultService.getFilteredTables(filters);
-        return ResponseEntity.ok(results);
+    public QueryResponse filterData(@RequestBody Map<String, String> filters) {
+        try {
+            return new QueryResponse(resultService.getFilteredTables(filters));
+        } catch (DatabaseException e) {
+            return new QueryResponse("Fehler beim Filtern: " + e.getMessage());
+        }
     }
 }

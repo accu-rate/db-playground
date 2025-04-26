@@ -1,4 +1,6 @@
 // js/query.js
+import {sendRequestToBackend} from './utils.js';
+
 export let cachedQueries = []; // Array für mehrere Abfragen
 
 
@@ -32,7 +34,7 @@ export function setQuery() {
     }
 }
 
-export function executeQuery() {
+export async function executeQuery() {
     const query = finalizeQuery();
 
     if (!query) {
@@ -40,39 +42,25 @@ export function executeQuery() {
         return;
     }
 
-    const loadingIndicator = document.getElementById('loadingIndicator');
-    loadingIndicator.style.display = 'block';
-
     const url = '/api/execute-query';
-    const options = {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({query})
-    };
+    console.log("Query:", query);
+    const data = await sendRequestToBackend(query, url); // Warte auf die Antwort von sendRequestToBackend
 
-    fetch(url, options)
-        .then(response => response.json())
-        .then(data => {
-            loadingIndicator.style.display = 'none';
+    if (!data) return; // Beende die Funktion, wenn keine Daten zurückgegeben werden
 
-            if (data.length === 0) {
-                alert('Keine Daten gefunden.');
-                return;
-            }
+    const querySelect = document.getElementById('querySelect');
+    const queryName = querySelect.options[querySelect.selectedIndex].text; // Name der Query
+    const tableSelect = document.getElementById('tableSelect');
+    const tableName = tableSelect.options[tableSelect.selectedIndex].text; // Name der Tabelle
 
-            const querySelect = document.getElementById('querySelect');
-            const queryName = querySelect.options[querySelect.selectedIndex].text; // Name der Query
-            const tableSelect = document.getElementById('tableSelect');
-            const tableName = tableSelect.options[tableSelect.selectedIndex].text; // Name der Tabelle
+    cachedQueries.push({id: queryName, table: tableName, query, data}); // Speichere die Abfrage mit Tabellennamen
+    const executedQueriesTable = document.getElementById('executedQueries');
+    executedQueriesTable.classList.remove('hidden');
 
-            cachedQueries.push({id: queryName, table: tableName, query, data}); // Speichere die Abfrage mit Tabellennamen
-            const executedQueriesTable = document.getElementById('executedQueries');
-            executedQueriesTable.classList.remove('hidden');
-
-            // Füge die Query zur Tabelle hinzu
-            const queryTableBody = document.querySelector('#queryTable tbody');
-            const row = document.createElement('tr');
-            row.innerHTML = `
+    // Füge die Query zur Tabelle hinzu
+    const queryTableBody = document.querySelector('#queryTable tbody');
+    const row = document.createElement('tr');
+    row.innerHTML = `
                 <td><input type="checkbox" value="${cachedQueries.length - 1}" checked></td>
                 <td>${queryName}</td>
                 <td>${tableName}</td>
@@ -80,12 +68,7 @@ export function executeQuery() {
                 <td>${Object.keys(data[0]).join(', ')}</td>
                 <td>${data.length}</td>   
                 `;
-            queryTableBody.appendChild(row);
-        })
-        .catch(error => {
-            loadingIndicator.style.display = 'none';
-            console.error('Fehler beim Abrufen der Daten:', error);
-        });
+    queryTableBody.appendChild(row);
 }
 
 function finalizeQuery() {
@@ -115,16 +98,28 @@ function finalizeQuery() {
 
     // Ersetze die Platzhalter "${selectedTable}" nur, wenn sie in der Query vorhanden sind
     if (query.includes('${selectedTable}')) {
+        if (!selectedTable) {
+            alert('Bitte wähle eine Tabelle aus.');
+            return;
+        }
         queryWithParam = queryWithParam
             .replaceAll('${selectedTable}', selectedTable);
     }
     if (query.includes('${noOfPeds}')) {
+        if (!noOfPeds) {
+            alert('Bitte setze die Anzahl der Personen.');
+            return;
+        }
         queryWithParam = queryWithParam
             .replaceAll('${noOfPeds}', noOfPeds);
     }
 
     // Ersetze die Platzhalter "${...}" nur, wenn sie in der Query vorhanden sind
     if (query.includes('${p')) {
+        if (!posXMin || !posXMax || !posYMin || !posYMax) {
+            alert('Bitte setze die Werte für die Position.');
+            return;
+        }
         queryWithParam = queryWithParam
             .replace('${posXMin}', posXMin)
             .replace('${posXMax}', posXMax)
@@ -193,29 +188,51 @@ export function loadQueriesFromApi(apiUrl) {
 }
 
 export async function filterQueriesFromQuerySelect(selectedTable, tableColumns) {
-    try {
-        const queries = await loadQueriesFromApi('/api/queries');
+    const queries = await sendRequestToBackend(null, '/api/queries'); // Anfrage mit sendRequestToBackend
 
-        // Map in ein Array von Objekten umwandeln
-        const queryArray = Object.entries(queries).map(([key, value]) => ({key, value}));
-
-        const filteredQueries = queryArray
-            .filter(option => option.value) // Entferne leere Werte
-            .filter(option => {
-                const query = option.value;
-                if (query.includes('${selectedTable}') || query.includes(selectedTable)) {
-                    const usedColumns = extractColumnsFromQuery(query);
-                    return usedColumns.every(column => tableColumns.includes(column));
-                }
-                return false;
-            });
-
-        // Gib die gefilterten Key-Value-Paare zurück
-        return filteredQueries;
-    } catch (error) {
-        console.error('Fehler beim Filtern der Queries:', error);
+    if (!queries) {
+        console.error('Fehler beim Abrufen der Queries.');
         return [];
     }
+
+    // Map in ein Array von Objekten umwandeln
+    const queryArray = Object.entries(queries).map(([key, value]) => ({key, value}));
+
+    const filteredQueries = queryArray
+        .filter(option => option.value) // Entferne leere Werte
+        .filter(option => {
+            const query = option.value;
+            if (query.includes('${selectedTable}') || query.includes(selectedTable)) {
+                const usedColumns = extractColumnsFromQuery(query);
+                return usedColumns.every(column => tableColumns.includes(column));
+            }
+            return false;
+        });
+
+    // Gib die gefilterten Key-Value-Paare zurück
+    return filteredQueries;
+}
+
+export async function updateQueries() {
+    const selectedTable = document.getElementById('tableSelect').value;
+
+    if (!selectedTable) {
+        updateQueryOptions([]);
+        return;
+    }
+
+
+    const url = `/api/get-columns?table=${encodeURIComponent(selectedTable)}`;
+    const tableColumns = await sendRequestToBackend(null, url);
+
+    if (!tableColumns) {
+        console.error('Fehler beim Abrufen der Tabellenspalten.');
+        return;
+    }
+
+    const filteredQueries = await filterQueriesFromQuerySelect(selectedTable, tableColumns);
+    updateQueryOptions(filteredQueries);
+
 }
 
 function extractColumnsFromQuery(query) {

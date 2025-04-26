@@ -12,7 +12,7 @@ public class FilterBuilder {
 
     public String buildFilterQuery(Map<String, String> filters) {
         parameters.clear();
-        StringBuilder query = new StringBuilder("SELECT * FROM variantmapping WHERE 1=1");
+        StringBuilder query = new StringBuilder("SELECT DISTINCT variant, ref, type, assignment FROM variantmapping WHERE 1=1");
 
         addFilterCondition(query, filters, "variant");
         addFilterCondition(query, filters, "ref");

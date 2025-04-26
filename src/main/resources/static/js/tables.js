@@ -1,3 +1,5 @@
+import {filterQueriesFromQuerySelect, updateQueries, updateQueryOptions} from './query.js';
+
 export function initializeTableSelectListener() {
     const tableSelect = document.getElementById('tableSelect');
     const showColumnsCheckbox = document.getElementById('showColumnsCheckbox');
@@ -34,11 +36,11 @@ export function populateTableSelect(tables) {
         option.textContent = table;
         select.appendChild(option);
     });
-
-    initializeTableSelectListener();
+    updateQueries();
 }
 
-export function loadColumnsForSelectedTable() {
+
+export async function loadColumnsForSelectedTable() {
     const tableSelect = document.getElementById('tableSelect');
     const selectedTable = tableSelect.value;
 
@@ -47,27 +49,28 @@ export function loadColumnsForSelectedTable() {
         return;
     }
 
-    fetch(`/api/get-columns?table=${encodeURIComponent(selectedTable)}`)
-        .then(response => response.json())
-        .then(columns => {
-            const columnsContainer = document.getElementById('columnsContainer');
-            columnsContainer.innerHTML = ''; // Vorherige Spalten entfernen
+    const url = `/api/get-columns?table=${encodeURIComponent(selectedTable)}`;
+    const columns = await sendRequestToBackend(null, url);
 
-            if (columns.length === 0) {
-                columnsContainer.textContent = 'Keine Spalten gefunden.';
-                return;
-            }
-            document.getElementById('columnsHeading').classList.remove('hidden');
-            const ul = document.createElement('ul');
-            columns.forEach(column => {
-                const li = document.createElement('li');
-                li.textContent = column;
-                ul.appendChild(li);
-            });
-            columnsContainer.appendChild(ul);
-        })
-        .catch(error => {
-            console.error('Fehler beim Abrufen der Spalten:', error);
-            alert('Ein Fehler ist beim Abrufen der Spalten aufgetreten.');
-        });
+    if (!columns) {
+        console.error('Fehler beim Abrufen der Spalten.');
+        return;
+    }
+
+    const columnsContainer = document.getElementById('columnsContainer');
+    columnsContainer.innerHTML = ''; // Vorherige Spalten entfernen
+
+    if (columns.length === 0) {
+        columnsContainer.textContent = 'Keine Spalten gefunden.';
+        return;
+    }
+
+    document.getElementById('columnsHeading').classList.remove('hidden');
+    const ul = document.createElement('ul');
+    columns.forEach(column => {
+        const li = document.createElement('li');
+        li.textContent = column;
+        ul.appendChild(li);
+    });
+    columnsContainer.appendChild(ul);
 }

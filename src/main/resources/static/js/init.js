@@ -1,10 +1,8 @@
-import {loadQueriesFromApiAndFillOptions} from './query.js';
+import {loadQueriesFromApiAndFillOptions, updateQueries} from './query.js';
 import {uploadMultipleCsvFilesAndFetchTables, resetDatabase, importDatabase} from './data.js';
-import {filterQueriesFromQuerySelect, updateQueryOptions} from './query.js';
+
 
 export function initializeApp() {
-    loadQueriesFromApiAndFillOptions('/api/queries', 'querySelect');
-
     document.getElementById('uploadMultipleFilesForm').addEventListener('submit', function (event) {
         event.preventDefault();
         uploadMultipleCsvFilesAndFetchTables('csvFiles');
@@ -14,22 +12,7 @@ export function initializeApp() {
     document.getElementById('importDatabaseButton').addEventListener('click', importDatabase);
 
     document.getElementById('tableSelect').addEventListener('change', async () => {
-        const selectedTable = document.getElementById('tableSelect').value;
-
-        if (!selectedTable) {
-            updateQueryOptions([]);
-            return;
-        }
-
-        const tableColumns = await fetch(`/api/get-columns?table=${encodeURIComponent(selectedTable)}`)
-            .then(response => response.json())
-            .catch(error => {
-                console.error('Fehler beim Abrufen der Tabellenspalten:', error);
-                return [];
-            });
-
-        const filteredQueries = await filterQueriesFromQuerySelect(selectedTable, tableColumns);
-        updateQueryOptions(filteredQueries);
+        await updateQueries();
     });
 
 

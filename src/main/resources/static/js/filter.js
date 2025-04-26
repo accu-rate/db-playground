@@ -1,42 +1,34 @@
 import {populateTableSelect} from './tables.js';
 import {fetchAndPopulateTables} from './data.js';
+import {sendRequestToBackend} from './utils.js';
 
-export function applyFilters() {
+export async function applyFilters() {
     const filters = {
         variant: document.getElementById('variantFilter').value,
         ref: document.getElementById('refFilter').value,
         type: document.getElementById('typeFilter').value,
         assignment: document.getElementById('assignmentFilter').value
     };
-
-    fetch('/api/filter-data', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(filters)
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Gefilterte Tabellennamen:', data);
-            populateTableSelect(data); // Tabellennamen in die Dropdown-Liste einfügen
-        })
-        .catch(error => console.error('Fehler beim Anwenden der Filter:', error));
+    const url = '/api/filter-data';
+    const data = await sendRequestToBackend(filters, url);
+    if (!data) return;
+    console.log('Gefilterte Tabellennamen:', data);
+    populateTableSelect(data); // Tabellennamen in die Dropdown-Liste einfügen
 }
 
 export async function updateFilters() {
-    const response = await fetch('/api/filter-options');
-    if (!response.ok) {
-        throw new Error('Fehler beim Abrufen der Filteroptionen.');
+    const url = '/api/filter-options';
+    const filterOptions = await sendRequestToBackend(null, url);
+
+    if (!filterOptions) {
+        console.error('Fehler beim Abrufen der Filteroptionen.');
+        return;
     }
-    try {
-        const filterOptions = await response.json();
-        populateFilter('variantFilter', filterOptions.variant);
-        populateFilter('refFilter', filterOptions.ref);
-        populateFilter('typeFilter', filterOptions.type);
-        populateFilter('assignmentFilter', filterOptions.assignment);
-    } catch (error) {
-        console.error('Fehler beim Aktualisieren der Filter:', error);
-        alert('Ein Fehler ist aufgetreten.');
-    }
+    populateFilter('variantFilter', filterOptions.variant);
+    populateFilter('refFilter', filterOptions.ref);
+    populateFilter('typeFilter', filterOptions.type);
+    populateFilter('assignmentFilter', filterOptions.assignment);
+
 }
 
 export function populateFilter(filterId, options) {

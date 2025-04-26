@@ -1,32 +1,6 @@
 <section class="query-section">
-    <h2>SQL-Abfrage</h2>
+    <h2>Datenabfrage</h2>
     <form>
-        <div id="filterContainer">
-            <h3>Vorfiltern der Varianten</h3>
-            <label for="variantFilter">Variante:</label>
-            <select id="variantFilter">
-                <option value="">-- Alle Varianten --</option>
-            </select>
-
-            <label for="refFilter">Ausgang:</label>
-            <select id="refFilter">
-                <option value="">-- Alle Ausgänge --</option>
-            </select>
-
-            <label for="typeFilter">Typ:</label>
-            <select id="typeFilter">
-                <option value="">-- Alle Typen --</option>
-            </select>
-
-            <label for="assignmentFilter">Verfügbarkeit:</label>
-            <select id="assignmentFilter">
-                <option value="">-- Alle --</option>
-                <option value="true">Verfügbar</option>
-                <option value="false">Nicht verfügbar</option>
-            </select>
-
-            <button type="button" onclick="applyFilters()">Filter anwenden</button>
-        </div>
         <div class="query-container">
             <input type="hidden" id="query" name="query">
             <label for="tableSelect">Wähle die zu analysierenden Daten:</label>

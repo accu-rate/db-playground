@@ -12,8 +12,9 @@ import {setChartTypeAndUpdate} from './chart.js';
 import {plotSelectedQueries} from './chart.js';
 import {clearAllQueries} from './query.js';
 import {setQuery} from './query.js';
-import {deleteSelectedQueries, applyFilters} from './query.js';
+import {deleteSelectedQueries} from './query.js';
 import {downloadDatabase} from './data.js';
+import {applyFilters} from './filter.js';
 
 
 window.deleteSelectedQueries = deleteSelectedQueries;

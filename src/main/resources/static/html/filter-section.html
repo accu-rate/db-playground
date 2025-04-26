@@ -1,0 +1,30 @@
+<section class="filter-section">
+    <h2>Vorfiltern der Varianten</h2>
+    <form>
+        <div id="filterContainer">
+            <div class="inline">
+                <label for="variantFilter">Variante:</label>
+                <select id="variantFilter">
+                    <option value="">-- Alle Varianten --</option>
+                </select>
+            </div>
+            <div class="inline">
+                <label for="typeFilter">Parameter:</label>
+                <select id="typeFilter">
+                    <option value="">-- Alle Typen --</option>
+                </select>
+                <label for="assignmentFilter">Wert:</label>
+                <select id="assignmentFilter">
+                    <option value="">-- Alle --</option>
+                </select>
+            </div>
+            <div class="inline">
+                <label for="refFilter">Objekt:</label>
+                <select id="refFilter">
+                    <option value="">-- Alle Objekte --</option>
+                </select>
+            </div>
+            <button type="button" onclick="applyFilters()">Filter anwenden</button>
+        </div>
+    </form>
+</section>

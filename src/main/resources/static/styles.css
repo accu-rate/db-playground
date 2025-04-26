@@ -77,6 +77,7 @@ button:hover {
     display: flex;
     align-items: bottom;
     gap: 5px; /* Abstand zwischen Label und Eingabefeld */
+    padding: 5px;
 }
 
 /* Tabellenstile */

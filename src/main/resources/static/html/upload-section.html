@@ -5,6 +5,8 @@
             <input type="file" id="csvFiles" name="files" multiple />
             <button type="submit">Dateien hochladen</button>
         </div>
+        <input type="file" id="zipFile" accept=".zip">
+        <button type="button" onclick="processVariantFolder()">ZIP verarbeiten</button>
     </form>
     <div id="loadingIndicator" style="display: none;">
         <span class="loader"></span>

@@ -1,5 +1,6 @@
 package org.example.io;
 
+import org.example.io.utils.ZipUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -8,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 @RestController
 public class DataController {
@@ -34,8 +36,89 @@ public class DataController {
         }
     }
 
+    @PostMapping("/api/process-variant-folder")
+    public ResponseEntity<String> processVariantFolder(@RequestParam("file") MultipartFile zipFile) {
+        if (!zipFile.getOriginalFilename().endsWith(".zip")) {
+            return ResponseEntity.badRequest().body("Es wird eine ZIP-Datei erwartet");
+        }
+
+        try {
+            // Temporäres Verzeichnis und ZIP-Datei erstellen
+            File tempDir = Files.createTempDirectory("variant-processing-").toFile();
+            File zipTemp = File.createTempFile("upload-", ".zip");
+            zipFile.transferTo(zipTemp);
+
+            // ZIP-Datei mit ZipUtils entpacken
+            ZipUtils.unzip(zipTemp, tempDir);
+            // In den Unterordner wechseln
+            File[] subDirs = tempDir.listFiles(File::isDirectory);
+            if (subDirs == null || subDirs.length == 0) {
+                throw new RuntimeException("Kein Unterordner im entpackten Verzeichnis gefunden: " + tempDir);
+            }
+
+            File crowditFolder = subDirs[0]; // Erster Unterordner
+            System.out.println("Gefundener Unterordner: " + crowditFolder.getAbsolutePath());
+
+            // Verarbeite die entpackten Dateien
+            File variantMapping = new File(crowditFolder, "variant-mapping.csv");
+            File variantSummary = new File(crowditFolder, "variant-result-summary.csv");
+
+            if (variantMapping.exists()) {
+                dataHandler.importCsv(variantMapping.getAbsolutePath(), "variantmapping");
+            }
+            if (variantSummary.exists()) {
+                dataHandler.importCsv(variantSummary.getAbsolutePath(), "variantresultsummary");
+            }
+
+            File[] variantDirs = crowditFolder.listFiles((dir, name) ->
+                    name.startsWith("out-variant-") && new File(dir, name).isDirectory());
+
+            if (variantDirs == null || variantDirs.length == 0) {
+                cleanupTempFiles(tempDir, zipTemp);
+                return ResponseEntity.badRequest().body("Keine variant-Ordner in der ZIP-Datei gefunden");
+            }
+
+            for (File variantDir : variantDirs) {
+                String variantNum = variantDir.getName().replace("out-variant-", "");
+                File[] gzFiles = variantDir.listFiles((dir, name) -> name.endsWith(".gz"));
+
+                if (gzFiles != null && gzFiles.length > 0) {
+                    String tableName = "variant" + variantNum;
+                    dataHandler.importCsv(gzFiles[0].getAbsolutePath(), tableName);
+                }
+            }
+
+            cleanupTempFiles(tempDir, zipTemp);
+            return ResponseEntity.ok("ZIP-Datei erfolgreich verarbeitet");
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body("Fehler beim Verarbeiten der ZIP-Datei: " + e.getMessage());
+        }
+    }
+
+    private void cleanupTempFiles(File tempDir, File zipTemp) {
+        // Rekursives Löschen des temporären Verzeichnisses
+        deleteDirectory(tempDir);
+        zipTemp.delete();
+    }
+
+    private void deleteDirectory(File directory) {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+        directory.delete();
+    }
+
     @PostMapping("/api/upload-multiple-csvs")
     public ResponseEntity<String> uploadMultipleCsvs(@RequestParam("files") MultipartFile[] files) {
+
         if (files.length == 0) {
             return ResponseEntity.badRequest().body("Keine Dateien hochgeladen.");
         }

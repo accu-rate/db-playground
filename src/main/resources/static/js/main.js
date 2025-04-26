@@ -15,6 +15,7 @@ import {setQuery} from './query.js';
 import {deleteSelectedQueries} from './query.js';
 import {downloadDatabase} from './data.js';
 import {applyFilters} from './filter.js';
+import {processVariantFolder} from './data.js';
 
 
 window.deleteSelectedQueries = deleteSelectedQueries;
@@ -25,3 +26,4 @@ window.executeQuery = executeQuery;
 window.plotSelectedQueries = plotSelectedQueries;
 window.downloadDatabase = downloadDatabase;
 window.applyFilters = applyFilters;
+window.processVariantFolder = processVariantFolder;

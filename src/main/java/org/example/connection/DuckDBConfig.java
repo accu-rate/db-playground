@@ -2,6 +2,7 @@ package org.example.connection;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import jakarta.annotation.PreDestroy;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,12 +12,16 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
 @Configuration
 public class DuckDBConfig {
     @Value("${database.name:duckdb.db}")
     private String databaseName;
+    private HikariDataSource dataSource;
 
     @Bean
     public HikariDataSource hikariDataSource() {
@@ -25,7 +30,25 @@ public class DuckDBConfig {
         config.setJdbcUrl("jdbc:duckdb:" + databaseName);
         config.setPoolName("duckdb-pool");
         config.setMaximumPoolSize(10);
-        return new HikariDataSource(config);
+
+        dataSource = new HikariDataSource(config);
+        return dataSource;
+    }
+
+    @PreDestroy
+    public void cleanup() {
+        if (dataSource != null && !dataSource.isClosed()) {
+            try (Connection conn = dataSource.getConnection()) {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute("CHECKPOINT");
+                    stmt.execute("FORCE_CHECKPOINT");
+                }
+            } catch (SQLException e) {
+                // Logger hier verwenden, falls vorhanden
+            } finally {
+                dataSource.close();
+            }
+        }
     }
 
     @Bean

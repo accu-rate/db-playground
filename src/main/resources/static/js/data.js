@@ -21,34 +21,41 @@ export function uploadMultipleCsvFilesAndFetchTables(fileInputId) {
         body: formData
     })
         .then(response => {
-            if (response.ok) {
-                return fetchAndPopulateTables();
-            } else {
-                throw new Error('Fehler beim Hochladen der Dateien.');
-            }
-        })
-        .then(() => {
-            // Filteroptionen laden, nachdem die Tabellen aktualisiert wurden
-            return fetch('/api/filter-options');
-        })
-        .then(response => {
             if (!response.ok) {
-                throw new Error('Fehler beim Abrufen der Filteroptionen.');
+                throw new Error(`Fehler beim Hochladen der Dateien: ${response.statusText}`);
             }
-            return response.json();
-        })
-        .then(filterOptions => {
-            populateFilter('variantFilter', filterOptions.variant);
-            populateFilter('refFilter', filterOptions.ref);
-            populateFilter('typeFilter', filterOptions.type);
+            return updateTablesAndFilters();
         })
         .catch(error => {
             console.error('Fehler:', error);
-            alert('Ein Fehler ist aufgetreten.');
+            alert('Ein Fehler ist aufgetreten: ' + error.message);
         })
         .finally(() => {
             loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
         });
+}
+
+async function updateTablesAndFilters(loadingIndicator) {
+    try {
+        await fetchAndPopulateTables();
+
+        const response = await fetch('/api/filter-options');
+        if (!response.ok) {
+            throw new Error('Fehler beim Abrufen der Filteroptionen.');
+        }
+
+        const filterOptions = await response.json();
+        populateFilter('variantFilter', filterOptions.variant);
+        populateFilter('refFilter', filterOptions.ref);
+        populateFilter('typeFilter', filterOptions.type);
+    } catch (error) {
+        console.error('Fehler:', error);
+        alert('Ein Fehler ist aufgetreten.');
+    } finally {
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'none';
+        }
+    }
 }
 
 export function populateFilter(filterId, options) {
@@ -85,6 +92,28 @@ function fetchAndPopulateTables() {
             console.error('Fehler:', error);
             alert('Ein Fehler ist aufgetreten.');
         });
+}
+
+export async function processVariantFolder() {
+    const fileInput = document.getElementById('zipFile');
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    try {
+        const response = await fetch('/api/process-variant-folder', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error('Fehler beim Verarbeiten des Ordners.');
+        }
+
+        // Erfolgreiche Verarbeitung, Tabellen und Filter aktualisieren
+        await updateTablesAndFilters();
+    } catch (error) {
+        console.error('Fehler:', error);
+    }
 }
 
 export function resetDatabase() {

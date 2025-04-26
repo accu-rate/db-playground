@@ -12,7 +12,7 @@ import {setChartTypeAndUpdate} from './chart.js';
 import {plotSelectedQueries} from './chart.js';
 import {clearAllQueries} from './query.js';
 import {setQuery} from './query.js';
-import {deleteSelectedQueries} from './query.js';
+import {deleteSelectedQueries, applyFilters} from './query.js';
 import {downloadDatabase} from './data.js';
 
 
@@ -23,3 +23,4 @@ window.setChartTypeAndUpdate = setChartTypeAndUpdate;
 window.executeQuery = executeQuery;
 window.plotSelectedQueries = plotSelectedQueries;
 window.downloadDatabase = downloadDatabase;
+window.applyFilters = applyFilters;

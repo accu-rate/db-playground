@@ -1,40 +1,31 @@
 package org.example.io;
 
-import org.example.Main;
+import com.zaxxer.hikari.HikariDataSource;
+import org.example.io.utils.ZipUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Paths;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import static org.example.Main.DATABASE_NAME;
 
 @Component
 public class DataHandlerDuckDB implements CommandLineRunner, DataHandler {
-
-    private static final String DEFAULT_TABLE_NAME = "sample_table";
-
+    private final HikariDataSource dataSource;
 
     @Autowired
-    public DataHandlerDuckDB() {
+    public DataHandlerDuckDB(HikariDataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
-
     @Override
-    public void run(String... args) throws Exception {
-        resetDatabase();
-
-        URL resource = Main.class.getResource("/testfile_res/out/floor-flo1.csv");
-        if (resource == null) {
-            throw new RuntimeException("Datei floor-flo1.csv nicht gefunden!");
-        }
-        String filePath = Paths.get(resource.toURI()).toString();
-
-        initDatabase(filePath, DEFAULT_TABLE_NAME);
+    public void run(String... args) {
     }
 
     @Override
@@ -61,7 +52,7 @@ public class DataHandlerDuckDB implements CommandLineRunner, DataHandler {
             exportDir.mkdirs();
         }
 
-        try (Connection conn = DriverManager.getConnection("jdbc:duckdb:" + DATABASE_NAME);
+        try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement()) {
 
             String exportQuery = "EXPORT DATABASE '" + exportDirPath + "';";
@@ -105,7 +96,7 @@ public class DataHandlerDuckDB implements CommandLineRunner, DataHandler {
             System.out.println("Gefundener Unterordner: " + databaseFolder.getAbsolutePath());
 
             // Datenbank importieren
-            try (Connection conn = DriverManager.getConnection("jdbc:duckdb:" + DATABASE_NAME);
+            try (Connection conn = dataSource.getConnection();
                  Statement stmt = conn.createStatement()) {
 
                 String importQuery = "IMPORT DATABASE '" + databaseFolder.getAbsolutePath() + "';";
@@ -128,7 +119,7 @@ public class DataHandlerDuckDB implements CommandLineRunner, DataHandler {
 
     private void initDatabase(String filePath, String tableName) {
         System.out.println("Importing CSV into a DuckDB table...");
-        try (Connection conn = DriverManager.getConnection("jdbc:duckdb:" + DATABASE_NAME);
+        try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement()) {
             createTable(filePath, stmt, tableName);
 

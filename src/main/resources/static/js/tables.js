@@ -29,12 +29,22 @@ export function initializeTableSelectListener() {
 export function populateTableSelect(tables) {
     const select = document.getElementById('tableSelect');
     select.innerHTML = ''; // Vorherige Optionen entfernen
+
+    if (tables.length === 0) {
+        const noDataOption = document.createElement('option');
+        noDataOption.value = '';
+        noDataOption.textContent = 'Keine Daten gefunden, die den eingestellten Filtern entsprechen';
+        select.appendChild(noDataOption);
+        return;
+    }
+
     tables.forEach(table => {
         const option = document.createElement('option');
         option.value = table;
         option.textContent = table;
         select.appendChild(option);
     });
+
     initializeTableSelectListener();
 }
 

@@ -38,7 +38,7 @@ export function populateFilter(filterId, options) {
     // Standardoption hinzufügen
     const defaultOption = document.createElement('option');
     defaultOption.value = '';
-    defaultOption.textContent = '-- Kein Filter --';
+    defaultOption.textContent = '-- Alle --';
     filter.appendChild(defaultOption);
 
     // Filteroptionen hinzufügen

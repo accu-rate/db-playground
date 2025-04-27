@@ -1,13 +1,13 @@
 <section class="chart-section">
-    <h2>Diagramm</h2>
+    <h2>Ergebnisse</h2>
     <div id="executedQueries" class="queryTable hidden">
-        <h3>Ausgeführte Abfragen</h3>
+        <h3>Gefilterte Ergebnisse</h3>
         <table id="queryTable">
             <thead>
             <tr>
                 <th><input type="checkbox" id="headerCheckbox"></th>
-                <th>Query-Name</th>
-                <th>Tabellenname</th>
+                <th>Variante</th>
+                <th>Abfragename</th>
                 <th>Zurückgegebene Spalten</th>
                 <th>Anzahl Datensätze</th>
             </tr>
@@ -17,9 +17,9 @@
             </tbody>
         </table>
         <div class="chart-controls">
-            <button type="button" onclick="plotSelectedQueries()">Ausgewählte Abfragen plotten</button>
-            <button type="button" onclick="deleteSelectedQueries()">Ausgewählte Abfragen löschen</button>
-            <button type="button" onclick="clearAllQueries()">Alle Abfragen löschen</button>
+            <button type="button" onclick="plotSelectedQueries()">Ausgewählte Varianten plotten</button>
+            <button type="button" onclick="deleteSelectedQueries()">Ausgewählte Varianten löschen</button>
+            <button type="button" onclick="clearAllQueries()">Alle Varianten löschen</button>
         </div>
     </div>
     <div class="chart-container">

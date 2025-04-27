@@ -44,6 +44,11 @@ export async function processVariantFolder() {
     const fileInput = document.getElementById('zipFile');
     const formData = new FormData();
     formData.append('file', fileInput.files[0]);
+    if (!fileInput.files.length) {
+        alert('Bitte wähle mindestens eine Datei aus.');
+        loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
+        return;
+    }
 
     try {
         const response = await fetch('/api/process-variant-folder', {
@@ -63,7 +68,6 @@ export async function processVariantFolder() {
         loadingIndicator.style.display = 'none'; // Ladeindikator ausblenden
     }
 }
-
 
 async function updateTablesAndFilters() {
     try {

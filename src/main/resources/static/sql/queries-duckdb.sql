@@ -1,24 +1,24 @@
 -- Aufenthaltsdauer
-SELECT pedID, MAX(time) - MIN(time) AS Duration
+SELECT pedID, MAX(time) - MIN(time) AS Dauer
 FROM ${selectedTable}
 GROUP BY pedID
 HAVING COUNT(*) > 2;
 
 -- Aufenthaltsdauer innerhalb eines bestimmten Bereichs
-SELECT pedID, MAX(time) - MIN(time) AS Duration
+SELECT pedID, MAX(time) - MIN(time) AS Dauer
 FROM ${selectedTable}
 WHERE posX BETWEEN ${posXMin} AND ${posXMax} AND posY BETWEEN ${posYMin} AND ${posYMax}
 GROUP BY pedID
 HAVING COUNT(*) > 2;
 
 -- Räumungsverlauf
-SELECT time AS Time, COUNT(DISTINCT pedID) AS pedID_count
+SELECT time AS Zeit, COUNT(DISTINCT pedID) AS Anzahl_Personen
 FROM ${selectedTable}
 GROUP BY time
 ORDER BY time ASC;
 
 -- Leerungsverlauf in einem bestimmten Bereich
-SELECT time AS Time, COUNT(DISTINCT pedID) AS pedID_count
+SELECT time AS Zeit, COUNT(DISTINCT pedID) AS Anzahl_Personen
 FROM ${selectedTable}
 WHERE posX BETWEEN ${posXMin} AND ${posXMax} AND posY BETWEEN ${posYMin} AND ${posYMax}
 GROUP BY time
@@ -83,7 +83,7 @@ WITH AvailableExits AS (
         variant
 )
 SELECT
-    a.available_exits AS "Anzahl Ausgaenge",
+    a.available_exits AS "Anzahl Ausgänge",
     b.value AS Raeumungszeit
 FROM
     AvailableExits a

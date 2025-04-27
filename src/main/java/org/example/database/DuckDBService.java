@@ -108,7 +108,7 @@ public class DuckDBService implements DatabaseService {
 
     private Map<String, Object> extractRow(ResultSet rs, ResultSetMetaData metaData) throws
             SQLException {
-        Map<String, Object> row = new HashMap<>();
+        Map<String, Object> row = new LinkedHashMap<>();
         int columnCount = metaData.getColumnCount();
         for (int i = 1; i <= columnCount; i++) {
             row.put(metaData.getColumnName(i), rs.getObject(i));

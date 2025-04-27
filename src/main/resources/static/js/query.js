@@ -62,8 +62,8 @@ export async function executeQuery() {
     const row = document.createElement('tr');
     row.innerHTML = `
                 <td><input type="checkbox" value="${cachedQueries.length - 1}" checked></td>
-                <td>${queryName}</td>
                 <td>${tableName}</td>
+                <td>${queryName}</td>
                 <td>${Object.keys(data[0]).join(', ')}</td>
                 <td>${data.length}</td>   
                 `;

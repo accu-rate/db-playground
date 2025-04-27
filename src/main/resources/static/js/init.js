@@ -1,5 +1,6 @@
 import {loadQueriesFromApiAndFillOptions, updateQueries} from './query.js';
 import {uploadMultipleCsvFilesAndFetchTables, resetDatabase, importDatabase} from './data.js';
+import {initializeTableSelectListener} from './tables.js';
 
 
 export function initializeApp() {
@@ -15,15 +16,8 @@ export function initializeApp() {
         await updateQueries();
     });
 
-    const toggleAreaCheckbox = document.getElementById('toggleAreaCheckbox');
-    const additionalAreaParamContainer = document.getElementById('queryContainer');
-    toggleAreaCheckbox.addEventListener('change', () => {
-        if (toggleAreaCheckbox.checked) {
-            additionalAreaParamContainer.classList.remove('hidden');
-        } else {
-            additionalAreaParamContainer.classList.add('hidden');
-        }
-    });
+    initializeTableSelectListener();
+    toggleVisibility(document.getElementById('toggleAreaCheckbox'), document.getElementById('queryContainer'));
 
     const queryTable = document.getElementById('queryTable');
     const headerCheckbox = document.getElementById('headerCheckbox');
@@ -49,4 +43,13 @@ export function initializeApp() {
         }
     });
 
+    function toggleVisibility(checkboxElement, containerElement) {
+        checkboxElement.addEventListener('change', () => {
+            if (checkboxElement.checked) {
+                containerElement.classList.remove('hidden');
+            } else {
+                containerElement.classList.add('hidden');
+            }
+        });
+    }
 }

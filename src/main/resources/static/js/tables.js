@@ -1,4 +1,5 @@
 import {filterQueriesFromQuerySelect, updateQueries, updateQueryOptions} from './query.js';
+import {sendRequestToBackend} from './utils.js';
 
 export function initializeTableSelectListener() {
     const tableSelect = document.getElementById('tableSelect');
@@ -38,7 +39,6 @@ export function populateTableSelect(tables) {
     });
     updateQueries();
 }
-
 
 export async function loadColumnsForSelectedTable() {
     const tableSelect = document.getElementById('tableSelect');

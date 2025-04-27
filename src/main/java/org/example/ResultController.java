@@ -22,7 +22,9 @@ public class ResultController {
     public QueryResponse executeQuery(@RequestBody String query) {
         try {
             // Entferne umschließende Anführungszeichen, falls vorhanden
-            query = query.replaceAll("^\"|\"$", "");
+            if (query.startsWith("\"") && query.endsWith("\"")) {
+                query = query.substring(1, query.length() - 1);
+            }
             return new QueryResponse(resultService.executeQuery(query));
         } catch (DatabaseException e) {
             e.printStackTrace();

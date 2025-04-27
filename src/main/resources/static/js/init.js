@@ -15,6 +15,15 @@ export function initializeApp() {
         await updateQueries();
     });
 
+    const toggleAreaCheckbox = document.getElementById('toggleAreaCheckbox');
+    const additionalAreaParamContainer = document.getElementById('queryContainer');
+    toggleAreaCheckbox.addEventListener('change', () => {
+        if (toggleAreaCheckbox.checked) {
+            additionalAreaParamContainer.classList.remove('hidden');
+        } else {
+            additionalAreaParamContainer.classList.add('hidden');
+        }
+    });
 
     const queryTable = document.getElementById('queryTable');
     const headerCheckbox = document.getElementById('headerCheckbox');

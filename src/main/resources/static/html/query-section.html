@@ -2,7 +2,6 @@
     <h2>Datenabfrage</h2>
     <form>
         <div class="query-container">
-            <input type="hidden" id="query" name="query">
             <label for="tableSelect">Wähle die zu analysierenden Daten:</label>
             <div class="inline">
                 <select id="tableSelect">
@@ -22,8 +21,15 @@
             <select id="querySelect" onchange="setQuery()">
                 <option value="">-- Wähle eine Abfrage --</option>
             </select>
-
-
+            <div class="inline">
+                <label>
+                    <input type="checkbox" id="toggleAreaCheckbox">
+                    Abfrage anzeigen
+                </label>
+                <div id="queryContainer" class="hidden">
+                    <textarea id="query" name="query"></textarea>
+                </div>
+            </div>
             <div id="congestionVelocityContainer" style="display: none;">
                 <label for="congestionVelocity">Staugrenzgeschwindigkeit:</label>
                 <input type="text" id="congestionVelocity" placeholder="0.8">

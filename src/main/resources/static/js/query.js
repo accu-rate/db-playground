@@ -64,7 +64,6 @@ export async function executeQuery() {
                 <td><input type="checkbox" value="${cachedQueries.length - 1}" checked></td>
                 <td>${queryName}</td>
                 <td>${tableName}</td>
-                <td>${query}</td>
                 <td>${Object.keys(data[0]).join(', ')}</td>
                 <td>${data.length}</td>   
                 `;

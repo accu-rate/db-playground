@@ -6,7 +6,9 @@ import java.util.Map;
 public interface DatabaseService {
     List<Map<String, Object>> executeQuery(String query);
 
-    List<String> getDistinctValues(String columnName);
+    List<String> getDistinctValuesFromVariantMapping(String columnName);
+
+    List<String> getDistinctValuesFromVariantResult(String columnName);
 
     Map<String, String> getAvailableQueries();
 

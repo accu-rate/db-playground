@@ -5,6 +5,7 @@ import org.example.io.utils.ZipUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +19,8 @@ import static org.example.Main.DATABASE_NAME;
 @Component
 public class DataHandlerDuckDB implements CommandLineRunner, DataHandler {
     private final HikariDataSource dataSource;
+    @Value("${database.name}")
+    private String databaseName;
 
     @Autowired
     public DataHandlerDuckDB(HikariDataSource dataSource) {
@@ -26,12 +29,13 @@ public class DataHandlerDuckDB implements CommandLineRunner, DataHandler {
 
     @Override
     public void run(String... args) {
+  //      resetDatabase();
     }
 
     @Override
     public void resetDatabase() {
         System.out.println("Löschen der bisherigen Datenbankdatei...");
-        File dbFile = new File(DATABASE_NAME);
+        File dbFile = new File(databaseName);
         if (dbFile.exists() && dbFile.isFile()) {
             if (dbFile.delete()) {
                 System.out.println("Datenbankdatei erfolgreich gelöscht.");

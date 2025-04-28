@@ -12,6 +12,9 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,6 +28,12 @@ public class DuckDBConfig {
 
     @Bean
     public HikariDataSource hikariDataSource() {
+        // Datei löschen falls sie existiert
+        File dbFile = new File(databaseName);
+        if (dbFile.exists() && !dbFile.delete()) {
+            throw new RuntimeException("Konnte existierende Datenbankdatei nicht löschen");
+        }
+
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("org.duckdb.DuckDBDriver");
         config.setJdbcUrl("jdbc:duckdb:" + databaseName);
@@ -33,6 +42,7 @@ public class DuckDBConfig {
 
         dataSource = new HikariDataSource(config);
         return dataSource;
+
     }
 
     @PreDestroy

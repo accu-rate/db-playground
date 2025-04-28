@@ -1,7 +1,5 @@
-package org.example;
+package org.example.database;
 
-import org.example.database.DatabaseService;
-import org.example.database.QueryResponse;
 import org.example.database.utils.DatabaseException;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-public class ResultController {
+public class DBController {
 
     private final DatabaseService resultService;
 
-    public ResultController(DatabaseService resultService) {
+    public DBController(DatabaseService resultService) {
         this.resultService = resultService;
     }
 
@@ -63,10 +61,10 @@ public class ResultController {
     public QueryResponse getFilterOptions() {
         try {
             Map<String, List<String>> filterOptions = new HashMap<>();
-            filterOptions.put("variant", resultService.getDistinctValues("variant"));
-            filterOptions.put("ref", resultService.getDistinctValues("ref"));
-            filterOptions.put("type", resultService.getDistinctValues("type"));
-            filterOptions.put("assignment", resultService.getDistinctValues("assignment"));
+            filterOptions.put("variant", resultService.getDistinctValuesFromVariantMapping("variant"));
+            filterOptions.put("ref", resultService.getDistinctValuesFromVariantMapping("ref"));
+            filterOptions.put("type", resultService.getDistinctValuesFromVariantMapping("type"));
+            filterOptions.put("assignment", resultService.getDistinctValuesFromVariantMapping("assignment"));
             return new QueryResponse(filterOptions);
         } catch (DatabaseException e) {
             return new QueryResponse("Fehler beim Laden der Filter-Optionen: " + e.getMessage());

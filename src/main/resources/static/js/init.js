@@ -16,6 +16,17 @@ export function initializeApp() {
         await updateQueries();
     });
 
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const queryButton = document.getElementById('send-query');
+        const tableSelect = document.getElementById('tableSelect');
+
+        // Button deaktivieren, wenn keine Tabelle ausgewählt ist
+        tableSelect.addEventListener('change', () => {
+            queryButton.disabled = tableSelect.value === '';
+        });
+    });
+
     initializeTableSelectListener();
     toggleVisibility(document.getElementById('toggleAreaCheckbox'), document.getElementById('queryContainer'));
 

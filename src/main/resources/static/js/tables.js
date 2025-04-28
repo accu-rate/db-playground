@@ -30,7 +30,6 @@ export function populateTableSelect(tables) {
         select.appendChild(noDataOption);
         return;
     }
-
     tables.forEach(table => {
         const option = document.createElement('option');
         option.value = table;

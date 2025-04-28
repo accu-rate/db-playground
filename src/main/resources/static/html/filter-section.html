@@ -2,6 +2,7 @@
     <h2>Vorfiltern der Varianten</h2>
     <form>
         <div id="filterContainer">
+            <h3>Varianten filtern:</h3>
             <div class="inline">
                 <label for="variantFilter">Filtere Variante(n):</label>
                 <select id="variantFilter">
@@ -19,9 +20,22 @@
                 </select>
             </div>
             <div class="inline">
-                <label for="refFilter">Für Objekt(e):</label>
-                <select id="refFilter">
+                <label for="objectFilter">Für Objekt(e):</label>
+                <select id="objectFilter">
                     <option value="">-- Alle Objekte --</option>
+                </select>
+            </div>
+            <h3>Ergebnisse filtern:</h3>
+            <div class="inline">
+                <label for="evacuationTimeFilter">Räumungszeit kleiner als:</label>
+                <select id="evacuationTimeFilter">
+                    <option value="">-- Zeit --</option>
+                </select>
+            </div>
+            <div class="inline">
+                <label for="noOfPedFilter">Anzahl Personen größer als:</label>
+                <select id="noOfPedFilter">
+                    <option value="">-- Personen --</option>
                 </select>
             </div>
             <div class="inline">

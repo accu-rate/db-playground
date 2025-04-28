@@ -57,9 +57,10 @@ export async function processVariantFolder() {
         });
 
         if (!response.ok) {
-            throw new Error('Fehler beim Verarbeiten des Ordners.');
+            const errorText = await response.text(); // Body als Text lesen
+            alert('Fehler beim Verarbeiten des Ordners: ' + errorText);
+            return;
         }
-
         // Erfolgreiche Verarbeitung, Tabellen und Filter aktualisieren
         await updateTablesAndFilters();
     } catch (error) {

@@ -50,7 +50,7 @@ public class DuckDBService implements DatabaseService {
     }
 
     @Override
-    public List<String> getDistinctValues(String columnName) {
+    public List<String> getDistinctValuesFromVariantMapping(String columnName) {
         System.out.println("getting distinct values for column: " + columnName);
         logPoolStats();
         String query = "SELECT DISTINCT " + columnName + " FROM variantmapping ORDER BY " + columnName;
@@ -66,6 +66,14 @@ public class DuckDBService implements DatabaseService {
         } catch (Exception e) {
             throw new DatabaseException(query, e);
         }
+    }
+
+    @Override
+    public List<String> getDistinctValuesFromVariantResult(String columnName) {
+        System.out.println("getting distinct values for column: " + columnName);
+        logPoolStats();
+        String query = "SELECT DISTINCT " + columnName + " FROM v ORDER BY " + columnName;
+        return Collections.emptyList();
     }
 
     @Override

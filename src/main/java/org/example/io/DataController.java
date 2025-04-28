@@ -59,34 +59,8 @@ public class DataController {
             File crowditFolder = subDirs[0]; // Erster Unterordner
             System.out.println("Gefundener Unterordner: " + crowditFolder.getAbsolutePath());
 
-            // Verarbeite die entpackten Dateien
-            File variantMapping = new File(crowditFolder, "variant-mapping.csv");
-            File variantSummary = new File(crowditFolder, "variant-result-summary.csv");
-
-            if (variantMapping.exists()) {
-                dataHandler.importCsv(variantMapping.getAbsolutePath(), "variantmapping");
-            }
-            if (variantSummary.exists()) {
-                dataHandler.importCsv(variantSummary.getAbsolutePath(), "variantresultsummary");
-            }
-
-            File[] variantDirs = crowditFolder.listFiles((dir, name) ->
-                    name.startsWith("out-variant-") && new File(dir, name).isDirectory());
-
-            if (variantDirs == null || variantDirs.length == 0) {
-                cleanupTempFiles(tempDir, zipTemp);
-                return ResponseEntity.badRequest().body("Keine variant-Ordner in der ZIP-Datei gefunden");
-            }
-
-            for (File variantDir : variantDirs) {
-                String variantNum = variantDir.getName().replace("out-variant-", "");
-                File[] gzFiles = variantDir.listFiles((dir, name) -> name.endsWith(".gz"));
-
-                if (gzFiles != null && gzFiles.length > 0) {
-                    String tableName = "variant" + variantNum;
-                    dataHandler.importCsv(gzFiles[0].getAbsolutePath(), tableName);
-                }
-            }
+            ResponseEntity<String> body = importVariants(crowditFolder, tempDir, zipTemp);
+            if (body != null) return body;
 
             cleanupTempFiles(tempDir, zipTemp);
             return ResponseEntity.ok("ZIP-Datei erfolgreich verarbeitet");
@@ -94,6 +68,38 @@ public class DataController {
             return ResponseEntity.status(500)
                     .body("Fehler beim Verarbeiten der ZIP-Datei: " + e.getMessage());
         }
+    }
+
+    private ResponseEntity<String> importVariants(File crowditFolder, File tempDir, File zipTemp) {
+        // Verarbeite die entpackten Dateien
+        File variantMapping = new File(crowditFolder, "variant-mapping.csv");
+        File variantSummary = new File(crowditFolder, "variant-result-summary.csv");
+
+        if (variantMapping.exists()) {
+            dataHandler.importCsv(variantMapping.getAbsolutePath(), "variantmapping");
+        }
+        if (variantSummary.exists()) {
+            dataHandler.importCsv(variantSummary.getAbsolutePath(), "variantresultsummary");
+        }
+
+        File[] variantDirs = crowditFolder.listFiles((dir, name) ->
+                name.startsWith("out-variant-") && new File(dir, name).isDirectory());
+
+        if (variantDirs == null || variantDirs.length == 0) {
+            cleanupTempFiles(tempDir, zipTemp);
+            return ResponseEntity.badRequest().body("Keine variant-Ordner in der ZIP-Datei gefunden");
+        }
+
+        for (File variantDir : variantDirs) {
+            String variantNum = variantDir.getName().replace("out-variant-", "");
+            File[] gzFiles = variantDir.listFiles((dir, name) -> name.endsWith(".gz"));
+
+            if (gzFiles != null && gzFiles.length > 0) {
+                String tableName = "variant" + variantNum;
+                dataHandler.importCsv(gzFiles[0].getAbsolutePath(), tableName);
+            }
+        }
+        return null;
     }
 
     private void cleanupTempFiles(File tempDir, File zipTemp) {

@@ -4,9 +4,9 @@ import {initializeTableSelectListener} from './tables.js';
 
 
 export function initializeApp() {
-    document.getElementById('uploadMultipleFilesForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        uploadMultipleCsvFilesAndFetchTables('csvFiles');
+
+    document.querySelectorAll('#filterContainer select').forEach(select => {
+        select.classList.add('filter-class');
     });
 
     document.getElementById('resetDatabaseButton').addEventListener('click', resetDatabase);
@@ -20,11 +20,6 @@ export function initializeApp() {
     document.addEventListener('DOMContentLoaded', () => {
         const queryButton = document.getElementById('send-query');
         const tableSelect = document.getElementById('tableSelect');
-
-        // Button deaktivieren, wenn keine Tabelle ausgewählt ist
-        tableSelect.addEventListener('change', () => {
-            queryButton.disabled = tableSelect.value === '';
-        });
     });
 
     initializeTableSelectListener();

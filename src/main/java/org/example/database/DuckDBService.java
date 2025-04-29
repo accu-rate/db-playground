@@ -28,15 +28,15 @@ public class DuckDBService implements DatabaseService {
     }
 
     @Override
-    public List<String> getFilteredTables(Map<String, String> filters) {
+    public List<String> getFilteredTables(Map<String, String> updatedFilters) {
         System.out.println("getting filtered tables: ");
         logPoolStats();
+
         FilterBuilder filterBuilder = new FilterBuilder();
-        String query = filterBuilder.buildFilterQuery(filters);
-        List<Object> parameters = filterBuilder.getParameters();
+        String query = filterBuilder.buildFilterQuery(updatedFilters);
 
         List<String> results = new ArrayList<>();
-        List<Map<String, Object>> queryResults = executeQuery(query, parameters);
+        List<Map<String, Object>> queryResults = executeQuery(query);
 
         for (Map<String, Object> row : queryResults) {
             String variantTable = "variant" + row.get("variant");
@@ -46,14 +46,16 @@ public class DuckDBService implements DatabaseService {
         }
 
         return results;
-
     }
 
     @Override
     public List<String> getDistinctValuesFromVariantMapping(String columnName) {
-        System.out.println("getting distinct values for column: " + columnName);
-        logPoolStats();
-        String query = "SELECT DISTINCT " + columnName + " FROM variantmapping ORDER BY " + columnName;
+        return getValuesFromTableForColumn("variantmapping", columnName);
+    }
+
+    private List<String> getValuesFromTableForColumn(String tableName, String columnName) {
+        System.out.println("getting distinct values for column: " + columnName + " from table" + tableName);
+        String query = "SELECT DISTINCT \"" + columnName + "\" FROM " + tableName + " ORDER BY \"" + columnName + "\"";
         List<String> results = new ArrayList<>();
 
         try (Connection conn = dataSource.getConnection();
@@ -70,10 +72,7 @@ public class DuckDBService implements DatabaseService {
 
     @Override
     public List<String> getDistinctValuesFromVariantResult(String columnName) {
-        System.out.println("getting distinct values for column: " + columnName);
-        logPoolStats();
-        String query = "SELECT DISTINCT " + columnName + " FROM v ORDER BY " + columnName;
-        return Collections.emptyList();
+        return getValuesFromTableForColumn("variantresultsummary", columnName);
     }
 
     @Override
@@ -89,18 +88,10 @@ public class DuckDBService implements DatabaseService {
     @Override
     public List<Map<String, Object>> executeQuery(String query) {
         System.out.println("executing query: " + query);
-        logPoolStats();
-        return executeQuery(query, Collections.emptyList());
-    }
-
-    private List<Map<String, Object>> executeQuery(String query, List<Object> parameters) {
         List<Map<String, Object>> results = new ArrayList<>();
+
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            for (int i = 0; i < parameters.size(); i++) {
-                stmt.setObject(i + 1, parameters.get(i));
-            }
 
             try (ResultSet rs = stmt.executeQuery()) {
                 ResultSetMetaData metaData = rs.getMetaData();
@@ -140,6 +131,7 @@ public class DuckDBService implements DatabaseService {
                 tables.add(rs.getString("TABLE_NAME"));
             } while (rs.next());
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new DatabaseException(e);
         }
         return tables;
@@ -174,4 +166,35 @@ public class DuckDBService implements DatabaseService {
             throw new DatabaseException(e);
         }
     }
+
+
+    @Override
+    public Map<String, String> getColumnTableMapping() throws DatabaseException {
+        Map<String, String> columnTableMap = new HashMap<>();
+        try (Connection connection = dataSource.getConnection()) {
+            DatabaseMetaData metaData = connection.getMetaData();
+            List<String> tables = getTables();
+            for (String tableName : tables) {
+                ResultSet columns = metaData.getColumns(null, null, tableName, "%");
+                while (columns.next()) {
+                    String columnName = columns.getString("COLUMN_NAME");
+                    columnTableMap.put(columnName, tableName);
+                }
+            }
+            printColumnTableMapping(columnTableMap);
+        } catch (Exception e) {
+            throw new DatabaseException("Fehler beim Abrufen der Tabellen- und Spalteninformationen", e);
+        }
+        return columnTableMap;
+    }
+
+    private void printColumnTableMapping(Map<String, String> mapping) {
+        System.out.println("\nSpalten-Tabellen-Zuordnung:");
+        System.out.println("===========================");
+        mapping.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .forEach(entry -> System.out.printf("%-30s -> %s%n", entry.getKey(), entry.getValue()));
+        System.out.println("===========================\n");
+    }
+
 }

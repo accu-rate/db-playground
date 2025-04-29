@@ -1,5 +1,7 @@
 package org.example.database;
 
+import org.example.database.utils.DatabaseException;
+
 import java.util.List;
 import java.util.Map;
 
@@ -14,9 +16,11 @@ public interface DatabaseService {
 
     List<String> getTables();
 
-    List<String> getFilteredTables(Map<String, String> filters);
+    List<String> getFilteredTables(Map<String, String> updatedFilters);
 
     List<String> getColumns(String tableName);
 
     boolean tableExists(String tableName);
+
+    Map<String, String> getColumnTableMapping() throws DatabaseException;
 }

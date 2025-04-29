@@ -3,12 +3,15 @@ import {fetchAndPopulateTables} from './data.js';
 import {sendRequestToBackend} from './utils.js';
 
 export async function applyFilters() {
-    const filters = {
-        variant: document.getElementById('variantFilter').value,
-        ref: document.getElementById('refFilter').value,
-        type: document.getElementById('typeFilter').value,
-        assignment: document.getElementById('assignmentFilter').value
-    };
+    const filters = [
+        { key: 'ref', operator: '=', value: document.getElementById('objectFilter').value },
+        { key: 'type', operator: '=', value: document.getElementById('typeFilter').value },
+        { key: 'assignment', operator: '=', value: document.getElementById('assignmentFilter').value },
+        { key: 'constraint type', operator: '=', value: document.getElementById('constraintTypeFilter').value },
+        { key: 'value', operator: '<=', value: document.getElementById('valueFilter').value }
+     ].filter(f => f.value !== ''); // Leere Filter entfernen
+
+
     const url = '/api/filter-data';
     const data = await sendRequestToBackend(filters, url);
     if (!data) return;
@@ -24,11 +27,11 @@ export async function updateFilters() {
         console.error('Fehler beim Abrufen der Filteroptionen.');
         return;
     }
-    populateFilter('variantFilter', filterOptions.variant);
     populateFilter('objectFilter', filterOptions.ref);
     populateFilter('typeFilter', filterOptions.type);
     populateFilter('assignmentFilter', filterOptions.assignment);
-
+    populateFilter('constraintTypeFilter', filterOptions.constraint_type);
+    populateFilter('valueFilter', filterOptions.value);
 }
 
 export function populateFilter(filterId, options) {
@@ -51,11 +54,10 @@ export function populateFilter(filterId, options) {
 }
 
 export function resetFilters() {
-    const filterIds = ['variantFilter', 'refFilter', 'typeFilter', 'assignmentFilter'];
-    filterIds.forEach(filterId => {
-        const filter = document.getElementById(filterId);
-        if (filter) {
-            filter.value = '';
+    const filters = document.querySelectorAll('.filter-class'); // Elemente mit der Klasse 'filter-class' auswählen
+    filters.forEach(filter => {
+        if (filter instanceof HTMLSelectElement) {
+            filter.value = ''; // Zurücksetzen des Wertes
         }
     });
     fetchAndPopulateTables();

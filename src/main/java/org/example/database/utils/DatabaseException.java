@@ -8,4 +8,8 @@ public class DatabaseException extends RuntimeException {
     public DatabaseException(String query, Throwable cause) {
         super("Error with database query:" + query, cause);
     }
+
+    public DatabaseException(String s) {
+        super("Error with database query:" + s);
+    }
 }

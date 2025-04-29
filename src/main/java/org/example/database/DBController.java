@@ -61,22 +61,50 @@ public class DBController {
     public QueryResponse getFilterOptions() {
         try {
             Map<String, List<String>> filterOptions = new HashMap<>();
+            // variant mapping
             filterOptions.put("variant", resultService.getDistinctValuesFromVariantMapping("variant"));
             filterOptions.put("ref", resultService.getDistinctValuesFromVariantMapping("ref"));
             filterOptions.put("type", resultService.getDistinctValuesFromVariantMapping("type"));
             filterOptions.put("assignment", resultService.getDistinctValuesFromVariantMapping("assignment"));
+
+            // variant constraints
+            filterOptions.put("constraint_type", resultService.getDistinctValuesFromVariantResult("constraint type"));
+            filterOptions.put("value_type", resultService.getDistinctValuesFromVariantResult("value type"));
+            filterOptions.put("value", resultService.getDistinctValuesFromVariantResult("value"));
+            filterOptions.put("fulfilled", resultService.getDistinctValuesFromVariantResult("constraint fulfilled"));
             return new QueryResponse(filterOptions);
         } catch (DatabaseException e) {
-            return new QueryResponse("Fehler beim Laden der Filter-Optionen: " + e.getMessage());
+            return handleError(e);
         }
     }
 
     @PostMapping("/api/filter-data")
-    public QueryResponse filterData(@RequestBody Map<String, String> filters) {
+    public QueryResponse filterData(@RequestBody List<Map<String, String>> filters) {
         try {
-            return new QueryResponse(resultService.getFilteredTables(filters));
+            Map<String, String> columnTableMap = resultService.getColumnTableMapping();
+            Map<String, String> updatedFilters = new HashMap<>();
+
+            for (Map<String, String> filter : filters) {
+                String columnName = filter.get("key");
+                String operator = filter.get("operator");
+                String value = filter.get("value");
+                String tableName = columnTableMap.get(columnName);
+
+                if (tableName != null) {
+                    String quotedColumnName = columnName.contains(" ") ? "\"" + columnName + "\"" : columnName;
+                    updatedFilters.put(tableName + "." + quotedColumnName + " " + operator, value);
+                } else {
+                    throw new DatabaseException("Spalte " + columnName + " konnte keiner Tabelle zugeordnet werden.");
+                }
+            }
+            return new QueryResponse(resultService.getFilteredTables(updatedFilters));
         } catch (DatabaseException e) {
-            return new QueryResponse("Fehler beim Filtern: " + e.getMessage());
+            return handleError(e);
         }
+    }
+
+    private static QueryResponse handleError(DatabaseException e) {
+        e.printStackTrace();
+        return new QueryResponse("Fehler beim Filtern: " + e.getCause());
     }
 }

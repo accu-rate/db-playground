@@ -217,3 +217,10 @@ select option {
     color: #555; /* Textfarbe der Optionen */
     background-color: #fff; /* Hintergrundfarbe der Optionen */
 }
+
+.filter-section {
+    display: flex;
+    align-items: bottom;
+    gap: 5px;
+    padding: 5px;
+}

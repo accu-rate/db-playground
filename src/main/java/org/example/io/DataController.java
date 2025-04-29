@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import static org.example.Constants.*;
+
 @RestController
 public class DataController {
 
@@ -72,18 +74,18 @@ public class DataController {
 
     private ResponseEntity<String> importVariants(File crowditFolder, File tempDir, File zipTemp) {
         // Verarbeite die entpackten Dateien
-        File variantMapping = new File(crowditFolder, "variant-mapping.csv");
-        File variantSummary = new File(crowditFolder, "variant-result-summary.csv");
+        File variantMapping = new File(crowditFolder, VARIANT_MAPPING_CSV);
+        File variantSummary = new File(crowditFolder, VARIANT_RESULT_SUMMARY_CSV);
 
         if (variantMapping.exists()) {
-            dataHandler.importCsv(variantMapping.getAbsolutePath(), "variantmapping");
+            dataHandler.importCsv(variantMapping.getAbsolutePath(), VARIANTMAPPING_TABLE);
         }
         if (variantSummary.exists()) {
-            dataHandler.importCsv(variantSummary.getAbsolutePath(), "variantresultsummary");
+            dataHandler.importCsv(variantSummary.getAbsolutePath(), VARIANTRESULTSUMMARY_TABLE);
         }
 
         File[] variantDirs = crowditFolder.listFiles((dir, name) ->
-                name.startsWith("out-variant-") && new File(dir, name).isDirectory());
+                name.startsWith(OUT_FOLDER_PREFIX) && new File(dir, name).isDirectory());
 
         if (variantDirs == null || variantDirs.length == 0) {
             cleanupTempFiles(tempDir, zipTemp);
@@ -91,15 +93,25 @@ public class DataController {
         }
 
         for (File variantDir : variantDirs) {
-            String variantNum = variantDir.getName().replace("out-variant-", "");
+            String tableName = createTableNameFromDir(variantDir.getName());
             File[] gzFiles = variantDir.listFiles((dir, name) -> name.endsWith(".gz"));
 
             if (gzFiles != null && gzFiles.length > 0) {
-                String tableName = "variant" + variantNum;
                 dataHandler.importCsv(gzFiles[0].getAbsolutePath(), tableName);
             }
         }
         return null;
+    }
+
+    private String createTableNameFromDir(String dirName) {
+
+        if (dirName.startsWith("out-variant-")) {
+            return VARIANT_TABLE_PREFIX + dirName.replace("out-variant-", "");
+        } else if (dirName.startsWith("out-")) {
+            return STATISTIC_RUN_PREFIX + dirName.replace("out-", "");
+        } else {
+            return dirName;
+        }
     }
 
     private void cleanupTempFiles(File tempDir, File zipTemp) {

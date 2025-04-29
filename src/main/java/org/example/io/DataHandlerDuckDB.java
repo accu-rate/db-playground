@@ -3,9 +3,9 @@ package org.example.io;
 import com.zaxxer.hikari.HikariDataSource;
 import org.example.io.utils.ZipUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +13,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import static org.example.Main.DATABASE_NAME;
 
 @Component
 public class DataHandlerDuckDB implements CommandLineRunner, DataHandler {
@@ -35,6 +33,17 @@ public class DataHandlerDuckDB implements CommandLineRunner, DataHandler {
     @Override
     public void resetDatabase() {
         System.out.println("Löschen der bisherigen Datenbankdatei...");
+
+        // Erst alle Verbindungen schließen
+        dataSource.close();
+
+        // Kurz warten um sicherzustellen, dass alle Verbindungen geschlossen sind
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         File dbFile = new File(databaseName);
         if (dbFile.exists() && dbFile.isFile()) {
             if (dbFile.delete()) {

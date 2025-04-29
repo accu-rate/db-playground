@@ -25,7 +25,7 @@ export async function updateFilters() {
         return;
     }
     populateFilter('variantFilter', filterOptions.variant);
-    populateFilter('refFilter', filterOptions.ref);
+    populateFilter('objectFilter', filterOptions.ref);
     populateFilter('typeFilter', filterOptions.type);
     populateFilter('assignmentFilter', filterOptions.assignment);
 

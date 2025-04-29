@@ -1,33 +1,35 @@
 <section class="chart-section">
-    <h2>Ergebnisse</h2>
-    <div id="executedQueries" class="queryTable hidden">
-        <h3>Gefilterte Ergebnisse</h3>
-        <table id="queryTable">
-            <thead>
-            <tr>
-                <th><input type="checkbox" id="headerCheckbox"></th>
-                <th>Variante</th>
-                <th>Abfragename</th>
-                <th>Zurückgegebene Spalten</th>
-                <th>Anzahl Datensätze</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- Dynamische Inhalte werden hier eingefügt -->
-            </tbody>
-        </table>
-        <div class="chart-controls">
-            <button type="button" onclick="plotSelectedQueries()">Ausgewählte Varianten plotten</button>
-            <button type="button" onclick="deleteSelectedQueries()">Ausgewählte Varianten löschen</button>
-            <button type="button" onclick="clearAllQueries()">Alle Varianten löschen</button>
+    <form>
+        <h2>Ergebnisse</h2>
+        <div id="executedQueries" class="queryTable hidden">
+            <label style="text-align: center" for="queryTable">Gefilterte Ergebnisse</label>
+            <table id="queryTable">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="headerCheckbox"></th>
+                    <th>Variante</th>
+                    <th>Abfragename</th>
+                    <th>Zurückgegebene Spalten</th>
+                    <th>Anzahl Datensätze</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Dynamische Inhalte werden hier eingefügt -->
+                </tbody>
+            </table>
+            <div class="chart-controls">
+                <button type="button" onclick="plotSelectedQueries()">Ausgewählte Varianten plotten</button>
+                <button type="button" onclick="deleteSelectedQueries()">Ausgewählte Varianten löschen</button>
+                <button type="button" onclick="clearAllQueries()">Alle Varianten löschen</button>
+            </div>
         </div>
-    </div>
-    <div class="chart-container">
-        <canvas id="resultChart" width="800" height="400"></canvas>
-    </div>
-    <div class="chart-controls">
-        <button onclick="setChartTypeAndUpdate('bar')"><i class="fas fa-chart-bar"></i>Balkendiagramm</button>
-        <button onclick="setChartTypeAndUpdate('line')"><i class="fas fa-chart-line"></i>Liniendiagramm</button>
-        <button onclick="setChartTypeAndUpdate('scatter')"><i class="fas fa-braille"></i>Streudiagramm</button>
-    </div>
+        <div class="chart-container">
+            <canvas id="resultChart" width="1200" height="800"></canvas>
+        </div>
+        <div class="chart-controls">
+            <button onclick="setChartTypeAndUpdate('bar')"><i class="fas fa-chart-bar"></i>Balkendiagramm</button>
+            <button onclick="setChartTypeAndUpdate('line')"><i class="fas fa-chart-line"></i>Liniendiagramm</button>
+            <button onclick="setChartTypeAndUpdate('scatter')"><i class="fas fa-braille"></i>Streudiagramm</button>
+        </div>
+    </form>
 </section>

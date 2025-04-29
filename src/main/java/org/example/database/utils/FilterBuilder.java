@@ -16,7 +16,7 @@ public class FilterBuilder {
         StringBuilder query = new StringBuilder(
                 "SELECT DISTINCT " + VARIANTMAPPING_TABLE + ".variant " +
                         "FROM " + VARIANTMAPPING_TABLE +
-                        "JOIN " + VARIANTRESULTSUMMARY_TABLE + " ON " + VARIANTMAPPING_TABLE + ".variant = " + VARIANTRESULTSUMMARY_TABLE + ".variant " +
+                        " JOIN " + VARIANTRESULTSUMMARY_TABLE + " ON " + VARIANTMAPPING_TABLE + ".variant = " + VARIANTRESULTSUMMARY_TABLE + ".variant " +
                         "WHERE 1=1"
         );
         filters.entrySet().forEach(entry -> addFilterCondition(query, entry));

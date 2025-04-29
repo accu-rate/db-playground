@@ -27,6 +27,14 @@ export async function updateFilters() {
         console.error('Fehler beim Abrufen der Filteroptionen.');
         return;
     }
+
+    const filterForm = document.getElementById('filterForm'); // Formular-Element auswählen
+
+    if (Object.keys(filterOptions).length === 0) {
+         filterForm.classList.add('hidden'); // Formular ausblenden
+        return;
+    }
+    filterForm.classList.remove('hidden'); // Formular anzeigen, falls es sichtbar sein soll
     populateFilter('objectFilter', filterOptions.ref);
     populateFilter('typeFilter', filterOptions.type);
     populateFilter('assignmentFilter', filterOptions.assignment);

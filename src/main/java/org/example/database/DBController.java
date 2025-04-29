@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.example.Constants.VARIANTMAPPING_TABLE;
+import static org.example.Constants.VARIANTRESULTSUMMARY_TABLE;
+
 @RestController
 public class DBController {
 
@@ -61,17 +64,23 @@ public class DBController {
     public QueryResponse getFilterOptions() {
         try {
             Map<String, List<String>> filterOptions = new HashMap<>();
-            // variant mapping
-            filterOptions.put("variant", resultService.getDistinctValuesFromVariantMapping("variant"));
-            filterOptions.put("ref", resultService.getDistinctValuesFromVariantMapping("ref"));
-            filterOptions.put("type", resultService.getDistinctValuesFromVariantMapping("type"));
-            filterOptions.put("assignment", resultService.getDistinctValuesFromVariantMapping("assignment"));
+            List<String> tables = resultService.getTables();
 
-            // variant constraints
-            filterOptions.put("constraint_type", resultService.getDistinctValuesFromVariantResult("constraint type"));
-            filterOptions.put("value_type", resultService.getDistinctValuesFromVariantResult("value type"));
-            filterOptions.put("value", resultService.getDistinctValuesFromVariantResult("value"));
-            filterOptions.put("fulfilled", resultService.getDistinctValuesFromVariantResult("constraint fulfilled"));
+            // Prüfe und füge Variant Mapping Optionen hinzu
+            if (tables.contains(VARIANTMAPPING_TABLE)) {
+                filterOptions.put("variant", resultService.getDistinctValuesFromVariantMapping("variant"));
+                filterOptions.put("ref", resultService.getDistinctValuesFromVariantMapping("ref"));
+                filterOptions.put("type", resultService.getDistinctValuesFromVariantMapping("type"));
+                filterOptions.put("assignment", resultService.getDistinctValuesFromVariantMapping("assignment"));
+            }
+
+            // Prüfe und füge Variant Result Optionen hinzu
+            if (tables.contains(VARIANTRESULTSUMMARY_TABLE)) {
+                filterOptions.put("constraint_type", resultService.getDistinctValuesFromVariantResult("constraint type"));
+                filterOptions.put("value_type", resultService.getDistinctValuesFromVariantResult("value type"));
+                filterOptions.put("value", resultService.getDistinctValuesFromVariantResult("value"));
+                filterOptions.put("fulfilled", resultService.getDistinctValuesFromVariantResult("constraint fulfilled"));
+            }
             return new QueryResponse(filterOptions);
         } catch (DatabaseException e) {
             return handleError(e);

@@ -30,12 +30,16 @@ public class DataController {
 
             assert originalFilename != null;
             originalFilename = originalFilename.substring(0, originalFilename.indexOf('.'));
-            String cleanedFilename = originalFilename.replaceAll("[^a-zA-Z0-9]", "");
+            String cleanedFilename = cleanFilename(originalFilename);
             dataHandler.importCsv(tempFile.getAbsolutePath(), cleanedFilename);
             tempFile.delete();
         } catch (IOException e) {
             throw new RuntimeException("Fehler beim Verarbeiten der Datei", e);
         }
+    }
+
+    private static String cleanFilename(String originalFilename) {
+        return originalFilename.replaceAll("[^a-zA-Z0-9]", "");
     }
 
     @PostMapping("/api/process-variant-folder")
@@ -93,11 +97,17 @@ public class DataController {
         }
 
         for (File variantDir : variantDirs) {
-            String tableName = createTableNameFromDir(variantDir.getName());
+            String baseTableName = createTableNameFromDir(variantDir.getName());
             File[] gzFiles = variantDir.listFiles((dir, name) -> name.endsWith(".gz"));
 
             if (gzFiles != null && gzFiles.length > 0) {
-                dataHandler.importCsv(gzFiles[0].getAbsolutePath(), tableName);
+                for (File gzFile : gzFiles) {
+                    // Extrahiere den Dateinamen ohne .gz Endung
+                    String fileName = gzFile.getName().replace(".gz", "").replace(".csv", "");
+                    // Kombiniere Basis-Tabellenname mit Dateiname
+                    String tableName = baseTableName + "_" + cleanFilename(fileName);
+                    dataHandler.importCsv(gzFile.getAbsolutePath(), tableName);
+                }
             }
         }
         return null;

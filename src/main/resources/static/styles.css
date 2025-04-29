@@ -78,11 +78,16 @@ button:hover {
     display: none;
 }
 
+.filter-group {
+    display: flex;
+    flex-direction: column; /* Filter-Input und Select vertikal anordnen */
+    gap: 5px; /* Abstand zwischen Filter-Input und Select */
+}
+
 .inline {
     display: flex;
-    align-items: bottom;
-    gap: 5px; /* Abstand zwischen Label und Eingabefeld */
-    padding: 5px;
+    align-items: flex-start; /* Elemente oben ausrichten */
+    gap: 10px; /* Abstand zwischen den Gruppen */
 }
 
 /* Tabellenstile */
@@ -224,3 +229,8 @@ select option {
 }
 
 .filter-section {}
+
+#tableSelect {
+    min-width: 200px; /* Mindestbreite */
+    min-height: 100px; /* Mindesthöhe */
+}

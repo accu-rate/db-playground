@@ -17,6 +17,18 @@ export function initializeApp() {
         }
     });
 
+    document.getElementById('tableFilterInput').addEventListener('input', function () {
+        const filterText = this.value.toLowerCase();
+        const options = document.querySelectorAll('#tableSelect option');
+
+        options.forEach(option => {
+            if (option.textContent.toLowerCase().includes(filterText) || option.value.toLowerCase().includes(filterText)) {
+                option.style.display = ''; // Zeige die Option
+            } else {
+                option.style.display = 'none'; // Verstecke die Option
+            }
+        });
+    });
 
     initializeTableSelectListener();
     toggleVisibility(document.getElementById('toggleAreaCheckbox'), document.getElementById('queryContainer'));

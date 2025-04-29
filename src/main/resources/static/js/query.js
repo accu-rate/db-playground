@@ -1,10 +1,11 @@
 // js/query.js
 import {sendRequestToBackend} from './utils.js';
+import {populateTableSelect} from './tables.js';
 
 export let cachedQueries = []; // Array für mehrere Abfragen
 
 
-export function setQuery() {
+export async function setQuery() {
     const querySelect = document.getElementById('querySelect');
     const queryTextarea = document.getElementById('query');
     const congestionVelocity = document.getElementById('congestionVelocityContainer');
@@ -32,6 +33,44 @@ export function setQuery() {
     } else {
         additionalAreaParamContainer.classList.add('hidden');
     }
+    await filterTables(selectedQuery);
+}
+
+
+async function filterTables(selectedQuery) {
+    const tableSelect = document.getElementById('tableSelect');
+
+    if (!selectedQuery) {
+        // Wenn keine Query ausgewählt ist, alle Tabellen anzeigen
+        populateTableSelect(await fetchAllTables());
+        return;
+    }
+
+    // Extrahiere die benötigten Spalten aus der Query
+    const requiredColumns = extractColumnsFromQuery(selectedQuery);
+
+    // Hole alle verfügbaren Tabellen
+    const allTables = await fetchAllTables();
+
+    // Filtere die Tabellen basierend auf den benötigten Spalten
+    const validTables = [];
+    for (const table of allTables) {
+        const tableColumns = await fetchTableColumns(table);
+        if (requiredColumns.every(column => tableColumns.includes(column))) {
+            validTables.push(table);
+        }
+    }
+
+    // Aktualisiere die Optionen in tableSelect
+    populateTableSelect(validTables);
+}
+
+async function fetchAllTables() {
+    return await sendRequestToBackend(null, '/api/get-tables')
+}
+
+async function fetchTableColumns(table) {
+    return await sendRequestToBackend(null, `/api/get-columns?table=${encodeURIComponent(table)}`)
 }
 
 export async function executeQuery() {
@@ -42,31 +81,47 @@ export async function executeQuery() {
         return;
     }
 
-    const url = '/api/execute-query';
-    console.log("Query:", query);
-    const data = await sendRequestToBackend(query, url); // Warte auf die Antwort von sendRequestToBackend
-
-    if (!data) return; // Beende die Funktion, wenn keine Daten zurückgegeben werden
-
-    const querySelect = document.getElementById('querySelect');
-    const queryName = querySelect.options[querySelect.selectedIndex].text; // Name der Query
     const tableSelect = document.getElementById('tableSelect');
-    const tableName = tableSelect.options[tableSelect.selectedIndex].text; // Name der Tabelle
+    const selectedOptions = Array.from(tableSelect.options).filter(option => option.selected && option.value);
 
-    cachedQueries.push({id: queryName, table: tableName, query, data}); // Speichere die Abfrage mit Tabellennamen
+    if (selectedOptions.length === 0) {
+        alert('Bitte wähle mindestens eine Tabelle aus.');
+        return;
+    }
+
+    for (const option of selectedOptions) {
+        const tableName = option.text;
+        await executeTableQuery(query, tableName);
+    }
+}
+
+async function executeTableQuery(query, tableName) {
+    const tableQuery = query.replace('${selectedTable}', tableName); // Ersetze Platzhalter mit Tabellenname
+    console.log("Query:", tableQuery);
+    const url = '/api/execute-query';
+    const data = await sendRequestToBackend(tableQuery, url);
+    if (!data) return null;
+
+    const queryName = querySelect.options[querySelect.selectedIndex].text; // Name der Query
+    cachedQueries.push({id: queryName, table: tableName, query: tableQuery, data});
+    addQueryToTable(tableName, queryName, data);
+
+    return data;
+}
+
+function addQueryToTable(tableName, queryName, data) {
     const executedQueriesTable = document.getElementById('executedQueries');
     executedQueriesTable.classList.remove('hidden');
 
-    // Füge die Query zur Tabelle hinzu
     const queryTableBody = document.querySelector('#queryTable tbody');
     const row = document.createElement('tr');
     row.innerHTML = `
-                <td><input type="checkbox" value="${cachedQueries.length - 1}" checked></td>
-                <td>${tableName}</td>
-                <td>${queryName}</td>
-                <td>${Object.keys(data[0]).join(', ')}</td>
-                <td>${data.length}</td>   
-                `;
+        <td><input type="checkbox" value="${cachedQueries.length - 1}" checked></td>
+        <td>${tableName}</td>
+        <td>${queryName}</td>
+        <td>${Object.keys(data[0]).join(', ')}</td>
+        <td>${data.length}</td>
+    `;
     queryTableBody.appendChild(row);
 }
 
@@ -95,15 +150,6 @@ function finalizeQuery() {
         queryWithParam = query.replace('?', congestionVelocity);
     }
 
-    // Ersetze die Platzhalter "${selectedTable}" nur, wenn sie in der Query vorhanden sind
-    if (query.includes('${selectedTable}')) {
-        if (!selectedTable) {
-            alert('Bitte wähle eine Tabelle aus.');
-            return;
-        }
-        queryWithParam = queryWithParam
-            .replaceAll('${selectedTable}', selectedTable);
-    }
     if (query.includes('${noOfPeds}')) {
         if (!noOfPeds) {
             alert('Bitte setze die Anzahl der Personen.');
@@ -156,83 +202,45 @@ export function deleteSelectedQueries() {
     });
 }
 
-export function loadQueriesFromApiAndFillOptions(apiUrl, selectElementId) {
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(queries => {
-            const querySelect = document.getElementById(selectElementId);
-            querySelect.innerHTML = '';
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = '-- Wähle eine Abfrage --';
-            querySelect.appendChild(defaultOption);
+export async function loadQueriesFromApiAndFillOptions() {
+    try {
+        const apiUrl = '/api/queries'; // API-URL für die Queries
+        console.log("Lade Queries von API:", apiUrl);
+        const queries = await sendRequestToBackend(null, apiUrl);
 
-            for (const [name, query] of Object.entries(queries)) {
-                const option = document.createElement('option');
-                option.value = query;
-                option.textContent = name;
-                querySelect.appendChild(option);
-            }
-        })
-        .catch(error => console.error('Fehler beim Laden der Queries:', error));
-}
+        if (!queries || typeof queries !== 'object') {
+            console.error('Ungültige API-Antwort:', queries);
+            return;
+        }
 
-export function loadQueriesFromApi(apiUrl) {
-    return fetch(apiUrl)
-        .then(response => response.json())
-        .catch(error => {
-            console.error('Fehler beim Laden der Queries:', error);
-            return [];
-        });
-}
+        const querySelect = document.getElementById('querySelect');
+        if (!querySelect) {
+            console.error("Element mit ID 'querySelect' nicht gefunden.");
+            return;
+        }
 
-export async function filterQueriesFromQuerySelect(selectedTable, tableColumns) {
-    const queries = await sendRequestToBackend(null, '/api/queries'); // Anfrage mit sendRequestToBackend
+        querySelect.innerHTML = '';
 
-    if (!queries) {
-        console.error('Fehler beim Abrufen der Queries.');
-        return [];
+        // Standardoption hinzufügen
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = '-- Wähle eine Abfrage --';
+        querySelect.appendChild(defaultOption);
+
+        // Queries hinzufügen
+        for (const [name, query] of Object.entries(queries)) {
+            const option = document.createElement('option');
+            option.value = query;
+            option.textContent = name;
+            querySelect.appendChild(option);
+        }
+
+        console.log("Queries erfolgreich geladen und hinzugefügt.");
+    } catch (error) {
+        console.error('Fehler beim Laden der Queries:', error.message || error);
     }
-
-    // Map in ein Array von Objekten umwandeln
-    const queryArray = Object.entries(queries).map(([key, value]) => ({key, value}));
-
-    const filteredQueries = queryArray
-        .filter(option => option.value) // Entferne leere Werte
-        .filter(option => {
-            const query = option.value;
-            if (query.includes('${selectedTable}') || query.includes(selectedTable)) {
-                const usedColumns = extractColumnsFromQuery(query);
-                return usedColumns.every(column => tableColumns.includes(column));
-            }
-            return false;
-        });
-
-    // Gib die gefilterten Key-Value-Paare zurück
-    return filteredQueries;
 }
 
-export async function updateQueries() {
-    const selectedTable = document.getElementById('tableSelect').value;
-
-    if (!selectedTable) {
-        updateQueryOptions([]);
-        return;
-    }
-
-
-    const url = `/api/get-columns?table=${encodeURIComponent(selectedTable)}`;
-    const tableColumns = await sendRequestToBackend(null, url);
-
-    if (!tableColumns) {
-        console.error('Fehler beim Abrufen der Tabellenspalten.');
-        return;
-    }
-
-    const filteredQueries = await filterQueriesFromQuerySelect(selectedTable, tableColumns);
-    updateQueryOptions(filteredQueries);
-
-}
 
 function extractColumnsFromQuery(query) {
     // Einfache Extraktion von Spaltennamen aus der Query (z. B. nach SELECT oder WHERE)

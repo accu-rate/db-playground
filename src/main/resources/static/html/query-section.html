@@ -2,22 +2,7 @@
     <h2>Ergebnisabfrage</h2>
     <form>
         <div class="query-container">
-            <label for="tableSelect">Wähle die zu analysierenden Ergebnisse:</label>
-            <div class="inline">
-                <select id="tableSelect">
-                    <option value="">-- Wähle eine Variante --</option>
-                    <!-- Tabellenoptionen werden hier dynamisch eingefügt -->
-                </select>
-                <label>
-                    <input type="checkbox" id="showColumnsCheckbox">
-                    Spalten anzeigen
-                </label>
-                <label class="hidden" id="columnsHeading" for="columnsContainer">Verfügbare Spalten:</label>
-                <div id="columnsContainer">
-                    <!-- Spalten werden hier angezeigt -->
-                </div>
-            </div>
-            <label for="querySelect">Wähle eine Abfrage:</label>
+             <label for="querySelect">Wähle eine Abfrage:</label>
             <select id="querySelect" onchange="setQuery()">
                 <option value="">-- Wähle eine Abfrage --</option>
             </select>
@@ -26,7 +11,7 @@
                     <input type="checkbox" id="toggleAreaCheckbox">
                     Abfrage anzeigen
                 </label>
-                <div id="queryContainer" class="hidden">
+                <div id="queryContainer" class="hidden" style="height: 86px; width: 571px;">
                     <textarea id="query" name="query"></textarea>
                 </div>
             </div>
@@ -54,6 +39,27 @@
 
                     <label for="posYMax">Y-Max:</label>
                     <input type="number" id="posYMax">
+                </div>
+            </div>
+
+            <label for="tableSelect">Wähle die zu analysierenden Ergebnisse:</label>
+            <div class="inline">
+                <select id="tableSelect"  multiple>
+                    <option value="">-- Wähle eine Variante --</option>
+                    <!-- Tabellenoptionen werden hier dynamisch eingefügt -->
+                </select>
+                <label>
+                    <input type="checkbox" id="selectAllTablesCheckbox">
+                    Alle Ergebnisse auswählen
+                </label>
+
+                <label>
+                    <input type="checkbox" id="showColumnsCheckbox">
+                    Spalten anzeigen
+                </label>
+                <label class="hidden" id="columnsHeading" for="columnsContainer">Verfügbare Spalten:</label>
+                <div id="columnsContainer">
+                    <!-- Spalten werden hier angezeigt -->
                 </div>
             </div>
         </div>

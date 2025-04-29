@@ -1,5 +1,5 @@
-import {loadQueriesFromApiAndFillOptions, updateQueries} from './query.js';
-import {uploadMultipleCsvFilesAndFetchTables, resetDatabase, importDatabase} from './data.js';
+import {loadQueriesFromApiAndFillOptions} from './query.js';
+import {resetDatabase, importDatabase} from './data.js';
 import {initializeTableSelectListener} from './tables.js';
 
 
@@ -7,15 +7,16 @@ export function initializeApp() {
     document.getElementById('resetDatabaseButton').addEventListener('click', resetDatabase);
     document.getElementById('importDatabaseButton').addEventListener('click', importDatabase);
 
-    document.getElementById('tableSelect').addEventListener('change', async () => {
-        await updateQueries();
-    });
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const queryButton = document.getElementById('send-query');
+    document.getElementById('selectAllTablesCheckbox').addEventListener('change', function () {
         const tableSelect = document.getElementById('tableSelect');
+        const isChecked = this.checked;
+
+        // Alle Optionen in der Mehrfachauswahl auswählen oder abwählen
+        for (const option of tableSelect.options) {
+            option.selected = isChecked;
+        }
     });
+
 
     initializeTableSelectListener();
     toggleVisibility(document.getElementById('toggleAreaCheckbox'), document.getElementById('queryContainer'));

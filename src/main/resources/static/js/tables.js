@@ -1,4 +1,3 @@
-import {filterQueriesFromQuerySelect, updateQueries, updateQueryOptions} from './query.js';
 import {sendRequestToBackend} from './utils.js';
 
 export function initializeTableSelectListener() {
@@ -36,7 +35,6 @@ export function populateTableSelect(tables) {
         option.textContent = table;
         select.appendChild(option);
     });
-    updateQueries();
 }
 
 export async function loadColumnsForSelectedTable() {

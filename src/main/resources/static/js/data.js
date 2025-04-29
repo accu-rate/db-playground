@@ -1,7 +1,8 @@
-import {populateTableSelect} from './tables.js';
+import {loadColumnsForSelectedTable, populateTableSelect} from './tables.js';
 import {updateFilters} from './filter.js';
 
 import {sendRequestToBackend} from './utils.js';
+import {loadQueriesFromApiAndFillOptions} from './query.js';
 
 export function uploadMultipleCsvFilesAndFetchTables(fileInputId) {
     const loadingIndicator = document.getElementById('loadingIndicator');
@@ -74,6 +75,7 @@ async function updateTablesAndFilters() {
     try {
         await fetchAndPopulateTables();
         await updateFilters();
+        await loadQueriesFromApiAndFillOptions();
     } catch (error) {
         console.error('Fehler:', error);
         alert('Ein Fehler ist aufgetreten.');

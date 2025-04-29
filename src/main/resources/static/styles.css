@@ -14,9 +14,9 @@ body {
     color: #0d3359; /* Dunkelblau */
 }
 
-h1, h2, h3 {
+h1, h2 {
     text-align: center;
-    color:  #0d3359; /* Mittelblau */
+    color:  #0d3359; /* Dunkelblau */
 }
 
 h1 {
@@ -26,6 +26,11 @@ h1 {
 h2 {
     margin-top: 12px;
 }
+
+h3 {
+    text-align: left;
+    color:   #1b6bbd; /* Mittelblau */
+    }
 
 form {
     max-width: 60%;
@@ -218,9 +223,4 @@ select option {
     background-color: #fff; /* Hintergrundfarbe der Optionen */
 }
 
-.filter-section {
-    display: flex;
-    align-items: bottom;
-    gap: 5px;
-    padding: 5px;
-}
+.filter-section {}

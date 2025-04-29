@@ -1,7 +1,7 @@
 <section class="filter-section">
     <h2>Vorfiltern der Varianten</h2>
     <form>
-        <div id="filterContainer">
+        <div id="filterContainer" class="filter-section">
             <h3>Varianten filtern:</h3>
             <div class="inline">
                 <label for="typeFilter">Mit Parameter:</label>
@@ -32,10 +32,10 @@
                     <option value="">-- Alle --</option>
                 </select>
             </div>
-            <div class="inline">
-                <button type="button" onclick="applyFilters()">Filter anwenden</button>
-                <button id="resetFiltersButton" type="button" onclick="resetFilters()">Filter zurücksetzen</button>
-            </div>
+        </div>
+        <div class="inline">
+            <button type="button" onclick="applyFilters()">Filter anwenden</button>
+            <button id="resetFiltersButton" type="button" onclick="resetFilters()">Filter zurücksetzen</button>
         </div>
     </form>
 </section>

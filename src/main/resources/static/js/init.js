@@ -4,11 +4,6 @@ import {initializeTableSelectListener} from './tables.js';
 
 
 export function initializeApp() {
-
-    document.querySelectorAll('#filterContainer select').forEach(select => {
-        select.classList.add('filter-class');
-    });
-
     document.getElementById('resetDatabaseButton').addEventListener('click', resetDatabase);
     document.getElementById('importDatabaseButton').addEventListener('click', importDatabase);
 

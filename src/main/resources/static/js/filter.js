@@ -54,7 +54,7 @@ export function populateFilter(filterId, options) {
 }
 
 export function resetFilters() {
-    const filters = document.querySelectorAll('.filter-class'); // Elemente mit der Klasse 'filter-class' auswählen
+    const filters = document.querySelectorAll('.filter-section'); // Elemente mit der Klasse 'filter-class' auswählen
     filters.forEach(filter => {
         if (filter instanceof HTMLSelectElement) {
             filter.value = ''; // Zurücksetzen des Wertes

@@ -90,7 +90,6 @@ export async function fetchAndPopulateTables() {
         console.error('Fehler beim Abrufen der Tabellen.');
         return;
     }
-
     populateTableSelect(tables);
 }
 

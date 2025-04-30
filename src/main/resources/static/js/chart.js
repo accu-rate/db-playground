@@ -14,6 +14,7 @@ export function setChartTypeAndUpdate(type) {
 }
 
 export function updateChart(data) {
+    console.log('updateChart', data);
     const datasets = [];
     const colors = generateColors(data.length);
     let xAxisLabel;
@@ -76,6 +77,7 @@ export function updateChart(data) {
         }
     });
 }
+
 function generateColors(count) {
     const alpha = 0.8; // Definiere den Alpha-Wert als Variable
 

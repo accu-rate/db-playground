@@ -50,7 +50,7 @@ async function filterTables(selectedQuery) {
     const requiredColumns = extractColumnsFromQuery(selectedQuery);
 
     // Hole alle verfügbaren Tabellen
-    const allTables = await fetchAllTables();
+    const allTables = await getCurrentTablesFromTableSelect();
 
     // Filtere die Tabellen basierend auf den benötigten Spalten
     const validTables = [];
@@ -65,8 +65,12 @@ async function filterTables(selectedQuery) {
     populateTableSelect(validTables);
 }
 
-async function fetchAllTables() {
-    return await sendRequestToBackend(null, '/api/get-tables')
+function getCurrentTablesFromTableSelect() {
+    const tableSelect = document.getElementById('tableSelect');
+    const currentTables = Array.from(tableSelect.options)
+        .map(option => option.value)
+        .filter(value => value); // Entferne leere Werte
+    return currentTables;
 }
 
 async function fetchTableColumns(table) {

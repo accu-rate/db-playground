@@ -40,12 +40,21 @@ public class DuckDBService implements DatabaseService {
 
         for (Map<String, Object> row : queryResults) {
             String variantTable = "variant" + row.get("variant");
-            if (tableExists(variantTable) && !results.contains(variantTable)) {
-                results.add(variantTable);
-            }
+            results.addAll(getTablesContaining(variantTable));
         }
 
         return results;
+    }
+
+    private List<String> getTablesContaining(String pattern) {
+        List<String> matchingTables = new ArrayList<>();
+
+        List<String> tables = getTables();
+        tables.stream()
+                .filter(tableName -> tableName.contains(pattern))
+                .forEach(matchingTables::add);
+
+        return matchingTables;
     }
 
     @Override

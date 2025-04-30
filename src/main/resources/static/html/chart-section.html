@@ -27,9 +27,15 @@
             <canvas id="resultChart" width="1200" height="800"></canvas>
         </div>
         <div class="chart-controls">
-            <button onclick="setChartTypeAndUpdate('bar')"><i class="fas fa-chart-bar"></i>Balkendiagramm</button>
-            <button onclick="setChartTypeAndUpdate('line')"><i class="fas fa-chart-line"></i>Liniendiagramm</button>
-            <button onclick="setChartTypeAndUpdate('scatter')"><i class="fas fa-braille"></i>Streudiagramm</button>
+            <button type="button" onclick="event.preventDefault(); setChartTypeAndUpdate('bar')">
+                <i class="fas fa-chart-bar"></i>Balkendiagramm
+            </button>
+            <button type="button" onclick="event.preventDefault(); setChartTypeAndUpdate('line')">
+                <i class="fas fa-chart-line"></i>Liniendiagramm
+            </button>
+            <button type="button" onclick="event.preventDefault(); setChartTypeAndUpdate('scatter')">
+                <i class="fas fa-braille"></i>Streudiagramm
+            </button>
         </div>
     </form>
 </section>

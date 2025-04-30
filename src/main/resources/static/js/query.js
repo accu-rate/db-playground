@@ -2,6 +2,8 @@
 import {sendRequestToBackend} from './utils.js';
 import {populateTableSelect} from './tables.js';
 
+export const QUERY_NAME_PEDS_VS_EVACTIME = 'Anzahl Personen vs. Räumungszeit'; // be careful with this name, it is used in queries-duckdb.sql - I know, very bad practice
+export const QUERY_NAME_EXITS_VS_EVACTIME = 'Anzahl Ausgänge vs. Räumungszeit'; // be careful with this name, it is used in queries-duckdb.sql - I know, very bad practice
 export let cachedQueries = []; // Array für mehrere Abfragen
 
 
@@ -33,34 +35,44 @@ export async function setQuery() {
     } else {
         additionalAreaParamContainer.classList.add('hidden');
     }
-    await filterTables(selectedQuery);
+    await filterTables(querySelect.options[querySelect.selectedIndex].text, selectedQuery);
 }
 
 
-async function filterTables(selectedQuery) {
-    const tableSelect = document.getElementById('tableSelect');
+function queryNeedsTableName(selectedQueryName) {
+    return selectedQueryName !== QUERY_NAME_PEDS_VS_EVACTIME && selectedQueryName !== QUERY_NAME_EXITS_VS_EVACTIME;
+}
 
+async function filterTables(selectedQueryName, selectedQuery) {
     if (!selectedQuery) {
         // Wenn keine Query ausgewählt ist, alle Tabellen anzeigen
-        populateTableSelect(await fetchAllTables());
+        const allTables = await fetchAllTables();
+        populateTableSelect(allTables);
         return;
     }
 
-    // Extrahiere die benötigten Spalten aus der Query
-    const requiredColumns = extractColumnsFromQuery(selectedQuery);
-
-    // Hole alle verfügbaren Tabellen
-    const allTables = await getCurrentTablesFromTableSelect();
-
     // Filtere die Tabellen basierend auf den benötigten Spalten
     const validTables = [];
-    for (const table of allTables) {
-        const tableColumns = await fetchTableColumns(table);
-        if (requiredColumns.every(column => tableColumns.includes(column))) {
-            validTables.push(table);
+    console.log("selectedQueryname:", selectedQueryName);
+    if (queryNeedsTableName(selectedQueryName)) {
+        // Extrahiere die benötigten Spalten aus der Query
+        const requiredColumns = extractColumnsFromQuery(selectedQuery);
+
+        // Hole alle verfügbaren Tabellen
+        const allTables = await getCurrentTablesFromTableSelect();
+
+        for (const table of allTables) {
+            try {
+                const tableColumns = await fetchTableColumns(table);
+                if (requiredColumns.every(column => tableColumns.includes(column))) {
+                    validTables.push(table);
+                }
+            } catch (error) {
+                console.error(`Fehler beim Abrufen der Spalten für Tabelle ${table}:`, error);
+            }
         }
     }
-
+    console.log("validTables:", validTables);
     // Aktualisiere die Optionen in tableSelect
     populateTableSelect(validTables);
 }
@@ -71,6 +83,12 @@ function getCurrentTablesFromTableSelect() {
         .map(option => option.value)
         .filter(value => value); // Entferne leere Werte
     return currentTables;
+}
+
+
+async function fetchColumnValues(table, columnName) {
+    const url = `/api/get-column-values?table=${encodeURIComponent(table)}&column=${encodeURIComponent(columnName)}`;
+    return await sendRequestToBackend(null, url);
 }
 
 async function fetchTableColumns(table) {
@@ -88,8 +106,14 @@ export async function executeQuery() {
     const tableSelect = document.getElementById('tableSelect');
     const selectedOptions = Array.from(tableSelect.options).filter(option => option.selected && option.value);
 
-    if (selectedOptions.length === 0) {
+    if (selectedOptions.length === 0 && queryNeedsTableName(querySelect.options[querySelect.selectedIndex].text)) {
+        console.log(querySelect.options[querySelect.selectedIndex].text);
         alert('Bitte wähle mindestens eine Tabelle aus.');
+        return;
+    }
+    console.log(querySelect.options[querySelect.selectedIndex].text);
+    if (selectedOptions.length === 0) {
+        await executeTableQuery(query, 'default');
         return;
     }
 
@@ -100,7 +124,8 @@ export async function executeQuery() {
 }
 
 async function executeTableQuery(query, tableName) {
-    const tableQuery = query.replace('${selectedTable}', tableName); // Ersetze Platzhalter mit Tabellenname
+    console.log("Query wird ersetzt:", query);
+    const tableQuery = query.replaceAll('${selectedTable}', tableName); // Ersetze Platzhalter mit Tabellenname
     console.log("Query:", tableQuery);
     const url = '/api/execute-query';
     const data = await sendRequestToBackend(tableQuery, url);
@@ -136,7 +161,6 @@ function finalizeQuery() {
     const posXMax = document.getElementById('posXMax').value || Number.MAX_VALUE;
     const posYMin = document.getElementById('posYMin').value || Number.MIN_VALUE;
     const posYMax = document.getElementById('posYMax').value || Number.MAX_VALUE;
-    const selectedTable = document.getElementById('tableSelect').value;
     const noOfPeds = document.getElementById('noOfPeds').value;
 
     if (!query) {
@@ -233,6 +257,34 @@ export async function loadQueriesFromApiAndFillOptions() {
 
         // Queries hinzufügen
         for (const [name, query] of Object.entries(queries)) {
+            if (name === QUERY_NAME_EXITS_VS_EVACTIME) {
+                const typeFilter = document.getElementById('typeFilter');
+                const options = Array.from(typeFilter.options);
+                const containsTrueOrFalse = options.some(option => option.text === 'noOfExits');
+                if (!containsTrueOrFalse) {
+                    console.log("query filter." + options.map(option => option.text));
+                    continue;
+                }
+            }
+            if (name === QUERY_NAME_PEDS_VS_EVACTIME) {
+                const typeFilter = document.getElementById('typeFilter');
+                const options = Array.from(typeFilter.options);
+                const containsTrueOrFalse = options.some(option => option.text === 'noOfPeds');
+                if (!containsTrueOrFalse) {
+                    console.log("query filter." + options.map(option => option.text));
+                    continue;
+                }
+            }
+            if (name === QUERY_NAME_EXITS_VS_EVACTIME || name === QUERY_NAME_PEDS_VS_EVACTIME) {
+                const constraintTypeFilter = document.getElementById('constraintTypeFilter');
+                const constraintOptions = Array.from(constraintTypeFilter.options);
+                const containsEvacTime = constraintOptions.some(option => option.text === 'evacuationTime');
+                if (!containsEvacTime) {
+                    console.log("query filter." + constraintOptions.map(option => option.text));
+                    continue;
+                }
+            }
+
             const option = document.createElement('option');
             option.value = query;
             option.textContent = name;

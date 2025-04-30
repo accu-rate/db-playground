@@ -83,7 +83,7 @@ WITH AvailableExits AS (
         variant
 )
 SELECT
-    a.available_exits AS "Anzahl Ausgänge",
+    a.available_exits AS 'Anzahl Ausgänge',
     b.value AS Raeumungszeit
 FROM
     AvailableExits a
@@ -99,7 +99,7 @@ ORDER BY b.value, a.available_exits;
 WITH NoOfPeds AS (
     SELECT
         variant,
-        COUNT(*) AS no_of_peds
+        SUM(assignment) AS no_of_peds
     FROM
         variantmapping
     WHERE
@@ -108,14 +108,17 @@ WITH NoOfPeds AS (
         variant
 )
 SELECT
-    a.no_of_peds AS "Anzahl Personen",
-    b.value AS Raeumungszeit
+    b.value AS Raeumungszeit,
+    SUM(a.no_of_peds) AS Gesamtanzahl_Personen
 FROM
     NoOfPeds a
-JOIN
+        JOIN
     variantresultsummary b
-ON
-    a.variant = b.variant
+    ON
+        a.variant = b.variant
 WHERE
     b."constraint type" = 'evacuationTime'
-ORDER BY b.value, a.no_of_peds;
+GROUP BY
+    b.value
+ORDER BY
+    b.value ASC;

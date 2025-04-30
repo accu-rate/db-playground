@@ -8,10 +8,18 @@ export function sendRequestToBackend(data, url) {
 
     if (data) {
         const isFormData = data instanceof FormData;
-        options.body = isFormData ? data : JSON.stringify(data); // Direkte Übergabe der Daten
+        options.body = data;
 
         if (!isFormData) {
-            options.headers = {'Content-Type': 'application/json'};
+            // Content-Type basierend auf Datentyp setzen
+            options.headers = {
+                'Content-Type': typeof data === 'string' ? 'text/plain' : 'application/json'
+            };
+
+            // Bei JSON-Daten noch stringify ausführen
+            if (typeof data !== 'string') {
+                options.body = JSON.stringify(data);
+            }
         }
     }
     return fetch(url, options)

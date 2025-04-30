@@ -104,7 +104,7 @@ public class DuckDBService implements DatabaseService {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 ResultSetMetaData metaData = rs.getMetaData();
-                while (rs.next()) {  // Entfernung der ersten next() Prüfung
+                while (rs.next()) {
                     results.add(extractRow(rs, metaData));
                 }
                 return results;
@@ -114,6 +114,25 @@ public class DuckDBService implements DatabaseService {
         }
     }
 
+
+    @Override
+    public List<Map<String, Object>> getColumnValues(String tableName, String columnName) {
+        String query = "SELECT DISTINCT \"" + columnName + "\" FROM " + tableName + " ORDER BY \"" + columnName + "\"";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                List<Map<String, Object>> results = new ArrayList<>();
+                ResultSetMetaData metaData = rs.getMetaData();
+                while (rs.next()) {
+                    results.add(extractRow(rs, metaData));
+                }
+                return results;
+            }
+        } catch (Exception e) {
+            throw new DatabaseException(query, e);
+        }
+    }
     private Map<String, Object> extractRow(ResultSet rs, ResultSetMetaData metaData) throws
             SQLException {
         Map<String, Object> row = new LinkedHashMap<>();

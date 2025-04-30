@@ -14,6 +14,8 @@ public interface DatabaseService {
 
     Map<String, String> getAvailableQueries();
 
+    List<Map<String, Object>> getColumnValues(String tableName, String columnName);
+
     List<String> getTables();
 
     List<String> getFilteredTables(Map<String, String> updatedFilters);

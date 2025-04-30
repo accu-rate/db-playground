@@ -82,13 +82,13 @@ function generateColors(count) {
     const alpha = 0.8; // Definiere den Alpha-Wert als Variable
 
     const baseColors = [
-        `rgba(233, 234, 242, ${alpha})`, // Graublau
         `rgba(27, 107, 189, ${alpha})`,  // Mittelblau
         `rgba(13, 51, 89, ${alpha})`,    // Dunkelblau
         `rgba(255, 107, 43, ${alpha})`,  // Orange
         `rgba(255, 140, 85, ${alpha})`,  // Helles Orange
         `rgba(204, 221, 237, ${alpha})`, // Helles Graublau
         `rgba(0, 82, 155, ${alpha})`,    // Tiefblau
+        `rgba(233, 234, 242, ${alpha})`, // Graublau
         `rgba(255, 178, 128, ${alpha})`, // Pastellorange
         `rgba(189, 204, 221, ${alpha})`, // Blasses Blau
         `rgba(102, 153, 204, ${alpha})`  // Mittelgraublau

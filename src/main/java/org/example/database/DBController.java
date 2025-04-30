@@ -1,6 +1,7 @@
 package org.example.database;
 
 import org.example.database.utils.DatabaseException;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -19,13 +20,9 @@ public class DBController {
         this.resultService = resultService;
     }
 
-    @PostMapping("/api/execute-query")
+    @PostMapping(value = "/api/execute-query", consumes = MediaType.TEXT_PLAIN_VALUE)
     public QueryResponse executeQuery(@RequestBody String query) {
         try {
-            // Entferne umschließende Anführungszeichen, falls vorhanden
-            if (query.startsWith("\"") && query.endsWith("\"")) {
-                query = query.substring(1, query.length() - 1);
-            }
             return new QueryResponse(resultService.executeQuery(query));
         } catch (DatabaseException e) {
             e.printStackTrace();
@@ -57,6 +54,15 @@ public class DBController {
             return new QueryResponse(resultService.getColumns(table));
         } catch (DatabaseException e) {
             return new QueryResponse("Fehler beim Laden der Spalten: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/api/get-column-values")
+    public QueryResponse getColumnValues(@RequestParam String table, @RequestParam String column) {
+        try {
+            return new QueryResponse(resultService.getColumnValues(table, column));
+        } catch (DatabaseException e) {
+            return new QueryResponse("Fehler beim Laden der Spaltenwerte: " + e.getMessage());
         }
     }
 

@@ -87,7 +87,7 @@ button:hover {
 .inline {
     display: flex;
     align-items: center; /* Elemente oben ausrichten */
-     gap: 10px; /* Abstand zwischen den Gruppen */
+    gap: 10px; /* Abstand zwischen den Gruppen */
 }
 
 /* Tabellenstile */

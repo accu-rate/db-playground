@@ -2,7 +2,7 @@
     <form>
         <h2>Ergebnisabfrage</h2>
         <div class="query-container">
-            <label for="querySelect">Wähle eine Abfrage:</label>
+            <h3>Abfrage wählen:</h3>
             <select id="querySelect" onchange="setQuery()">
                 <option value="">-- Wähle eine Abfrage --</option>
             </select>
@@ -15,14 +15,18 @@
                     <textarea id="query" name="query"></textarea>
                 </div>
             </div>
-            <div id="congestionVelocityContainer" style="display: none;">
-                <label for="congestionVelocity">Staugrenzgeschwindigkeit:</label>
-                <input type="text" id="congestionVelocity" placeholder="0.8">
+            <div class="inline">
+                <div id="congestionVelocityContainer" style="display: none;">
+                    <label for="congestionVelocity">Staugrenzgeschwindigkeit:</label>
+                    <input type="text" id="congestionVelocity" placeholder="0.8">
+                </div>
             </div>
 
-            <div id="noOfPedsContainer" style="display: none;">
-                <label for="noOfPeds">Anzahl Personen:</label>
-                <input type="text" id="noOfPeds" placeholder="40">
+            <div class="inline">
+                <div id="noOfPedsContainer" style="display: none;">
+                    <label for="noOfPeds">Anzahl Personen:</label>
+                    <input type="text" id="noOfPeds" placeholder="40">
+                </div>
             </div>
 
             <div id="additionalAreaParamContainer" class="hidden">
@@ -41,8 +45,7 @@
                     <input type="number" id="posYMax">
                 </div>
             </div>
-
-            <label for="tableSelect">Wähle die zu analysierenden Ergebnisse:</label>
+            <h3>Wähle die zu analysierenden Ergebnisse:</h3>
             <div class="inline">
                 <div class="filter-group">
                     <input type="text" id="tableFilterInput" placeholder="Filtere Varianten...">

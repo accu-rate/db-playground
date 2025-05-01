@@ -260,7 +260,7 @@ export async function loadQueriesFromApiAndFillOptions() {
             if (name === QUERY_NAME_EXITS_VS_EVACTIME) {
                 const typeFilter = document.getElementById('typeFilter');
                 const options = Array.from(typeFilter.options);
-                const containsTrueOrFalse = options.some(option => option.text === 'noOfExits');
+                const containsTrueOrFalse = options.some(option => option.text === 'availability');
                 if (!containsTrueOrFalse) {
                     console.log("query filter." + options.map(option => option.text));
                     continue;

@@ -1,4 +1,4 @@
-import {sendRequestToBackend} from './utils.js';
+import {sendRequestToBackend} from '../utils.js';
 
 export function initializeTableSelectListener() {
     const tableSelect = document.getElementById('tableSelect');

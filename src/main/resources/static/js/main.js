@@ -8,11 +8,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 import {initializeComponents} from './components.js';
 import {initializeApp} from './init.js';
 import {
-    executeQuery,
     clearAllQueries,
-    setQuery,
     deleteSelectedQueries
-} from './query.js';
+} from './query/query.js';
+import {executeQuery} from './query/queryExecution.js';
+import {setQuery} from './query/queryFilter.js';
 import {
     setChartTypeAndUpdate,
     plotSelectedQueries

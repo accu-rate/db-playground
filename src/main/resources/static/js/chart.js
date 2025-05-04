@@ -1,7 +1,7 @@
 // js/chart.js
 let chartInstance;
 let selectedChartType = 'scatter';
-import {cachedQueries} from './query.js';
+import {cachedQueries} from './query/query.js';
 
 export function setChartTypeAndUpdate(type) {
     if (!cachedQueries) {
@@ -111,5 +111,6 @@ export function plotSelectedQueries() {
     }
 
     const selectedData = selectedIndices.map(index => cachedQueries[index]);
+    console.log('selectedData', selectedData);
     updateChart(selectedData);
 }

@@ -1,4 +1,4 @@
-import {populateTableSelect} from './tables.js';
+import {populateTableSelect} from './tables/tables.js';
 import {fetchAndPopulateTables} from './data.js';
 import {sendRequestToBackend} from './utils.js';
 

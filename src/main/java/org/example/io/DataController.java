@@ -38,7 +38,7 @@ public class DataController {
         }
     }
 
-    private static String cleanFilename(String originalFilename) {
+    private String cleanFilename(String originalFilename) {
         return originalFilename.replaceAll("[^a-zA-Z0-9]", "");
     }
 
@@ -100,10 +100,10 @@ public class DataController {
             String baseTableName = createTableNameFromDir(variantDir.getName());
             File[] gzFiles = variantDir.listFiles((dir, name) -> name.endsWith(".gz"));
 
-            if (gzFiles != null && gzFiles.length > 0) {
+            if (gzFiles != null) {
                 for (File gzFile : gzFiles) {
                     // Extrahiere den Dateinamen ohne .gz Endung
-                    String fileName = gzFile.getName().replace(".gz", "").replace(".csv", "");
+                    String fileName = gzFile.getName().replace(".gz", "").replace(".csv", "").replace("floor", "");
                     // Kombiniere Basis-Tabellenname mit Dateiname
                     String tableName = baseTableName + "_" + cleanFilename(fileName);
                     dataHandler.importCsv(gzFile.getAbsolutePath(), tableName);

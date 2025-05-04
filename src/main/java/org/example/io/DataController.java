@@ -22,26 +22,6 @@ public class DataController {
         this.dataHandler = dataHandler;
     }
 
-    private void uploadInDatabase(MultipartFile file) {
-        try {
-            String originalFilename = file.getOriginalFilename();
-            File tempFile = File.createTempFile("uploaded-", originalFilename);
-            file.transferTo(tempFile);
-
-            assert originalFilename != null;
-            originalFilename = originalFilename.substring(0, originalFilename.indexOf('.'));
-            String cleanedFilename = cleanFilename(originalFilename);
-            dataHandler.importCsv(tempFile.getAbsolutePath(), cleanedFilename);
-            tempFile.delete();
-        } catch (IOException e) {
-            throw new RuntimeException("Fehler beim Verarbeiten der Datei", e);
-        }
-    }
-
-    private String cleanFilename(String originalFilename) {
-        return originalFilename.replaceAll("[^a-zA-Z0-9]", "");
-    }
-
     @PostMapping("/api/process-variant-folder")
     public ResponseEntity<String> processVariantFolder(@RequestParam("file") MultipartFile zipFile) {
         if (!zipFile.getOriginalFilename().endsWith(".zip")) {
@@ -74,74 +54,6 @@ public class DataController {
             return ResponseEntity.status(500)
                     .body("Fehler beim Verarbeiten der ZIP-Datei: " + e.getMessage());
         }
-    }
-
-    private ResponseEntity<String> importVariants(File crowditFolder, File tempDir, File zipTemp) {
-        // Verarbeite die entpackten Dateien
-        File variantMapping = new File(crowditFolder, VARIANT_MAPPING_CSV);
-        File variantSummary = new File(crowditFolder, VARIANT_RESULT_SUMMARY_CSV);
-
-        if (variantMapping.exists()) {
-            dataHandler.importCsv(variantMapping.getAbsolutePath(), VARIANTMAPPING_TABLE);
-        }
-        if (variantSummary.exists()) {
-            dataHandler.importCsv(variantSummary.getAbsolutePath(), VARIANTRESULTSUMMARY_TABLE);
-        }
-
-        File[] variantDirs = crowditFolder.listFiles((dir, name) ->
-                name.startsWith(OUT_FOLDER_PREFIX) && new File(dir, name).isDirectory());
-
-        if (variantDirs == null || variantDirs.length == 0) {
-            cleanupTempFiles(tempDir, zipTemp);
-            return ResponseEntity.badRequest().body("Keine variant-Ordner in der ZIP-Datei gefunden");
-        }
-
-        for (File variantDir : variantDirs) {
-            String baseTableName = createTableNameFromDir(variantDir.getName());
-            File[] gzFiles = variantDir.listFiles((dir, name) -> name.endsWith(".gz"));
-
-            if (gzFiles != null) {
-                for (File gzFile : gzFiles) {
-                    // Extrahiere den Dateinamen ohne .gz Endung
-                    String fileName = gzFile.getName().replace(".gz", "").replace(".csv", "").replace("floor", "");
-                    // Kombiniere Basis-Tabellenname mit Dateiname
-                    String tableName = baseTableName + "_" + cleanFilename(fileName);
-                    dataHandler.importCsv(gzFile.getAbsolutePath(), tableName);
-                }
-            }
-        }
-        return null;
-    }
-
-    private String createTableNameFromDir(String dirName) {
-
-        if (dirName.startsWith("out-variant-")) {
-            return VARIANT_TABLE_PREFIX + dirName.replace("out-variant-", "");
-        } else if (dirName.startsWith("out-")) {
-            return STATISTIC_RUN_PREFIX + dirName.replace("out-", "");
-        } else {
-            return dirName;
-        }
-    }
-
-    private void cleanupTempFiles(File tempDir, File zipTemp) {
-        // Rekursives Löschen des temporären Verzeichnisses
-        deleteDirectory(tempDir);
-        zipTemp.delete();
-    }
-
-    private void deleteDirectory(File directory) {
-        File[] files = directory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    deleteDirectory(file);
-                } else {
-                    file.delete();
-                }
-            }
-        }
-        directory.delete();
     }
 
     @PostMapping("/api/upload-multiple-csvs")
@@ -196,5 +108,107 @@ public class DataController {
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Fehler beim Importieren der Datenbank: " + e.getMessage());
         }
+    }
+
+    private void uploadInDatabase(MultipartFile file) {
+        try {
+            String originalFilename = file.getOriginalFilename();
+            File tempFile = File.createTempFile("uploaded-", originalFilename);
+            file.transferTo(tempFile);
+
+            assert originalFilename != null;
+            originalFilename = originalFilename.substring(0, originalFilename.indexOf('.'));
+            String cleanedFilename = cleanFilename(originalFilename);
+            dataHandler.importCsv(tempFile.getAbsolutePath(), cleanedFilename);
+            tempFile.delete();
+        } catch (IOException e) {
+            throw new RuntimeException("Fehler beim Verarbeiten der Datei", e);
+        }
+    }
+
+    private String cleanFilename(String originalFilename) {
+        return originalFilename.replaceAll("[^a-zA-Z0-9]", "");
+    }
+
+    private ResponseEntity<String> importVariants(File crowditFolder, File tempDir, File zipTemp) {
+        // Verarbeite die entpackten Dateien
+        File variantMapping = new File(crowditFolder, VARIANT_MAPPING_CSV);
+        File variantSummary = new File(crowditFolder, VARIANT_RESULT_SUMMARY_CSV);
+
+        importTable(variantMapping, VARIANTMAPPING_TABLE);
+        importTable(variantSummary, VARIANTRESULTSUMMARY_TABLE);
+
+        File[] variantDirs = crowditFolder.listFiles((dir, name) ->
+                name.startsWith(OUT_FOLDER_PREFIX) && new File(dir, name).isDirectory());
+
+        if (variantDirs == null || variantDirs.length == 0) {
+            cleanupTempFiles(tempDir, zipTemp);
+            return ResponseEntity.badRequest().body("Keine variant-Ordner in der ZIP-Datei gefunden");
+        }
+
+        for (File variantDir : variantDirs) {
+            String baseTableName = createTableNameFromDir(variantDir.getName());
+            File[] gzFiles = variantDir.listFiles((dir, name) -> name.endsWith(".gz"));
+
+            if (gzFiles != null) {
+                for (File gzFile : gzFiles) {
+                    // Extrahiere den Dateinamen ohne .gz Endung
+                    String fileName = gzFile.getName().replace(".gz", "").replace(".csv", "").replace("floor", "");
+                    // Kombiniere Basis-Tabellenname mit Dateiname
+                    String tableName = baseTableName + "_" + cleanFilename(fileName);
+                    dataHandler.importCsv(gzFile.getAbsolutePath(), tableName);
+                }
+
+                importVariantAssignmentTable(baseTableName, variantDir);
+            }
+        }
+        return null;
+    }
+
+    private void importTable(File fileToImport, String tableName) {
+        if (fileToImport.exists()) {
+            System.out.println("Importing table: " + tableName);
+            dataHandler.importCsv(fileToImport.getAbsolutePath(), tableName);
+        }
+    }
+
+    private void importVariantAssignmentTable(String baseTableName, File variantDir) {
+        File variantAssignment = new File(variantDir, VARIANT_ASSIGNMENT_CSV);
+        String tableName = baseTableName + VARIANT_ASSIGNMENT_TABLE;
+        if (variantAssignment.exists()) {
+            System.out.println("Importing table: " + tableName);
+            dataHandler.importCsv(variantAssignment.getAbsolutePath(), tableName);
+        }
+    }
+
+    private String createTableNameFromDir(String dirName) {
+
+        if (dirName.startsWith("out-variant-")) {
+            return VARIANT_TABLE_PREFIX + dirName.replace("out-variant-", "");
+        } else if (dirName.startsWith("out-")) {
+            return STATISTIC_RUN_PREFIX + dirName.replace("out-", "");
+        } else {
+            return dirName;
+        }
+    }
+
+    private void cleanupTempFiles(File tempDir, File zipTemp) {
+        // Rekursives Löschen des temporären Verzeichnisses
+        deleteDirectory(tempDir);
+        zipTemp.delete();
+    }
+
+    private void deleteDirectory(File directory) {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+        directory.delete();
     }
 }

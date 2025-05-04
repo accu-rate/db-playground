@@ -8,8 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.example.Constants.VARIANTMAPPING_TABLE;
-import static org.example.Constants.VARIANTRESULTSUMMARY_TABLE;
+import static org.example.Constants.*;
 
 @RestController
 public class DBController {
@@ -115,6 +114,23 @@ public class DBController {
             return new QueryResponse(resultService.getFilteredTables(updatedFilters));
         } catch (DatabaseException e) {
             return handleError(e);
+        }
+    }
+
+
+    @GetMapping("/api/get-variant-assignment")
+    public QueryResponse getVariantAssignment(@RequestParam("table") String tableName) {
+        try {
+            // Extrahiere den Variantennamen (alles nach dem letzten Unterstrich)
+            String variantName = tableName.substring(0, tableName.lastIndexOf('_') );
+            String assignmentTable = variantName + VARIANT_ASSIGNMENT_TABLE;
+
+            // SQL-Query für die Abfrage der Spalten ref, type und assignment
+            String query = "SELECT ref, type, assignment FROM " + assignmentTable;
+
+            return new QueryResponse(resultService.executeQuery(query));
+        } catch (DatabaseException e) {
+            return new QueryResponse("Fehler beim Laden der Zuweisungsdaten: " + e.getMessage());
         }
     }
 

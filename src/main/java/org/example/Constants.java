@@ -11,8 +11,10 @@ public class Constants {
     public static String STATISTIC_RUN_PREFIX;
     public static String VARIANTMAPPING_TABLE;
     public static String VARIANTRESULTSUMMARY_TABLE;
+    public static String VARIANT_ASSIGNMENT_TABLE;
     public static String VARIANT_MAPPING_CSV;
     public static String VARIANT_RESULT_SUMMARY_CSV;
+    public static String VARIANT_ASSIGNMENT_CSV;
 
     public Constants(
             @Value("${app.prefix.out-folder}") String outFolderPrefix,
@@ -20,15 +22,19 @@ public class Constants {
             @Value("${app.prefix.statistic-run}") String statisticRunPrefix,
             @Value("${app.table.variantmapping}") String variantMappingTable,
             @Value("${app.table.variantresultsummary}") String variantResultSummaryTable,
+            @Value("${app.table.variantAssignment}") String variantAssignmentTable,
             @Value("${app.file.variant-mapping}") String variantMappingCsv,
-            @Value("${app.file.variant-result-summary}") String variantResultSummaryCsv
+            @Value("${app.file.variant-result-summary}") String variantResultSummaryCsv,
+            @Value("${app.file.variant-assignment}") String variantAssignmentCsv
     ) {
         OUT_FOLDER_PREFIX = outFolderPrefix;
         VARIANT_TABLE_PREFIX = variantTablePrefix;
         STATISTIC_RUN_PREFIX = statisticRunPrefix;
         VARIANTMAPPING_TABLE = variantMappingTable;
         VARIANTRESULTSUMMARY_TABLE = variantResultSummaryTable;
+        VARIANT_ASSIGNMENT_TABLE = variantAssignmentTable;
         VARIANT_MAPPING_CSV = variantMappingCsv;
         VARIANT_RESULT_SUMMARY_CSV = variantResultSummaryCsv;
+        VARIANT_ASSIGNMENT_CSV = variantAssignmentCsv;
     }
 }

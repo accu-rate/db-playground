@@ -1,6 +1,7 @@
 // js/query.js
 import {sendRequestToBackend} from './utils.js';
 import {populateTableSelect} from './tables.js';
+import {mapAssignment} from './mapping.js';
 
 export const QUERY_NAME_PEDS_VS_EVACTIME = 'Anzahl Personen vs. Räumungszeit'; // be careful with this name, it is used in queries-duckdb.sql - I know, very bad practice
 export const QUERY_NAME_EXITS_VS_EVACTIME = 'Anzahl Ausgänge vs. Räumungszeit'; // be careful with this name, it is used in queries-duckdb.sql - I know, very bad practice
@@ -85,12 +86,6 @@ function getCurrentTablesFromTableSelect() {
     return currentTables;
 }
 
-
-async function fetchColumnValues(table, columnName) {
-    const url = `/api/get-column-values?table=${encodeURIComponent(table)}&column=${encodeURIComponent(columnName)}`;
-    return await sendRequestToBackend(null, url);
-}
-
 async function fetchTableColumns(table) {
     return await sendRequestToBackend(null, `/api/get-columns?table=${encodeURIComponent(table)}`)
 }
@@ -116,6 +111,8 @@ export async function executeQuery() {
         await executeTableQuery(query, 'default');
         return;
     }
+    const chartForm = document.getElementById('chartForm');
+    chartForm.classList.remove('hidden');
 
     for (const option of selectedOptions) {
         const tableName = option.text;
@@ -132,26 +129,46 @@ async function executeTableQuery(query, tableName) {
     if (!data) return null;
 
     const queryName = querySelect.options[querySelect.selectedIndex].text; // Name der Query
-    cachedQueries.push({id: queryName, table: tableName, query: tableQuery, data});
-    addQueryToTable(tableName, queryName, data);
+
+    cachedQueries.push({
+        id: queryName, table: tableName, query: tableQuery, data
+    });
+    await addQueryToTable(tableName, queryName, data);
 
     return data;
 }
 
-function addQueryToTable(tableName, queryName, data) {
+
+async function addQueryToTable(tableName, queryName, data) {
     const executedQueriesTable = document.getElementById('executedQueries');
     executedQueriesTable.classList.remove('hidden');
+    const variantAssignment = await sendRequestToBackend(null, `/api/get-variant-assignment?table=${encodeURIComponent(tableName)}`);
+    console.log("variantAssignment:", variantAssignment);
+    const formattedVariantAssignment = formatVariantAssignment(variantAssignment);
 
     const queryTableBody = document.querySelector('#queryTable tbody');
     const row = document.createElement('tr');
     row.innerHTML = `
         <td><input type="checkbox" value="${cachedQueries.length - 1}" checked></td>
         <td>${tableName}</td>
+        <td><pre>${formattedVariantAssignment}</pre></td>
         <td>${queryName}</td>
         <td>${Object.keys(data[0]).join(', ')}</td>
         <td>${data.length}</td>
     `;
     queryTableBody.appendChild(row);
+
+}
+
+function formatVariantAssignment(variantAssignment) {
+    if (!variantAssignment) {
+        return 'Keine Daten';
+    }
+
+    return variantAssignment.map(item => {
+        const mappedAssignment = mapAssignment(item.type, item.assignment);
+        return `Bezugsquelle: ${item.ref}, Bedingung: ${mappedAssignment}`;
+    }).join('\n');
 }
 
 function finalizeQuery() {
@@ -246,6 +263,9 @@ export async function loadQueriesFromApiAndFillOptions() {
             console.error("Element mit ID 'querySelect' nicht gefunden.");
             return;
         }
+        const queryForm = document.getElementById('queryForm');
+        queryForm.classList.remove('hidden');
+
 
         querySelect.innerHTML = '';
 

@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import java.sql.*;
 import java.util.*;
 
+import static org.example.Constants.VARIANTMAPPING_TABLE;
+import static org.example.Constants.VARIANTRESULTSUMMARY_TABLE;
+
 @Service
 public class DuckDBService implements DatabaseService {
     private final HikariDataSource dataSource;
@@ -59,7 +62,22 @@ public class DuckDBService implements DatabaseService {
 
     @Override
     public List<String> getDistinctValuesFromVariantMapping(String columnName) {
-        return getValuesFromTableForColumn("variantmapping", columnName);
+        return getValuesFromTableForColumn(VARIANTMAPPING_TABLE, columnName);
+
+    }
+
+    @Override
+    public List<Map<String, Object>> getTypeAssignmentPair() {
+        // Type-Assignment Paare abrufen
+        String query = "SELECT DISTINCT type, assignment FROM " + VARIANTMAPPING_TABLE + " ORDER BY type, assignment";
+        return executeQuery(query);
+    }
+
+    @Override
+    public List<Map<String, Object>> getConstraintValuePairs() {
+        // Type-Assignment Paare abrufen
+        String query = "SELECT DISTINCT \"constraint type\", value FROM " + VARIANTRESULTSUMMARY_TABLE + " ORDER BY \"constraint type\", value";
+        return executeQuery(query);
     }
 
     private List<String> getValuesFromTableForColumn(String tableName, String columnName) {
@@ -81,7 +99,7 @@ public class DuckDBService implements DatabaseService {
 
     @Override
     public List<String> getDistinctValuesFromVariantResult(String columnName) {
-        return getValuesFromTableForColumn("variantresultsummary", columnName);
+        return getValuesFromTableForColumn(VARIANTRESULTSUMMARY_TABLE, columnName);
     }
 
     @Override
@@ -133,6 +151,7 @@ public class DuckDBService implements DatabaseService {
             throw new DatabaseException(query, e);
         }
     }
+
     private Map<String, Object> extractRow(ResultSet rs, ResultSetMetaData metaData) throws
             SQLException {
         Map<String, Object> row = new LinkedHashMap<>();

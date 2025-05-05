@@ -1,5 +1,5 @@
 // js/query.js
-import {sendRequestToBackend} from '../utils.js';
+import {sendRequestToBackend} from '../utils/utils.js';
 
 export const QUERY_NAME_PEDS_VS_EVACTIME = 'Anzahl Personen vs. Räumungszeit'; // be careful with this name, it is used in queries-duckdb.sql - I know, very bad practice
 export const QUERY_NAME_EXITS_VS_EVACTIME = 'Anzahl Ausgänge vs. Räumungszeit'; // be careful with this name, it is used in queries-duckdb.sql - I know, very bad practice
@@ -17,6 +17,9 @@ export function clearAllQueries() {
 }
 
 export function deleteSelectedQueries() {
+    const chartDisplay = document.getElementById('chartDisplay');
+    chartDisplay.classList.add('hidden');
+
     const queryTableBody = document.querySelector('#queryTable tbody');
     const selectedCheckboxes = queryTableBody.querySelectorAll('input[type="checkbox"]:checked');
 
@@ -31,6 +34,7 @@ export function deleteSelectedQueries() {
     Array.from(queryTableBody.querySelectorAll('input[type="checkbox"]')).forEach((checkbox, newIndex) => {
         checkbox.value = newIndex;
     });
+
 }
 
 export async function loadQueriesFromApiAndFillOptions() {

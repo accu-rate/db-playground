@@ -1,4 +1,4 @@
-import {sendRequestToBackend} from '../utils.js';
+import {sendRequestToBackend} from '../utils/utils.js';
 
 export function initializeTableSelectListener() {
     const tableSelect = document.getElementById('tableSelect');
@@ -35,6 +35,12 @@ export function populateTableSelect(tables) {
         option.textContent = table;
         select.appendChild(option);
     });
+
+    if (document.getElementById('selectAllTablesCheckbox').checked) {
+         for (const option of tableSelect.options) {
+            option.selected = true;
+        }
+    }
 }
 
 export async function loadColumnsForSelectedTable() {

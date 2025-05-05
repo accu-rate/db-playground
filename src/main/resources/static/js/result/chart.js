@@ -1,7 +1,7 @@
 // js/chart.js
 let chartInstance;
 let selectedChartType = 'scatter';
-import {cachedQueries} from './query/query.js';
+import {cachedQueries} from '../query/query.js';
 
 export function setChartTypeAndUpdate(type) {
     if (!cachedQueries) {
@@ -15,6 +15,9 @@ export function setChartTypeAndUpdate(type) {
 
 export function updateChart(data) {
     console.log('updateChart', data);
+    const chartSection = document.getElementById('chartDisplay');
+    chartSection.classList.remove('hidden');
+
     const datasets = [];
     const colors = generateColors(data.length);
     let xAxisLabel;

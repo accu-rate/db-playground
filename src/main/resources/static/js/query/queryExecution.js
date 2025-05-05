@@ -1,5 +1,5 @@
-import {sendRequestToBackend} from '../utils.js';
-import {addResultToOverviewTable} from './resultPresentation.js';
+import {sendRequestToBackend} from '../utils/utils.js';
+import {addResultToOverviewTable} from '../result/resultTable.js';
 import {finalizeQuery} from './queryPreparation.js';
 import {cachedQueries} from './query.js';
 
@@ -12,8 +12,9 @@ export async function executeQuery() {
     const tableSelect = document.getElementById('tableSelect');
     const selectedOptions = Array.from(tableSelect.options).filter(option => option.selected && option.value);
 
+    console.log("selectedOptions:", selectedOptions);
     if (selectedOptions.length === 0) {
-        await executeTableQuery(query, 'default');
+        alert('Bitte wähle zuerst eine Tabelle aus.');
         return;
     }
 
@@ -35,5 +36,4 @@ async function executeTableQuery(query, tableName) {
         id: queryName, table: tableName, query: tableQuery, data
     });
     await addResultToOverviewTable(tableName, queryName, data);
-    return data;
 }

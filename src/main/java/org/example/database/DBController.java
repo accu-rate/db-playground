@@ -75,20 +75,36 @@ public class DBController {
             if (tables.contains(VARIANTMAPPING_TABLE)) {
                 filterOptions.put("variant", resultService.getDistinctValuesFromVariantMapping("variant"));
                 filterOptions.put("ref", resultService.getDistinctValuesFromVariantMapping("ref"));
-                filterOptions.put("type", resultService.getDistinctValuesFromVariantMapping("type"));
-                filterOptions.put("assignment", resultService.getDistinctValuesFromVariantMapping("assignment"));
             }
-
-            // Prüfe und füge Variant Result Optionen hinzu
-            if (tables.contains(VARIANTRESULTSUMMARY_TABLE)) {
-                filterOptions.put("constraint_type", resultService.getDistinctValuesFromVariantResult("constraint type"));
-                filterOptions.put("value_type", resultService.getDistinctValuesFromVariantResult("value type"));
-                filterOptions.put("value", resultService.getDistinctValuesFromVariantResult("value"));
-                filterOptions.put("fulfilled", resultService.getDistinctValuesFromVariantResult("constraint fulfilled"));
-            }
+//
+//            // Prüfe und füge Variant Result Optionen hinzu
+//            if (tables.contains(VARIANTRESULTSUMMARY_TABLE)) {
+//                filterOptions.put("constraint_type", resultService.getDistinctValuesFromVariantResult("constraint type"));
+//                filterOptions.put("value_type", resultService.getDistinctValuesFromVariantResult("value type"));
+//                filterOptions.put("value", resultService.getDistinctValuesFromVariantResult("value"));
+//                filterOptions.put("fulfilled", resultService.getDistinctValuesFromVariantResult("constraint fulfilled"));
+//            }
             return new QueryResponse(filterOptions);
         } catch (DatabaseException e) {
             return handleError(e);
+        }
+    }
+
+    @GetMapping("/api/get-type-assignment-pairs")
+    public QueryResponse getTypeAssignmentPairs() {
+        try {
+            return new QueryResponse(resultService.getTypeAssignmentPair());
+        } catch (DatabaseException e) {
+            return new QueryResponse("Fehler beim Laden der Filterzuweisungen: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/api/get-constraint-value-pairs")
+    public QueryResponse getConstraintValuePairs() {
+        try {
+            return new QueryResponse(resultService.getConstraintValuePairs());
+        } catch (DatabaseException e) {
+            return new QueryResponse("Fehler beim Laden der Constraint values: " + e.getMessage());
         }
     }
 
@@ -122,7 +138,7 @@ public class DBController {
     public QueryResponse getVariantAssignment(@RequestParam("table") String tableName) {
         try {
             // Extrahiere den Variantennamen (alles nach dem letzten Unterstrich)
-            String variantName = tableName.substring(0, tableName.lastIndexOf('_') );
+            String variantName = tableName.substring(0, tableName.lastIndexOf('_'));
             String assignmentTable = variantName + VARIANT_ASSIGNMENT_TABLE;
 
             // SQL-Query für die Abfrage der Spalten ref, type und assignment

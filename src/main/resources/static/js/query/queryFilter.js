@@ -1,6 +1,6 @@
 import {populateTableSelect} from '../tables/tables.js';
 import {QUERY_NAME_EXITS_VS_EVACTIME, QUERY_NAME_PEDS_VS_EVACTIME} from './query.js';
-import {sendRequestToBackend} from '../utils.js';
+import {sendRequestToBackend} from '../utils/utils.js';
 import {getAppliedFilters, getMatchingTablesForFilters} from '../filter.js';
 
 export async function setQuery() {

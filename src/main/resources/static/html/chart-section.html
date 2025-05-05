@@ -2,7 +2,13 @@
     <form id="chartForm" class="hidden">
         <h2>Ergebnisse</h2>
         <div id="executedQueries" class="queryTable">
-            <label style="text-align: center" for="queryTable">Gefilterte Ergebnisse</label>
+            <div class="chart-controls">
+                <button type="button" onclick="deleteSelectedQueries()">Ausgewählte Varianten löschen</button>
+                <button type="button" onclick="clearAllQueries()">Alle Varianten löschen</button>
+            </div>
+            <div style="text-align: center; margin-bottom: 10px;">
+                <label for="queryTable">Gefilterte Ergebnisse</label>
+            </div>
             <table id="queryTable">
                 <thead>
                 <tr>
@@ -20,23 +26,21 @@
             </table>
             <div class="chart-controls">
                 <button type="button" onclick="plotSelectedQueries()">Ausgewählte Varianten plotten</button>
-                <button type="button" onclick="deleteSelectedQueries()">Ausgewählte Varianten löschen</button>
-                <button type="button" onclick="clearAllQueries()">Alle Varianten löschen</button>
             </div>
         </div>
-        <div class="chart-container">
-            <canvas id="resultChart" width="1200" height="800"></canvas>
-        </div>
-        <div class="chart-controls">
-            <button type="button" onclick="event.preventDefault(); setChartTypeAndUpdate('bar')">
-                <i class="fas fa-chart-bar"></i>Balkendiagramm
-            </button>
-            <button type="button" onclick="event.preventDefault(); setChartTypeAndUpdate('line')">
-                <i class="fas fa-chart-line"></i>Liniendiagramm
-            </button>
-            <button type="button" onclick="event.preventDefault(); setChartTypeAndUpdate('scatter')">
-                <i class="fas fa-braille"></i>Streudiagramm
-            </button>
+        <div id="chartDisplay" class="hidden">
+            <canvas id="resultChart" width="1200" height="800" ></canvas>
+            <div class="chart-controls">
+                <button type="button" onclick="event.preventDefault(); setChartTypeAndUpdate('bar')">
+                    <i class="fas fa-chart-bar"></i>Balkendiagramm
+                </button>
+                <button type="button" onclick="event.preventDefault(); setChartTypeAndUpdate('line')">
+                    <i class="fas fa-chart-line"></i>Liniendiagramm
+                </button>
+                <button type="button" onclick="event.preventDefault(); setChartTypeAndUpdate('scatter')">
+                    <i class="fas fa-braille"></i>Streudiagramm
+                </button>
+            </div>
         </div>
     </form>
 </section>

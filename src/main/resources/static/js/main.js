@@ -16,7 +16,7 @@ import {setQuery} from './query/queryFilter.js';
 import {
     setChartTypeAndUpdate,
     plotSelectedQueries
-} from './chart.js';
+} from './result/chart.js';
 import {
     downloadDatabase,
     processVariantFolder

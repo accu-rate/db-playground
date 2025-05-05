@@ -1,6 +1,6 @@
 import {updateFilters} from './filter.js';
 
-import {sendRequestToBackend} from './utils.js';
+import {sendRequestToBackend} from './utils/utils.js';
 import {loadQueriesFromApiAndFillOptions} from './query/query.js';
 
 export async function processVariantFolder() {

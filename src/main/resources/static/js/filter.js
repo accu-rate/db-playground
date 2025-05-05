@@ -1,5 +1,6 @@
 import {populateTableSelect} from './tables/tables.js';
-import {sendRequestToBackend} from './utils.js';
+import {sendRequestToBackend} from './utils/utils.js';
+import {invertMapAssignment, mapAssignment} from './utils/mapping.js';
 
 export async function getMatchingTablesForFilters(filters) {
     const url = '/api/filter-data';
@@ -9,12 +10,16 @@ export async function getMatchingTablesForFilters(filters) {
 }
 
 export function getAppliedFilters() {
+
+    const revertedAssignment = invertMapAssignment(document.getElementById('typeFilter').value);
+    const revertedConstraint = invertMapAssignment(document.getElementById('constraintValue').value);
+
     const filters = [
         {key: 'ref', operator: '=', value: document.getElementById('objectFilter').value},
-        {key: 'type', operator: '=', value: document.getElementById('typeFilter').value},
-        {key: 'assignment', operator: '=', value: document.getElementById('assignmentFilter').value},
-        {key: 'constraint type', operator: '=', value: document.getElementById('constraintTypeFilter').value},
-        {key: 'value', operator: '<=', value: document.getElementById('valueFilter').value}
+        {key: 'type', operator: '=', value: revertedAssignment.type},
+        {key: 'assignment', operator: '=', value: revertedAssignment.assignment},
+        {key: 'constraint type', operator: '=', value: revertedConstraint.type},
+        {key: 'value', operator: '<=', value: revertedConstraint.assignment}
     ].filter(f => f.value !== '');
     return filters;
 }
@@ -46,21 +51,30 @@ export async function updateFilters() {
     }
     filterForm.classList.remove('hidden'); // Formular anzeigen, falls es sichtbar sein soll
     populateFilter('objectFilter', filterOptions.ref);
-    populateFilter('typeFilter', filterOptions.type);
-    populateFilter('assignmentFilter', filterOptions.assignment);
-    populateFilter('constraintTypeFilter', filterOptions.constraint_type);
-    populateFilter('valueFilter', filterOptions.value);
+
+    const secondUrl = '/api/get-type-assignment-pairs';
+    const typeAssignmentPairs = await sendRequestToBackend(null, secondUrl);
+    if (!typeAssignmentPairs) {
+        console.error('Fehler beim Abrufen der Filteroptionen.');
+        return;
+    }
+
+    populateTypeFilter('typeFilter', typeAssignmentPairs);
+
+    const thirdUrl = '/api/get-constraint-value-pairs';
+    const constraintValuePairs = await sendRequestToBackend(null, thirdUrl);
+    if (!constraintValuePairs) {
+        console.error('Fehler beim Abrufen der Constraints.');
+        return;
+    }
+    populateTypeFilter('constraintValue', constraintValuePairs);
 }
 
-export function populateFilter(filterId, options) {
-    const filter = document.getElementById(filterId);
+export function populateFilter(htmlElementId, options) {
+    const filter = document.getElementById(htmlElementId);
     filter.innerHTML = ''; // Vorherige Optionen entfernen
 
-    // Standardoption hinzufügen
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = '-- Alle --';
-    filter.appendChild(defaultOption);
+    addDefaultOption(filter);
 
     // Filteroptionen hinzufügen
     options.forEach(option => {
@@ -70,6 +84,35 @@ export function populateFilter(filterId, options) {
         filter.appendChild(opt);
     });
 }
+
+function addDefaultOption(filter) {
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '-- Alle --';
+    filter.appendChild(defaultOption);
+}
+
+export function populateTypeFilter(htmlElementId, typeAssignments) {
+    const filter = document.getElementById(htmlElementId);
+    filter.innerHTML = ''; // Vorherige Optionen entfernen
+    console.log("type: " + typeAssignments);
+
+    // Standardoption hinzufügen
+    addDefaultOption(filter);
+
+    // Filteroptionen hinzufügen
+    typeAssignments.forEach(entry => {
+
+        const type = entry.type ? entry.type : entry['constraint type'];
+        const assignment = entry.assignment ? entry.assignment : entry['value'];
+
+        const opt = document.createElement('option');
+        opt.value = mapAssignment(type, assignment);
+        opt.textContent = mapAssignment(type, assignment); // mapAssignment aufrufen
+        filter.appendChild(opt);
+    });
+}
+
 
 export function resetFilters() {
     const filters = document.querySelectorAll('.filter-section select'); // Nur <select>-Elemente innerhalb von .filter-section auswählen

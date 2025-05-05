@@ -10,6 +10,10 @@ public interface DatabaseService {
 
     List<String> getDistinctValuesFromVariantMapping(String columnName);
 
+    List<Map<String, Object>> getTypeAssignmentPair();
+
+    List<Map<String, Object>> getConstraintValuePairs();
+
     List<String> getDistinctValuesFromVariantResult(String columnName);
 
     Map<String, String> getAvailableQueries();

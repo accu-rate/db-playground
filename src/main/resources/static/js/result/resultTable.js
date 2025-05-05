@@ -1,6 +1,6 @@
-import {sendRequestToBackend} from '../utils.js';
-import {cachedQueries} from './query.js';
-import {mapAssignment} from './mapping.js';
+import {sendRequestToBackend} from '../utils/utils.js';
+import {cachedQueries} from '../query/query.js';
+import {mapAssignment} from '../utils/mapping.js';
 
 export async function addResultToOverviewTable(tableName, queryName, data) {
     const executedQueriesTable = document.getElementById('chartForm');
@@ -15,7 +15,7 @@ export async function addResultToOverviewTable(tableName, queryName, data) {
     row.innerHTML = `
         <td><input type="checkbox" value="${cachedQueries.length - 1}" checked></td>
         <td>${tableName}</td>
-        <td><pre>${formattedVariantAssignment}</pre></td>
+        <td>${formattedVariantAssignment}</td>
         <td>${queryName}</td>
         <td>${Object.keys(data[0]).join(', ')}</td>
         <td>${data.length}</td>

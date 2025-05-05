@@ -1,6 +1,7 @@
 import {populateTableSelect} from '../tables/tables.js';
 import {QUERY_NAME_EXITS_VS_EVACTIME, QUERY_NAME_PEDS_VS_EVACTIME} from './query.js';
 import {sendRequestToBackend} from '../utils.js';
+import {getAppliedFilters, getMatchingTablesForFilters} from '../filter.js';
 
 export async function setQuery() {
     const querySelect = document.getElementById('querySelect');
@@ -34,7 +35,7 @@ export async function setQuery() {
 }
 
 
-async function filterTables(selectedQueryName, selectedQuery) {
+export async function filterTables(selectedQueryName, selectedQuery) {
     if (!selectedQuery) {
         return;
     }
@@ -47,7 +48,7 @@ async function filterTables(selectedQueryName, selectedQuery) {
         const requiredColumns = extractColumnsFromQuery(selectedQuery);
 
         // Hole alle verfügbaren Tabellen
-        const allTables = await getTables();
+        const allTables = await getMatchingTablesForFilters(getAppliedFilters());
 
         for (const table of allTables) {
             try {
@@ -75,15 +76,7 @@ async function getTables() {
     const tables = await sendRequestToBackend(null, url); // sendRequestToBackend verwenden
     return tables;
 }
-//
-// function getCurrentTablesFromTableSelect() {
-//     const tableSelect = document.getElementById('tableSelect');
-//     const tables = await getTables();
-//
-//     tables.map(option => option.value)
-//         .filter(value => value); // Entferne leere Werte
-//     return currentTables;
-// }
+
 
 async function fetchTableColumns(table) {
     return await sendRequestToBackend(null, `/api/get-columns?table=${encodeURIComponent(table)}`)

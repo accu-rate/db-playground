@@ -122,7 +122,6 @@ export function importDatabase() {
             .then(response => {
                 if (response.ok) {
                     alert('Datenbank erfolgreich importiert.');
-                    fetchAndPopulateTables();
                 } else {
                     throw new Error('Fehler beim Importieren der Datenbank.');
                 }

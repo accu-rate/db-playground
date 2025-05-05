@@ -1,20 +1,30 @@
 import {populateTableSelect} from './tables/tables.js';
-import {fetchAndPopulateTables} from './data.js';
 import {sendRequestToBackend} from './utils.js';
 
-export async function applyFilters() {
-    const filters = [
-        { key: 'ref', operator: '=', value: document.getElementById('objectFilter').value },
-        { key: 'type', operator: '=', value: document.getElementById('typeFilter').value },
-        { key: 'assignment', operator: '=', value: document.getElementById('assignmentFilter').value },
-        { key: 'constraint type', operator: '=', value: document.getElementById('constraintTypeFilter').value },
-        { key: 'value', operator: '<=', value: document.getElementById('valueFilter').value }
-     ].filter(f => f.value !== ''); // Leere Filter entfernen
-
-
+export async function getMatchingTablesForFilters(filters) {
     const url = '/api/filter-data';
     const data = await sendRequestToBackend(filters, url);
-    if (!data) return;
+    if (!data) return null;
+    return data;
+}
+
+export function getAppliedFilters() {
+    const filters = [
+        {key: 'ref', operator: '=', value: document.getElementById('objectFilter').value},
+        {key: 'type', operator: '=', value: document.getElementById('typeFilter').value},
+        {key: 'assignment', operator: '=', value: document.getElementById('assignmentFilter').value},
+        {key: 'constraint type', operator: '=', value: document.getElementById('constraintTypeFilter').value},
+        {key: 'value', operator: '<=', value: document.getElementById('valueFilter').value}
+    ].filter(f => f.value !== '');
+    return filters;
+}
+
+export async function applyFilters() {
+    const filters = getAppliedFilters(); // Leere Filter entfernen
+    const data = await getMatchingTablesForFilters(filters);
+    if (!data) {
+        return;
+    }
     console.log('Gefilterte Tabellennamen:', data);
     populateTableSelect(data); // Tabellennamen in die Dropdown-Liste einfügen
 }
@@ -31,7 +41,7 @@ export async function updateFilters() {
     const filterForm = document.getElementById('filterForm'); // Formular-Element auswählen
 
     if (Object.keys(filterOptions).length === 0) {
-         filterForm.classList.add('hidden'); // Formular ausblenden
+        filterForm.classList.add('hidden'); // Formular ausblenden
         return;
     }
     filterForm.classList.remove('hidden'); // Formular anzeigen, falls es sichtbar sein soll
@@ -62,11 +72,12 @@ export function populateFilter(filterId, options) {
 }
 
 export function resetFilters() {
-    const filters = document.querySelectorAll('.filter-section'); // Elemente mit der Klasse 'filter-class' auswählen
+    const filters = document.querySelectorAll('.filter-section select'); // Nur <select>-Elemente innerhalb von .filter-section auswählen
     filters.forEach(filter => {
         if (filter instanceof HTMLSelectElement) {
-            filter.value = ''; // Zurücksetzen des Wertes
+            filter.selectedIndex = 0; // Auswahl auf die erste Option zurücksetzen
+            console.log("filter: " + filter.id + " zurückgesetzt");
         }
     });
-    fetchAndPopulateTables();
+    console.log('Filter zurückgesetzt');
 }

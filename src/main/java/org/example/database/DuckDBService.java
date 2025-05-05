@@ -39,7 +39,7 @@ public class DuckDBService implements DatabaseService {
         List<Map<String, Object>> queryResults = executeQuery(query);
 
         for (Map<String, Object> row : queryResults) {
-            String variantTable = "variant" + row.get("variant");
+            String variantTable = "variant" + row.get("variant") + "_";
             results.addAll(getTablesContaining(variantTable));
         }
 

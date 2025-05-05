@@ -1,7 +1,5 @@
 // js/query.js
 import {sendRequestToBackend} from '../utils.js';
-import {populateTableSelect} from '../tables/tables.js';
-import {mapAssignment} from './mapping.js';
 
 export const QUERY_NAME_PEDS_VS_EVACTIME = 'Anzahl Personen vs. Räumungszeit'; // be careful with this name, it is used in queries-duckdb.sql - I know, very bad practice
 export const QUERY_NAME_EXITS_VS_EVACTIME = 'Anzahl Ausgänge vs. Räumungszeit'; // be careful with this name, it is used in queries-duckdb.sql - I know, very bad practice
@@ -14,8 +12,8 @@ export function clearAllQueries() {
     // Entferne alle Listenelemente aus query table
     const queryTableBody = document.querySelector('#queryTable tbody');
     queryTableBody.innerHTML = '';
-    const executedQueriesTable = document.getElementById('executedQueries');
-    executedQueriesTable.classList.add('hidden');
+    const chartForm = document.getElementById('chartForm');
+    chartForm.classList.add('hidden');
 }
 
 export function deleteSelectedQueries() {

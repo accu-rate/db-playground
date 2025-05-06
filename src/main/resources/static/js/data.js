@@ -1,4 +1,4 @@
-import {updateFilters} from './filter.js';
+import {initFilter} from './filter.js';
 
 import {sendRequestToBackend} from './utils/utils.js';
 import {loadQueriesFromApiAndFillOptions} from './query/query.js';
@@ -37,8 +37,7 @@ export async function processVariantFolder() {
 
 async function updateTablesAndFilters() {
     try {
-  //      await fetchAndPopulateTables();
-        await updateFilters();
+        await initFilter();
         await loadQueriesFromApiAndFillOptions();
     } catch (error) {
         console.error('Fehler:', error);

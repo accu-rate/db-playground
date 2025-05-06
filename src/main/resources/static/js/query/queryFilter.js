@@ -40,15 +40,23 @@ export async function filterTables(selectedQueryName, selectedQuery) {
         return;
     }
 
-    // Filtere die Tabellen basierend auf den benötigten Spalten
     const validTables = [];
-    console.log("selectedQueryname:", selectedQueryName);
     if (queryNeedsTableName(selectedQueryName)) {
         // Extrahiere die benötigten Spalten aus der Query
         const requiredColumns = extractColumnsFromQuery(selectedQuery);
 
+        let allTables;
         // Hole alle verfügbaren Tabellen
-        const allTables = await getMatchingTablesForFilters(getAppliedFilters());
+        const appliedFilters = getAppliedFilters();
+        if (appliedFilters.length === 0) {
+            allTables = await getTables();
+            if (!allTables) {
+                console.error('Fehler beim Abrufen der Tabellen.');
+                return;
+            }
+          } else {
+            allTables = await getMatchingTablesForFilters(appliedFilters);
+        }
 
         for (const table of allTables) {
             try {
@@ -61,7 +69,6 @@ export async function filterTables(selectedQueryName, selectedQuery) {
             }
         }
     }
-    console.log("validTables:", validTables);
     // Aktualisiere die Optionen in tableSelect
     populateTableSelect(validTables);
 }

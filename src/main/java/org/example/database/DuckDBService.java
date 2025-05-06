@@ -61,15 +61,27 @@ public class DuckDBService implements DatabaseService {
     }
 
     @Override
-    public List<String> getDistinctValuesFromVariantMapping(String columnName) {
-        return getValuesFromTableForColumn(VARIANTMAPPING_TABLE, columnName);
-
+    public List<Map<String, Object>> getDistinctValuesFromVariantMapping(String columnName) {
+        String query = "SELECT DISTINCT \"" + columnName + "\" FROM " + VARIANTMAPPING_TABLE + " ORDER BY \"" + columnName + "\"";
+        return executeQuery(query);
     }
 
     @Override
     public List<Map<String, Object>> getTypeAssignmentPair() {
-        // Type-Assignment Paare abrufen
         String query = "SELECT DISTINCT type, assignment FROM " + VARIANTMAPPING_TABLE + " ORDER BY type, assignment";
+        return executeQuery(query);
+    }
+
+
+    @Override
+    public List<Map<String, Object>> getDistinctValuesForType(String type) {
+        String query = "SELECT DISTINCT assignment FROM " + VARIANTMAPPING_TABLE + " where type = '" + type + "' ORDER BY assignment";
+        return executeQuery(query);
+    }
+
+    @Override
+    public List<Map<String, Object>> getDistinctObjectsFor(String type, String assignment) {
+        String query = "SELECT DISTINCT ref FROM " + VARIANTMAPPING_TABLE + " where type = '" + type + "' and  assignment = '" + assignment + "' ORDER BY ref";
         return executeQuery(query);
     }
 
@@ -81,7 +93,6 @@ public class DuckDBService implements DatabaseService {
     }
 
     private List<String> getValuesFromTableForColumn(String tableName, String columnName) {
-        System.out.println("getting distinct values for column: " + columnName + " from table" + tableName);
         String query = "SELECT DISTINCT \"" + columnName + "\" FROM " + tableName + " ORDER BY \"" + columnName + "\"";
         List<String> results = new ArrayList<>();
 
@@ -234,6 +245,7 @@ public class DuckDBService implements DatabaseService {
         }
         return columnTableMap;
     }
+
 
     private void printColumnTableMapping(Map<String, String> mapping) {
         System.out.println("\nSpalten-Tabellen-Zuordnung:");

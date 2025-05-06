@@ -8,7 +8,7 @@ import java.util.Map;
 public interface DatabaseService {
     List<Map<String, Object>> executeQuery(String query);
 
-    List<String> getDistinctValuesFromVariantMapping(String columnName);
+    List<Map<String, Object>> getDistinctValuesFromVariantMapping(String columnName);
 
     List<Map<String, Object>> getTypeAssignmentPair();
 
@@ -29,4 +29,8 @@ public interface DatabaseService {
     boolean tableExists(String tableName);
 
     Map<String, String> getColumnTableMapping() throws DatabaseException;
+
+    List<Map<String, Object>> getDistinctValuesForType(String type);
+
+    List<Map<String, Object>> getDistinctObjectsFor(String type, String assignment);
 }

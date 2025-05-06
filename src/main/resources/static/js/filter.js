@@ -1,8 +1,12 @@
 import {populateTableSelect} from './tables/tables.js';
 import {sendRequestToBackend} from './utils/utils.js';
-import {invertMapAssignment, mapAssignment} from './utils/mapping.js';
+import {invertMapAssignment, mapAssignment, mapType} from './utils/mapping.js';
+import {filterTypeElement, filterAssignmentLabel} from './constants.js';
 
 export async function getMatchingTablesForFilters(filters) {
+    if (filters.length === 0) {
+        console.log("getMatchingTablesForFilters: called without any filters.");
+    }
     const url = '/api/filter-data';
     const data = await sendRequestToBackend(filters, url);
     if (!data) return null;
@@ -10,17 +14,16 @@ export async function getMatchingTablesForFilters(filters) {
 }
 
 export function getAppliedFilters() {
-
-    const revertedAssignment = invertMapAssignment(document.getElementById('typeFilter').value);
     const revertedConstraint = invertMapAssignment(document.getElementById('constraintValue').value);
 
     const filters = [
         {key: 'ref', operator: '=', value: document.getElementById('objectFilter').value},
-        {key: 'type', operator: '=', value: revertedAssignment.type},
-        {key: 'assignment', operator: '=', value: revertedAssignment.assignment},
+        {key: 'type', operator: '=', value: document.getElementById(filterTypeElement).value},
+        {key: 'assignment', operator: '=', value: document.getElementById('filterAssignment').value},
         {key: 'constraint type', operator: '=', value: revertedConstraint.type},
         {key: 'value', operator: '<=', value: revertedConstraint.assignment}
     ].filter(f => f.value !== '');
+
     return filters;
 }
 
@@ -31,84 +34,117 @@ export async function applyFilters() {
         return;
     }
     console.log('Gefilterte Tabellennamen:', data);
-    populateTableSelect(data); // Tabellennamen in die Dropdown-Liste einfügen
+    populateTableSelect(data);
 }
 
-export async function updateFilters() {
-    const url = '/api/filter-options';
-    const filterOptions = await sendRequestToBackend(null, url);
+export async function initFilter() {
+    const url = '/api/get-filter-types';
+    const filterTypes = await sendRequestToBackend(null, url);
 
-    if (!filterOptions) {
+    if (!filterTypes) {
         console.error('Fehler beim Abrufen der Filteroptionen.');
         return;
     }
-
     const filterForm = document.getElementById('filterForm'); // Formular-Element auswählen
 
-    if (Object.keys(filterOptions).length === 0) {
-        filterForm.classList.add('hidden'); // Formular ausblenden
+    if (Object.keys(filterTypes).length === 0) {
+        filterForm.classList.add('hidden'); // hide form
         return;
     }
-    filterForm.classList.remove('hidden'); // Formular anzeigen, falls es sichtbar sein soll
-    populateFilter('objectFilter', filterOptions.ref);
+    filterForm.classList.remove('hidden');
+    populateFilter(filterTypeElement, filterTypes.map(entry => entry.type), true);
 
-    const secondUrl = '/api/get-type-assignment-pairs';
-    const typeAssignmentPairs = await sendRequestToBackend(null, secondUrl);
-    if (!typeAssignmentPairs) {
-        console.error('Fehler beim Abrufen der Filteroptionen.');
-        return;
-    }
-
-    populateTypeFilter('typeFilter', typeAssignmentPairs);
-
-    const thirdUrl = '/api/get-constraint-value-pairs';
-    const constraintValuePairs = await sendRequestToBackend(null, thirdUrl);
+    const constraintURL = '/api/get-constraint-value-pairs';
+    const constraintValuePairs = await sendRequestToBackend(null, constraintURL);
     if (!constraintValuePairs) {
         console.error('Fehler beim Abrufen der Constraints.');
         return;
     }
-    populateTypeFilter('constraintValue', constraintValuePairs);
+    populateConstraintFilter('constraintValue', constraintValuePairs);
+    initEventListenerForTypeChange();
 }
 
-export function populateFilter(htmlElementId, options) {
+export function populateFilter(htmlElementId, options, translate) {
     const filter = document.getElementById(htmlElementId);
-    filter.innerHTML = ''; // Vorherige Optionen entfernen
-
     addDefaultOption(filter);
 
     // Filteroptionen hinzufügen
     options.forEach(option => {
         const opt = document.createElement('option');
         opt.value = option;
-        opt.textContent = option;
+        opt.textContent = translate ? mapType(option) : option;
         filter.appendChild(opt);
     });
 }
 
+
 function addDefaultOption(filter) {
+    filter.innerHTML = '';
     const defaultOption = document.createElement('option');
     defaultOption.value = '';
     defaultOption.textContent = '-- Alle --';
     filter.appendChild(defaultOption);
 }
 
-export function populateTypeFilter(htmlElementId, typeAssignments) {
-    const filter = document.getElementById(htmlElementId);
-    filter.innerHTML = ''; // Vorherige Optionen entfernen
-    console.log("type: " + typeAssignments);
+export function initEventListenerForTypeChange() {
+    const typeFilter = document.getElementById(filterTypeElement);
+    if (typeFilter) {
+        typeFilter.addEventListener('change', () => {
+            populatePossibleAssignments(typeFilter.value);
+            initEventListenerForAssignmentChange(typeFilter.value);
+        });
+    }
+}
 
-    // Standardoption hinzufügen
+async function populatePossibleAssignments(filterType) {
+    const url = `/api/get-filter-values?type=${encodeURIComponent(filterType)}`;
+    const values = await sendRequestToBackend(null, url);
+    console.log("values: " + values.entries());
+
+    if (!values) {
+        console.error('Fehler beim Abrufen der Filteroptionen.');
+        return;
+    }
+    populateFilter(filterAssignmentLabel, values.map(entry => entry.assignment, false));
+
+}
+
+export function initEventListenerForAssignmentChange(typeValue) {
+    const filterAssignment = document.getElementById(filterAssignmentLabel);
+    if (filterAssignment) {
+        filterAssignment.addEventListener('change', (event) => {
+            populatePossibleObjects(typeValue, filterAssignment.value);
+        });
+    }
+}
+
+async function populatePossibleObjects(filterType, filterAssignment) {
+    const url = `/api/get-objects-for-filter?type=${encodeURIComponent(filterType)}&assignment=${encodeURIComponent(filterAssignment)}`;
+    const values = await sendRequestToBackend(null, url);
+    console.log("values: " + values.entries());
+
+    if (!values) {
+        console.error('Fehler beim Abrufen der Filteroptionen.');
+        return;
+    }
+    populateFilter('objectFilter', values.map(entry => entry.ref, false));
+
+}
+
+export function populateConstraintFilter(htmlElementId, typeAssignments) {
+    const filter = document.getElementById(htmlElementId);
+
     addDefaultOption(filter);
 
     // Filteroptionen hinzufügen
     typeAssignments.forEach(entry => {
 
-        const type = entry.type ? entry.type : entry['constraint type'];
-        const assignment = entry.assignment ? entry.assignment : entry['value'];
+        const constraintType = entry['constraint type'];
+        const value = entry['value'];
 
         const opt = document.createElement('option');
-        opt.value = mapAssignment(type, assignment);
-        opt.textContent = mapAssignment(type, assignment); // mapAssignment aufrufen
+        opt.value = mapAssignment(constraintType, value);
+        opt.textContent = mapAssignment(constraintType, value); // mapAssignment aufrufen
         filter.appendChild(opt);
     });
 }

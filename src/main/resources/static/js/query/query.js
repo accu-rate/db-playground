@@ -1,5 +1,6 @@
 // js/query.js
 import {sendRequestToBackend} from '../utils/utils.js';
+import {filterTypeElement} from '../constants.js';
 
 export const QUERY_NAME_PEDS_VS_EVACTIME = 'Anzahl Personen vs. Räumungszeit'; // be careful with this name, it is used in queries-duckdb.sql - I know, very bad practice
 export const QUERY_NAME_EXITS_VS_EVACTIME = 'Anzahl Ausgänge vs. Räumungszeit'; // be careful with this name, it is used in queries-duckdb.sql - I know, very bad practice
@@ -68,7 +69,7 @@ export async function loadQueriesFromApiAndFillOptions() {
         // Queries hinzufügen
         for (const [name, query] of Object.entries(queries)) {
             if (name === QUERY_NAME_EXITS_VS_EVACTIME) {
-                const typeFilter = document.getElementById('typeFilter');
+                const typeFilter = document.getElementById(filterTypeElement);
                 const options = Array.from(typeFilter.options);
                 const containsTrueOrFalse = options.some(option => option.text === 'availability');
                 if (!containsTrueOrFalse) {
@@ -77,7 +78,7 @@ export async function loadQueriesFromApiAndFillOptions() {
                 }
             }
             if (name === QUERY_NAME_PEDS_VS_EVACTIME) {
-                const typeFilter = document.getElementById('typeFilter');
+                const typeFilter = document.getElementById(filterTypeElement);
                 const options = Array.from(typeFilter.options);
                 const containsTrueOrFalse = options.some(option => option.text === 'noOfPeds');
                 if (!containsTrueOrFalse) {

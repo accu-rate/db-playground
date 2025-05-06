@@ -27,17 +27,15 @@ public class DataHandlerDuckDB implements CommandLineRunner, DataHandler {
 
     @Override
     public void run(String... args) {
-  //      resetDatabase();
+        //      resetDatabase();
     }
 
     @Override
     public void resetDatabase() {
         System.out.println("Löschen der bisherigen Datenbankdatei...");
 
-        // Erst alle Verbindungen schließen
         dataSource.close();
 
-        // Kurz warten um sicherzustellen, dass alle Verbindungen geschlossen sind
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {

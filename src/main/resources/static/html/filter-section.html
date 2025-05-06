@@ -4,18 +4,22 @@
         <div id="filterContainer" class="filter-section">
             <h3>Varianten filtern:</h3>
             <div class="inline">
+                <label for="filterType">Parameter:</label>
+                <select id="filterType">
+                    <option value="">-- Alle Typen --</option>
+                </select>
+                <label for="filterAssignment">mit Wert:</label>
+                <select id="filterAssignment">
+                    <option value="">-- Alle Typen --</option>
+                </select>
+            </div>
+            <div class="inline">
                 <label for="objectFilter">Für Objekt(e):</label>
                 <select id="objectFilter">
                     <option value="">-- Alle Objekte --</option>
                 </select>
             </div>
-            <div class="inline">
-                <label for="typeFilter">Mit Bedingung:</label>
-                <select id="typeFilter">
-                    <option value="">-- Alle Typen --</option>
-                </select>
-             </div>
-             <h3>Ergebnisse filtern:</h3>
+            <h3>Ergebnisse filtern:</h3>
             <div class="inline">
                 <label for="constraintValue">Bedingungstyp:</label>
                 <select id="constraintValue">

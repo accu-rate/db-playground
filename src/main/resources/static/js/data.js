@@ -53,7 +53,7 @@ export async function resetDatabase() {
             console.log('Response:', response);
             if (response.ok) {
                 alert('Die Datenbank wurde erfolgreich zurückgesetzt.');
-                location.reload(); 
+                location.reload();
             } else {
                 throw new Error('Fehler beim Zurücksetzen der Datenbank.');
             }

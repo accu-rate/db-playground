@@ -92,7 +92,7 @@ button:hover {
 
 /* Tabellenstile */
 #queryTable {
-    width: 60%;
+    width: 100%;
     border-collapse: collapse;
     margin: 0 auto;
     justify-content: center;

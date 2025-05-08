@@ -45,11 +45,11 @@ export function updateChart(data) {
             borderWidth: 1
         });
     });
+    destroyFormerChart();
+    createNewChart(data, datasets, xAxisLabel, yAxisLabel);
+}
 
-    if (chartInstance) {
-        chartInstance.destroy();
-    }
-
+function createNewChart(data, datasets, xAxisLabel, yAxisLabel) {
     const ctx = document.getElementById('resultChart').getContext('2d');
     chartInstance = new Chart(ctx, {
         type: selectedChartType,
@@ -83,6 +83,12 @@ export function updateChart(data) {
     });
 }
 
+export function destroyFormerChart() {
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+}
+
 function generateColors(count) {
     const alpha = 0.8; // Definiere den Alpha-Wert als Variable
 
@@ -111,7 +117,7 @@ export function plotSelectedQueries() {
         .map(checkbox => parseInt(checkbox.value));
 
     if (selectedIndices.length === 0) {
-      //  alert('Bitte wähle mindestens eine Abfrage aus.');
+        //  alert('Bitte wähle mindestens eine Abfrage aus.');
         return;
     }
 

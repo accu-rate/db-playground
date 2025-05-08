@@ -1,14 +1,19 @@
 import {sendRequestToBackend} from '../utils/utils.js';
 import {cachedQueries} from '../query/query.js';
 import {mapAssignment} from '../utils/mapping.js';
+import {makeCanvasResizable} from '../result/resize.js';
+
 
 export async function addResultToOverviewTable(tableName, queryName, data) {
-    const executedQueriesTable = document.getElementById('chartForm');
-    console.log("found element: " + executedQueriesTable);
-    executedQueriesTable.classList.remove('hidden');
+    const chartFormElement = document.getElementById('chartForm');
+    console.log("found element: " + chartFormElement);
+    if (notYetVisible(chartFormElement)) {
+        chartFormElement.classList.remove('hidden');
+        makeCanvasResizable();
+    }
     let formattedVariantAssignment = '';
 
-    if (!document.getElementById('filterForm').classList.contains('hidden')) {
+    if (hasFilters()) {
         const variantAssignment = await sendRequestToBackend(null, `/api/get-variant-assignment?table=${encodeURIComponent(tableName)}`);
         console.log("variantAssignment:", variantAssignment);
         formattedVariantAssignment = formatVariantAssignment(variantAssignment);
@@ -25,6 +30,15 @@ export async function addResultToOverviewTable(tableName, queryName, data) {
         <td>${data.length}</td>
     `;
     queryTableBody.appendChild(row);
+}
+
+function hasFilters() {
+    return !document.getElementById('filterForm').classList.contains('hidden');
+}
+
+
+function notYetVisible(chartFormElement) {
+    return chartFormElement.classList.contains('hidden');
 }
 
 function formatVariantAssignment(variantAssignment) {

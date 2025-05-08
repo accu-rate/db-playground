@@ -1,4 +1,3 @@
-import {loadQueriesFromApiAndFillOptions} from './query/query.js';
 import {resetDatabase, importDatabase} from './data.js';
 import {initializeTableSelectListener} from './tables/tables.js';
 

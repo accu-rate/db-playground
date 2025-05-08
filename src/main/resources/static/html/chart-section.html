@@ -29,7 +29,9 @@
             </div>
         </div>
         <div id="chartDisplay" class="hidden">
-            <canvas id="resultChart" width="1200" height="800" ></canvas>
+            <div class="resizable-container">
+                <canvas id="resultChart"></canvas>
+            </div>
             <div class="chart-controls">
                 <button type="button" onclick="event.preventDefault(); setChartTypeAndUpdate('bar')">
                     <i class="fas fa-chart-bar"></i>Balkendiagramm

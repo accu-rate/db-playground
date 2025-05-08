@@ -235,7 +235,7 @@ select option {
 
 #tableSelect option:checked {
     background-color: #1b6bbd; /* Highlight color */
-    color: #000; /* Text color */
+    color: white; /* Text color */
 }
 
 form#uploadMultipleFilesForm {

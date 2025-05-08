@@ -21,7 +21,7 @@ export function getAppliedFilters() {
         {key: 'type', operator: '=', value: document.getElementById(filterTypeElement).value},
         {key: 'assignment', operator: '=', value: document.getElementById('filterAssignment').value},
         {key: 'constraint type', operator: '=', value: revertedConstraint.type},
-        {key: 'value', operator: '<=', value: revertedConstraint.assignment}
+        {key: 'value', operator: '<', value: revertedConstraint.assignment}
     ].filter(f => f.value !== '');
 
     return filters;

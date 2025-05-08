@@ -1,10 +1,10 @@
 import {sendRequestToBackend} from '../utils/utils.js';
 import {addResultToOverviewTable} from '../result/resultTable.js';
-import {finalizeQuery} from './queryPreparation.js';
+import {prepareQuery} from './queryPreparation.js';
 import {cachedQueries} from './query.js';
 
 export async function executeQuery() {
-    const query = finalizeQuery();
+    const query = prepareQuery();
     if (!query) {
         alert('Bitte wähle zuerst eine Abfrage aus.');
         return;

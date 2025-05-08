@@ -1,4 +1,4 @@
-export function finalizeQuery() {
+export function prepareQuery() {
     const query = document.getElementById('query').value;
     const congestionVelocity = document.getElementById('congestionVelocity').value;
     const noOfPeds = document.getElementById('noOfPeds').value;

@@ -2,6 +2,7 @@
 import {hideElement, sendRequestToBackend, showElement} from '../utils/utils.js';
 import {filterTypeElement} from '../constants.js';
 import {destroyFormerChart} from '../result/chart.js';
+import {invertMapAssignment} from '../utils/mapping.js';
 
 export const QUERY_NAME_PEDS_VS_EVACTIME = 'Anzahl Personen vs. Räumungszeit'; // be careful with this name, it is used in queries-duckdb.sql - I know, very bad practice
 export const QUERY_NAME_EXITS_VS_EVACTIME = 'Anzahl Ausgänge vs. Räumungszeit'; // be careful with this name, it is used in queries-duckdb.sql - I know, very bad practice
@@ -71,28 +72,29 @@ export async function loadQueriesFromApiAndFillOptions() {
         for (const [name, query] of Object.entries(queries)) {
             if (name === QUERY_NAME_EXITS_VS_EVACTIME) {
                 const typeFilter = document.getElementById(filterTypeElement);
+                console.log("query filter." + typeFilter.options.map(option => option.value));
                 const options = Array.from(typeFilter.options);
-                const containsTrueOrFalse = options.some(option => option.text === 'availability');
+                const containsTrueOrFalse = options.some(option => option.value === 'availability');
                 if (!containsTrueOrFalse) {
-                    console.log("query filter." + options.map(option => option.text));
+                    console.log("query filter." + options.map(option => option.value));
                     continue;
                 }
             }
             if (name === QUERY_NAME_PEDS_VS_EVACTIME) {
                 const typeFilter = document.getElementById(filterTypeElement);
                 const options = Array.from(typeFilter.options);
-                const containsTrueOrFalse = options.some(option => option.text === 'noOfPeds');
+                const containsTrueOrFalse = options.some(option => option.value === 'noOfPeds');
                 if (!containsTrueOrFalse) {
-                    console.log("query filter." + options.map(option => option.text));
+                    console.log("query filter." + options.map(option => option.value));
                     continue;
                 }
             }
             if (name === QUERY_NAME_EXITS_VS_EVACTIME || name === QUERY_NAME_PEDS_VS_EVACTIME) {
-                const constraintTypeFilter = document.getElementById('constraintTypeFilter');
+                const constraintTypeFilter = document.getElementById('constraintValue');
                 const constraintOptions = Array.from(constraintTypeFilter.options);
-                const containsEvacTime = constraintOptions.some(option => option.text === 'evacuationTime');
+                const containsEvacTime = constraintOptions.some(option => invertMapAssignment(option.value).type === 'evacuationTime');
                 if (!containsEvacTime) {
-                    console.log("query filter." + constraintOptions.map(option => option.text));
+                    console.log("query filter." + constraintOptions.map(option => option.value));
                     continue;
                 }
             }

@@ -13,7 +13,7 @@ export async function addResultToOverviewTable(tableName, queryName, data) {
     }
     let formattedVariantAssignment = '';
 
-    if (hasFilters()) {
+    if (hasFilters() && tableName) {
         const variantAssignment = await sendRequestToBackend(null, `/api/get-variant-assignment?table=${encodeURIComponent(tableName)}`);
         console.log("variantAssignment:", variantAssignment);
         formattedVariantAssignment = formatVariantAssignment(variantAssignment);
@@ -23,7 +23,7 @@ export async function addResultToOverviewTable(tableName, queryName, data) {
     const row = document.createElement('tr');
     row.innerHTML = `
         <td><input type="checkbox" value="${cachedQueries.length - 1}" checked></td>
-        <td>${tableName}</td>
+        <td>${tableName === null ? 'alle' : tableName}</td>
         <td>${formattedVariantAssignment}</td>
         <td>${queryName}</td>
         <td>${Object.keys(data[0]).join(', ')}</td>

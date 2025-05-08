@@ -3,12 +3,21 @@ import {addResultToOverviewTable} from '../result/resultTable.js';
 import {prepareQuery} from './queryPreparation.js';
 import {cachedQueries} from './query.js';
 
+const tablePlaceholder = '${selectedTable}';
+
 export async function executeQuery() {
     const query = prepareQuery();
     if (!query) {
         alert('Bitte wähle zuerst eine Abfrage aus.');
         return;
     }
+
+    const queryNeedsTable = query.includes(tablePlaceholder);
+    if (!queryNeedsTable) {
+       await executeTableQuery(query, null);
+        return;
+    }
+
     const tableSelect = document.getElementById('tableSelect');
     const selectedOptions = Array.from(tableSelect.options).filter(option => option.selected && option.value);
 
@@ -25,7 +34,7 @@ export async function executeQuery() {
 }
 
 async function executeTableQuery(query, tableName) {
-    const tableQuery = query.replaceAll('${selectedTable}', tableName);
+    const tableQuery = query.replaceAll(tablePlaceholder, tableName);
     const url = '/api/execute-query';
     const data = await sendRequestToBackend(tableQuery, url);
     if (!data) return null;

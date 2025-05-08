@@ -1,4 +1,4 @@
-import {sendRequestToBackend} from '../utils/utils.js';
+import {sendRequestToBackend, showElement, hideElement} from '../utils/utils.js';
 import {cachedQueries} from '../query/query.js';
 import {mapAssignment} from '../utils/mapping.js';
 import {makeCanvasResizable} from '../result/resize.js';
@@ -8,7 +8,7 @@ export async function addResultToOverviewTable(tableName, queryName, data) {
     const chartFormElement = document.getElementById('chartForm');
     console.log("found element: " + chartFormElement);
     if (notYetVisible(chartFormElement)) {
-        chartFormElement.classList.remove('hidden');
+        showElement(chartFormElement);
         makeCanvasResizable();
     }
     let formattedVariantAssignment = '';

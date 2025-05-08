@@ -1,4 +1,6 @@
 // js/chart.js
+import {showElement} from '../utils/utils.js';
+
 let chartInstance;
 let selectedChartType = 'scatter';
 import {cachedQueries} from '../query/query.js';
@@ -16,7 +18,7 @@ export function setChartTypeAndUpdate(type) {
 export function updateChart(data) {
     console.log('updateChart', data);
     const chartSection = document.getElementById('chartDisplay');
-    chartSection.classList.remove('hidden');
+    showElement(chartSection);
 
     const datasets = [];
     const colors = generateColors(data.length);
@@ -109,7 +111,7 @@ export function plotSelectedQueries() {
         .map(checkbox => parseInt(checkbox.value));
 
     if (selectedIndices.length === 0) {
-        alert('Bitte wähle mindestens eine Abfrage aus.');
+      //  alert('Bitte wähle mindestens eine Abfrage aus.');
         return;
     }
 

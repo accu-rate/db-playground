@@ -1,5 +1,6 @@
 import {resetDatabase, importDatabase} from './data.js';
 import {initializeTableSelectListener} from './tables/tables.js';
+import {showElement,hideElement} from './utils/utils.js';
 
 
 export function initializeApp() {
@@ -59,9 +60,9 @@ export function initializeApp() {
     function toggleVisibility(checkboxElement, containerElement) {
         checkboxElement.addEventListener('change', () => {
             if (checkboxElement.checked) {
-                containerElement.classList.remove('hidden');
-            } else {
-                containerElement.classList.add('hidden');
+                showElement(containerElement);
+             } else {
+                hideElement(containerElement);
             }
         });
     }

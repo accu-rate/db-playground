@@ -48,3 +48,12 @@ export function sendRequestToBackend(data, url) {
             return null;
         });
 }
+
+export function hideElement(elementToHide) {
+    elementToHide.classList.add('hidden');
+}
+
+export function showElement(elementToShow) {
+    elementToShow.classList.remove('hidden');
+    elementToShow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}

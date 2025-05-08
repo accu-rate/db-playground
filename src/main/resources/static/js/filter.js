@@ -1,5 +1,5 @@
 import {populateTableSelect} from './tables/tables.js';
-import {sendRequestToBackend} from './utils/utils.js';
+import {hideElement, sendRequestToBackend, showElement} from './utils/utils.js';
 import {invertMapAssignment, mapAssignment, mapType} from './utils/mapping.js';
 import {filterTypeElement, filterAssignmentLabel} from './constants.js';
 
@@ -48,10 +48,10 @@ export async function initFilter() {
     const filterForm = document.getElementById('filterForm'); // Formular-Element auswählen
 
     if (Object.keys(filterTypes).length === 0) {
-        filterForm.classList.add('hidden'); // hide form
+        hideElement(filterForm);
         return;
     }
-    filterForm.classList.remove('hidden');
+    showElement(filterForm);
     populateFilter(filterTypeElement, filterTypes.map(entry => entry.type), true);
 
     const constraintURL = '/api/get-constraint-value-pairs';

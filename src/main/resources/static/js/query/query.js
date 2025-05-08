@@ -1,5 +1,5 @@
 // js/query.js
-import {sendRequestToBackend} from '../utils/utils.js';
+import {hideElement, sendRequestToBackend, showElement} from '../utils/utils.js';
 import {filterTypeElement} from '../constants.js';
 
 export const QUERY_NAME_PEDS_VS_EVACTIME = 'Anzahl Personen vs. Räumungszeit'; // be careful with this name, it is used in queries-duckdb.sql - I know, very bad practice
@@ -14,12 +14,12 @@ export function clearAllQueries() {
     const queryTableBody = document.querySelector('#queryTable tbody');
     queryTableBody.innerHTML = '';
     const chartForm = document.getElementById('chartForm');
-    chartForm.classList.add('hidden');
+    hideElement(chartForm);
 }
 
 export function deleteSelectedQueries() {
     const chartDisplay = document.getElementById('chartDisplay');
-    chartDisplay.classList.add('hidden');
+    hideElement(chartDisplay);
 
     const queryTableBody = document.querySelector('#queryTable tbody');
     const selectedCheckboxes = queryTableBody.querySelectorAll('input[type="checkbox"]:checked');
@@ -55,8 +55,7 @@ export async function loadQueriesFromApiAndFillOptions() {
             return;
         }
         const queryForm = document.getElementById('queryForm');
-        queryForm.classList.remove('hidden');
-
+        showElement(queryForm);
 
         querySelect.innerHTML = '';
 

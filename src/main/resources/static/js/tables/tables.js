@@ -1,4 +1,4 @@
-import {sendRequestToBackend} from '../utils/utils.js';
+import {hideElement, showElement, sendRequestToBackend} from '../utils/utils.js';
 
 export function initializeTableSelectListener() {
     const tableSelect = document.getElementById('tableSelect');
@@ -12,8 +12,8 @@ export function initializeTableSelectListener() {
             }
         } else {
             const columnsContainer = document.getElementById('columnsContainer');
-            columnsContainer.innerHTML = ''; // Spalten ausblenden
-            document.getElementById('columnsHeading').classList.add('hidden');
+            columnsContainer.innerHTML = '';
+            hideElement(document.getElementById('columnsHeading'));
         }
     });
 }
@@ -68,7 +68,7 @@ export async function loadColumnsForSelectedTable() {
         return;
     }
 
-    document.getElementById('columnsHeading').classList.remove('hidden');
+    showElement(document.getElementById('columnsHeading'));
     const ul = document.createElement('ul');
     columns.forEach(column => {
         const li = document.createElement('li');

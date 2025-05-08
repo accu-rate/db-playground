@@ -1,6 +1,6 @@
 import {populateTableSelect} from '../tables/tables.js';
 import {QUERY_NAME_EXITS_VS_EVACTIME, QUERY_NAME_PEDS_VS_EVACTIME} from './query.js';
-import {sendRequestToBackend} from '../utils/utils.js';
+import {sendRequestToBackend, showElement, hideElement} from '../utils/utils.js';
 import {getAppliedFilters, getMatchingTablesForFilters} from '../filter.js';
 
 export async function setQuery() {
@@ -26,11 +26,11 @@ export async function setQuery() {
     }
 
     if (selectedQuery.includes('${p')) {
-        console.log("query mit velocity")
-        additionalAreaParamContainer.classList.remove('hidden');
+        console.log("query mit velocity");
+        showElement(additionalAreaParamContainer);
     } else {
-        additionalAreaParamContainer.classList.add('hidden');
-    }
+        hideElement(additionalAreaParamContainer);
+   }
     await filterTables(querySelect.options[querySelect.selectedIndex].text, selectedQuery);
 }
 

@@ -54,18 +54,21 @@
                         <!-- Tabellenoptionen werden hier dynamisch eingefügt -->
                     </select>
                 </div>
-                <label>
-                    <input type="checkbox" id="selectAllTablesCheckbox">
-                    Alle Ergebnisse auswählen
-                </label>
-                <label>
-                    <input type="checkbox" id="showColumnsCheckbox">
-                    Spalten anzeigen
-                </label>
-                <label class="hidden" id="columnsHeading" for="columnsContainer">Verfügbare Spalten:</label>
-                <div id="columnsContainer">
-                    <!-- Spalten werden hier angezeigt -->
+                <div>
+                    <label>
+                        <input type="checkbox" id="selectAllTablesCheckbox">
+                        Alle Ergebnisse auswählen
+                    </label>
+                    <label>
+                        <input type="checkbox" id="showColumnsCheckbox">
+                        Spalten anzeigen
+                    </label>
                 </div>
+            </div>
+            <br>
+            <label class="hidden" id="columnsHeading" for="columnsContainer">Verfügbare Spalten:</label>
+            <div id="columnsContainer">
+                <!-- Spalten werden hier angezeigt -->
             </div>
         </div>
         <div class="query-actions">

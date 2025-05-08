@@ -64,8 +64,8 @@ Filtered AS (
     WHERE avg_speed < ?
 )
 SELECT
-    current_time AS Time,
-    COUNT(pedID) AS PedCount
+    current_time AS 'Zeit [s]',
+    COUNT(pedID) AS 'Anzahl Personen im Stau'
 FROM Filtered
 GROUP BY current_time
 ORDER BY current_time;

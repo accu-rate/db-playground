@@ -233,6 +233,11 @@ select option {
     min-height: 100px; /* Mindesthöhe */
 }
 
+#tableSelect option:checked {
+    background-color: #1b6bbd; /* Highlight color */
+    color: #000; /* Text color */
+}
+
 form#uploadMultipleFilesForm {
     padding: 20px;
     border-radius: 8px;

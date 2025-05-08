@@ -37,7 +37,7 @@ export function populateTableSelect(tables) {
     });
 
     if (document.getElementById('selectAllTablesCheckbox').checked) {
-         for (const option of tableSelect.options) {
+         for (const option of select.options) {
             option.selected = true;
         }
     }

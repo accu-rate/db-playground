@@ -48,6 +48,6 @@ function formatVariantAssignment(variantAssignment) {
 
     return variantAssignment.map(item => {
         const mappedAssignment = mapAssignment(item.type, item.assignment);
-        return `Bezugsquelle: ${item.ref}, Bedingung: ${mappedAssignment}\n`;
-    }).join('\n');
+        return `${item.ref}, Bedingung: ${mappedAssignment}`;
+    }).join('<br>');
 }

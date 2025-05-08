@@ -34,12 +34,12 @@ public class DataHandlerDuckDB implements CommandLineRunner, DataHandler {
     public void resetDatabase() {
         System.out.println("Löschen der bisherigen Datenbankdatei...");
 
-        dataSource.close();
-
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        // Alle aktiven Verbindungen schließen
+        try (Connection conn = dataSource.getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute("CHECKPOINT");
+        } catch (SQLException e) {
+            throw new RuntimeException("Fehler beim Schließen der Verbindungen", e);
         }
 
         File dbFile = new File(databaseName);

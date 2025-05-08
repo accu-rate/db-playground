@@ -45,34 +45,22 @@ async function updateTablesAndFilters() {
     }
 }
 
-export async function fetchAndPopulateTables() {
-    const url = '/api/get-tables';
-    const tables = await sendRequestToBackend(null, url); // sendRequestToBackend verwenden
 
-    if (!tables) {
-        console.error('Fehler beim Abrufen der Tabellen.');
-        return;
-    }
-    populateTableSelect(tables);
-}
-
-export function resetDatabase() {
+export async function resetDatabase() {
     if (confirm('Möchtest du wirklich die gesamte Datenbank löschen?')) {
-        fetch('/api/reset-database', {method: 'POST'})
-            .then(response => {
-                if (response.ok) {
-                    alert('Die Datenbank wurde erfolgreich zurückgesetzt.');
-                    location.reload(); // Seite neu laden, um Änderungen anzuzeigen
-                } else {
-                    throw new Error('Fehler beim Zurücksetzen der Datenbank.');
-                }
-            })
-            .catch(error => {
-                console.error('Fehler:', error);
-                alert('Ein Fehler ist aufgetreten.');
-            });
+        try {
+            const response = await fetch('/api/reset-database', {method: 'POST'});
+            console.log('Response:', response);
+            if (response.ok) {
+                alert('Die Datenbank wurde erfolgreich zurückgesetzt.');
+                location.reload(); 
+            } else {
+                throw new Error('Fehler beim Zurücksetzen der Datenbank.');
+            }
+        } catch (error) {
+            console.error('Fehler:', error);
+        }
     }
-
 }
 
 export function downloadDatabase() {

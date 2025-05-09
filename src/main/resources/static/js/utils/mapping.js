@@ -10,6 +10,7 @@ const evacuationLabel = 'Räumungszeit kleiner als: ';
 const noOfPedsLabel = 'Anzahl Personen: ';
 const availableLabel = 'verfügbar';
 const notAvailableLabel = 'nicht verfügbar';
+const unitString = " Sekunden";
 
 export function mapAssignment(type, assignment) {
     if (type === 'availability') {
@@ -18,7 +19,7 @@ export function mapAssignment(type, assignment) {
     if (type === 'noOfPeds')
         return noOfPedsLabel + assignment;
     if (type === 'evacuationTime') {
-        return evacuationLabel + assignment;
+        return evacuationLabel + assignment + unitString;
     }
      return assignment;
 }
@@ -39,7 +40,7 @@ export function invertMapAssignment(text) {
         return {type: 'noOfPeds', assignment};
     }
     if (text.startsWith(evacuationLabel)) {
-        const assignment = text.split(': ')[1];
+        const assignment = text.split(': ')[1].split(unitString)[0];;
         return {type: 'evacuationTime', assignment};
     }
 

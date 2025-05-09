@@ -72,11 +72,9 @@ export async function loadQueriesFromApiAndFillOptions() {
         for (const [name, query] of Object.entries(queries)) {
             if (name === QUERY_NAME_EXITS_VS_EVACTIME) {
                 const typeFilter = document.getElementById(filterTypeElement);
-                console.log("query filter." + typeFilter.options.map(option => option.value));
                 const options = Array.from(typeFilter.options);
                 const containsTrueOrFalse = options.some(option => option.value === 'availability');
                 if (!containsTrueOrFalse) {
-                    console.log("query filter." + options.map(option => option.value));
                     continue;
                 }
             }
@@ -85,7 +83,6 @@ export async function loadQueriesFromApiAndFillOptions() {
                 const options = Array.from(typeFilter.options);
                 const containsTrueOrFalse = options.some(option => option.value === 'noOfPeds');
                 if (!containsTrueOrFalse) {
-                    console.log("query filter." + options.map(option => option.value));
                     continue;
                 }
             }
@@ -94,7 +91,7 @@ export async function loadQueriesFromApiAndFillOptions() {
                 const constraintOptions = Array.from(constraintTypeFilter.options);
                 const containsEvacTime = constraintOptions.some(option => invertMapAssignment(option.value).type === 'evacuationTime');
                 if (!containsEvacTime) {
-                    console.log("query filter." + constraintOptions.map(option => option.value));
+
                     continue;
                 }
             }

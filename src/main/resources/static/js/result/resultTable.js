@@ -1,6 +1,6 @@
 import {sendRequestToBackend, showElement, hideElement} from '../utils/utils.js';
 import {cachedQueries} from '../query/query.js';
-import {mapAssignment} from '../utils/mapping.js';
+import {mapTypeAndAssignment} from '../utils/mapping.js';
 import {makeCanvasResizable} from '../result/resize.js';
 
 
@@ -47,7 +47,7 @@ function formatVariantAssignment(variantAssignment) {
     }
 
     return variantAssignment.map(item => {
-        const mappedAssignment = mapAssignment(item.type, item.assignment);
-        return `${item.ref}, Bedingung: ${mappedAssignment}`;
+        const mappedAssignment = mapTypeAndAssignment(item.type, item.assignment);
+        return `${item.ref} - ${mappedAssignment}`;
     }).join('<br>');
 }

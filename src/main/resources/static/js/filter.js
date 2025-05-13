@@ -1,6 +1,6 @@
 import {populateTableSelect} from './tables/tables.js';
 import {hideElement, sendRequestToBackend, showElement} from './utils/utils.js';
-import {invertMapAssignment, mapAssignment, mapType} from './utils/mapping.js';
+import {invertMapAssignment, mapTypeAndAssignment, mapType, mapAssignment} from './utils/mapping.js';
 import {filterTypeElement, filterAssignmentLabel} from './constants.js';
 
 export async function getMatchingTablesForFilters(filters) {
@@ -72,7 +72,7 @@ export function populateFilter(htmlElementId, options, translate) {
     options.forEach(option => {
         const opt = document.createElement('option');
         opt.value = option;
-        opt.textContent = translate ? mapType(option) : option;
+        opt.textContent = translate ? mapType(option) : mapAssignment(option);
         filter.appendChild(opt);
     });
 }
@@ -143,8 +143,8 @@ export function populateConstraintFilter(htmlElementId, typeAssignments) {
         const value = entry['value'];
 
         const opt = document.createElement('option');
-        opt.value = mapAssignment(constraintType, value);
-        opt.textContent = mapAssignment(constraintType, value); // mapAssignment aufrufen
+        opt.value = mapTypeAndAssignment(constraintType, value);
+        opt.textContent = mapTypeAndAssignment(constraintType, value); // mapAssignment aufrufen
         filter.appendChild(opt);
     });
 }

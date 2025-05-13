@@ -1,5 +1,6 @@
 export const typeMappings = {
     noOfPeds: 'Anzahl Personen',
+    pedsInScenario: 'Anzahl Personen',
     availability: 'Verfügbarkeit',
     evacuationTime: 'Räumungszeit',
     true: 'ja',
@@ -12,16 +13,24 @@ const availableLabel = 'verfügbar';
 const notAvailableLabel = 'nicht verfügbar';
 const unitString = " Sekunden";
 
-export function mapAssignment(type, assignment) {
+export function mapTypeAndAssignment(type, assignment) {
     if (type === 'availability') {
         return assignment === 'true' ? availableLabel : notAvailableLabel;
     }
-    if (type === 'noOfPeds')
+    if (type === 'noOfPeds' || type === 'pedsInScenario') {
         return noOfPedsLabel + assignment;
+    }
     if (type === 'evacuationTime') {
         return evacuationLabel + assignment + unitString;
     }
      return assignment;
+}
+
+export function mapAssignment(assignment) {
+    if (assignment === 'true' || assignment === 'false') {
+        return assignment === 'true' ? availableLabel : notAvailableLabel;
+    }
+    return assignment;
 }
 
 export function mapType(type) {

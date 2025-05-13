@@ -7,6 +7,7 @@ const tablePlaceholder = '${selectedTable}';
 
 export async function executeQuery() {
     const query = prepareQuery();
+    console.log("query:", query);
     if (!query) {
         alert('Bitte wähle zuerst eine Abfrage aus.');
         return;

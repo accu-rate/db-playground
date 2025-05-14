@@ -179,6 +179,7 @@ canvas {
     top: 50%;
     left: 50%;
     margin: 0 auto 10px;
+    padding: 20px;
     transform: translate(-50%, -50%);
     z-index: 1000;
     font-size: 24px;

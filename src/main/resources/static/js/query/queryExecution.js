@@ -29,13 +29,14 @@ export async function executeQuery() {
     }
 
     for (const option of selectedOptions) {
-        const tableName = option.text;
-        await executeTableQuery(query, tableName);
+        await executeTableQuery(query, option);
     }
 }
 
-async function executeTableQuery(query, tableName) {
-    const tableQuery = query.replaceAll(tablePlaceholder, tableName);
+async function executeTableQuery(query, selectedOption) {
+    const tableValue = selectedOption ? selectedOption.value : null;
+    const tableName = selectedOption ? selectedOption.textContent : null;
+    const tableQuery = query.replaceAll(tablePlaceholder, tableValue);
     const url = '/api/execute-query';
     const data = await sendRequestToBackend(tableQuery, url);
     if (!data) return null;
@@ -45,5 +46,5 @@ async function executeTableQuery(query, tableName) {
     cachedQueries.push({
         id: queryName, table: tableName, query: tableQuery, data
     });
-    await addResultToOverviewTable(tableName, queryName, data);
+    await addResultToOverviewTable(tableValue, queryName, data, tableName);
 }

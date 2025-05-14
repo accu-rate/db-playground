@@ -32,7 +32,7 @@ export function populateTableSelect(tables) {
     tables.forEach(table => {
         const option = document.createElement('option');
         option.value = table;
-        option.textContent = table;
+        option.textContent = generateTableString(table);
         select.appendChild(option);
     });
 
@@ -41,6 +41,14 @@ export function populateTableSelect(tables) {
             option.selected = true;
         }
     }
+}
+
+function generateTableString(table) {
+    const match = table.match(/variant(\d+)/i); // Match "variant" followed by a number
+    if (match) {
+        return `Variante ${match[1]}`; // Format as "Variante x"
+    }
+    return table; // Return the original table name if no match
 }
 
 export async function loadColumnsForSelectedTable() {

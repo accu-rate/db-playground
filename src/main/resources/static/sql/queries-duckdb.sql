@@ -34,7 +34,7 @@ GROUP BY minute_bucket
 ORDER BY minute_bucket;
 
 -- Räumungsverlauf
-SELECT time AS Zeit, COUNT (DISTINCT pedID) AS Anzahl_Personen
+SELECT time AS 'Zeit [s]', COUNT (DISTINCT pedID) AS 'Anzahl Personen'
 FROM ${selectedTable}
 GROUP BY time
 ORDER BY time ASC;

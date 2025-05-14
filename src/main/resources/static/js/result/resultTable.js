@@ -4,7 +4,7 @@ import {mapTypeAndAssignment} from '../utils/mapping.js';
 import {makeCanvasResizable} from '../result/resize.js';
 
 
-export async function addResultToOverviewTable(tableName, queryName, data) {
+export async function addResultToOverviewTable(tableValue, queryName, data, tableName) {
     const chartFormElement = document.getElementById('chartForm');
     console.log("found element: " + chartFormElement);
     if (notYetVisible(chartFormElement)) {
@@ -13,8 +13,8 @@ export async function addResultToOverviewTable(tableName, queryName, data) {
     }
     let formattedVariantAssignment = '';
 
-    if (hasFilters() && tableName) {
-        const variantAssignment = await sendRequestToBackend(null, `/api/get-variant-assignment?table=${encodeURIComponent(tableName)}`);
+    if (hasFilters() && tableValue) {
+        const variantAssignment = await sendRequestToBackend(null, `/api/get-variant-assignment?table=${encodeURIComponent(tableValue)}`);
         console.log("variantAssignment:", variantAssignment);
         formattedVariantAssignment = formatVariantAssignment(variantAssignment);
     }
